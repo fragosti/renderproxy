@@ -1,0 +1,11 @@
+{
+  "name": "sample-s3-spa",
+  "version": "1.0.0",
+  "description": "An example Single Page App deployed to s3 and cloudfront",
+  "main": "index.js",
+  "author": "Francesco Agosti",
+  "license": "MIT",
+  "devDependencies": {
+    "@static/discharge": "^2.0.0"
+  }
+}
