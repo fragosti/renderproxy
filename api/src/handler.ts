@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import logger from './util/logger';
 
 export class Handler {
-  health(req: Request, res: Response): void {
+  root(req: Request, res: Response): void {
     logger.info('Called root endpoint');
     res.send('HELLO WORLD').status(201).end();
   }
