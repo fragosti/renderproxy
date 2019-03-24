@@ -5,6 +5,10 @@
   "main": "index.js",
   "author": "Francesco Agosti",
   "license": "MIT",
+  "scripts": {
+    "deploy": "discharge deploy",
+    "discharge": "discharge"
+  },
   "devDependencies": {
     "@static/discharge": "^2.0.0"
   }
