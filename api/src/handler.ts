@@ -5,7 +5,7 @@ import logger from './util/logger';
 export class Handler {
   health(req: Request, res: Response): void {
     logger.info('Called root endpoint');
-    res.status(201).end();
+    res.send('HELLO WORLD').status(201).end();
   }
 }
 export default new Handler();
