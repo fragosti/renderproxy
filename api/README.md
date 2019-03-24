@@ -89,4 +89,4 @@ $ source eb-env/bin/activate
 $ pip install awsebcli --upgrade
 ```
 
-You need the correct acccess keys in ~/.aws/config to deploy the EB instance.
+You need the correct acccess keys in ~/.aws/config with profile `eb-cli` to deploy the EB instance using `yarn deploy`.
