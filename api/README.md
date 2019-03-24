@@ -90,3 +90,11 @@ $ pip install awsebcli --upgrade
 ```
 
 You need the correct acccess keys in ~/.aws/config with profile `eb-cli` to deploy the EB instance using `yarn deploy`.
+
+#### Creating a new Elastic Beanstalk Environment
+
+Make sure to use the "network" ELB type, so as to obtain a static IP.
+
+```
+$ eb create <ENV_NAME> --elb-type network
+```

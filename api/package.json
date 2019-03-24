@@ -10,7 +10,7 @@
     "dev:debug": "nodemon --exec 'node -r ts-node/register --inspect-brk' src/index.ts | pino-pretty",
     "test": "mocha test/**/*.ts --exit",
     "test:debug": "mocha --inspect-brk test/**/*.ts --exit",
-    "deploy": "eb deploy"
+    "deploy": "yarn build && eb deploy"
   },
   "dependencies": {
     "bluebird": "^3.5.3",
