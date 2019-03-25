@@ -6,3 +6,4 @@ node_modules
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 eb-env
+.DS_STORE
