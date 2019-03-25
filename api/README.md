@@ -80,16 +80,7 @@ yarn run test:debug
 
 #### Deploy
 
-Install virtualenv and create an env to install awsebcli.
-
-```
-$ pip install --user virtualenv
-$ virtualenv eb-env
-$ source eb-env/bin/activate
-$ pip install awsebcli --upgrade
-```
-
-You need the correct acccess keys in ~/.aws/config with profile `eb-cli` to deploy the EB instance using `yarn deploy`.
+You can deploy using `yarn deploy` assuming you have the AWS elastic beanstalk set up in as described [here](../README.md).
 
 #### Creating a new Elastic Beanstalk Environment
 
