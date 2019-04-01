@@ -1,30 +1,14 @@
 import { Request, Response } from 'express';
 
+
+import { rendertron } from './util/rendertron';
 import logger from './util/logger';
 
 export class Handler {
-  root(req: Request, res: Response): void {
+  async root(req: Request, res: Response): Promise<void> {
     logger.info('Called root endpoint');
-    res.send('HELLO WORLD').status(201).end();
+    const response = await rendertron.render('http://sample-s3-spa.com.s3-website-us-west-2.amazonaws.com/');
+    res.send(response.data);
   }
 }
 export default new Handler();
-// all(req: Request, res: Response): void {
-  //   ExamplesService.all().then(r => res.json(r));
-  // }
-
-  // byId(req: Request, res: Response): void {
-  //   ExamplesService.byId(req.params.id).then(r => {
-  //     if (r) res.json(r);
-  //     else res.status(404).end();
-  //   });
-  // }
-
-  // create(req: Request, res: Response): void {
-  //   ExamplesService.create(req.body.name).then(r =>
-  //     res
-  //       .status(201)
-  //       .location(`<%= apiRoot %>/examples/${r.id}`)
-  //       .json(r),
-  //   );
-  // }
