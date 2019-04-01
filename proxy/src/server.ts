@@ -4,7 +4,9 @@ import path from 'path';
 import bodyParser from 'body-parser';
 import http from 'http';
 import os from 'os';
+
 import l from './util/logger';
+import { handler } from './handler';
 
 const app = express();
 
@@ -16,11 +18,7 @@ export default class ExpressServer {
     // app.use(bodyParser.urlencoded({ extended: true, limit: process.env.REQUEST_LIMIT || '100kb' }));
     // app.use(cookieParser(process.env.SESSION_SECRET));
     // app.use(express.static(`${root}/public`));
-  }
-
-  router(routes: (app: Application) => void): ExpressServer {
-    routes(app);
-    return this;
+    app.get('/*', handler.root);
   }
 
   listen(p: string | number = process.env.PORT): Application {
