@@ -4,9 +4,9 @@
   "description": "Prerender API",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "dotenv -e prod.env node dist/index.js",
     "build": "tsc",
-    "dev": "nodemon src/index.ts | pino-pretty",
+    "dev": "dotenv -e dev.env nodemon src/index.ts | pino-pretty",
     "dev:debug": "nodemon --exec 'node -r ts-node/register --inspect-brk' src/index.ts | pino-pretty",
     "test": "mocha test/**/*.ts --exit",
     "test:debug": "mocha --inspect-brk test/**/*.ts --exit",
@@ -16,7 +16,6 @@
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.4",
-    "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "pino": "^5.11.1",
     "swagger-express-middleware": "^2.0.1"
@@ -28,6 +27,7 @@
     "@types/mocha": "^5.2.6",
     "@types/pino": "^5.8.5",
     "chai": "^4.2.0",
+    "dotenv-cli": "^2.0.0",
     "mocha": "^6.0.2",
     "nodemon": "^1.18.10",
     "pino-pretty": "^2.5.0",
