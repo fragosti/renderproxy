@@ -1,6 +1,6 @@
-# api
+# proxy
 
-Prerender API
+Prerender Proxy
 
 ## Quick Start
 
