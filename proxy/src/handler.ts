@@ -26,7 +26,6 @@ export const handler = {
     res.send(response.data);
   },
   handleRegularRequest: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    // Only proxy text/html content type
     const proxyHandler = proxy(originUrl);
     const url = req.url;
     if (
