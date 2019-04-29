@@ -1,12 +1,12 @@
+import bodyParser from 'body-parser';
 import express from 'express';
 import { Application } from 'express';
-import path from 'path';
-import bodyParser from 'body-parser';
 import http from 'http';
 import os from 'os';
+import path from 'path';
 
-import l from './util/logger';
 import { handler } from './handler';
+import l from './util/logger';
 
 const app = express();
 
@@ -21,9 +21,10 @@ export default class ExpressServer {
     app.get('/*', handler.root);
   }
 
-  listen(p: string | number = process.env.PORT): Application {
-    const welcome = port => () => l.info(`up and running in ${process.env.NODE_ENV || 'development'} @: ${os.hostname() } on port: ${port}}`);
-    http.createServer(app).listen(p, welcome(p));
+  public listen(p: string | number = process.env.PORT): Application {
+    http.createServer(app).listen(p, () => {
+      l.info(`up and running in ${process.env.NODE_ENV || 'development'} @: ${os.hostname() } on port: ${p}}`);
+    });
     return app;
   }
 }

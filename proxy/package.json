@@ -10,6 +10,7 @@
     "dev:debug": "nodemon --exec 'node -r ts-node/register --inspect-brk' src/index.ts | pino-pretty",
     "test": "mocha test/**/*.ts --exit",
     "test:debug": "mocha --inspect-brk test/**/*.ts --exit",
+    "lint": "tslint --format stylish --project .",
     "deploy": "yarn build && eb deploy"
   },
   "dependencies": {
@@ -39,7 +40,7 @@
     "supertest": "^3.4.2",
     "ts-lint": "^4.5.1",
     "ts-node": "^8.0.2",
-    "tslint": "^5.13.1",
+    "tslint": "^5.16.0",
     "typescript": "^3.3.3333"
   },
   "author": "Francesco Agosti"
