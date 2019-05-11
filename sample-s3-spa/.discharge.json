@@ -1,5 +1,5 @@
 {
-  "domain": "sample-s3-spa.com",
+  "domain": "samples3spasite.com",
   "build_command": "echo \"No build\"",
   "upload_directory": "public",
   "index_key": "index.html",

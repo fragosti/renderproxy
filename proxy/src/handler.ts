@@ -6,7 +6,7 @@ import { requestTypesToRedirect } from './constants';
 import logger from './util/logger';
 import { rendertron } from './util/rendertron';
 
-const originUrl = 'http://sample-s3-spa.com.s3-website-us-west-2.amazonaws.com';
+const originUrl = 'http://samples3spasite.com.s3-website-us-west-2.amazonaws.com';
 
 export const handler = {
   handleBotRequest: async (req: Request, res: Response): Promise<void> => {
@@ -32,6 +32,7 @@ export const handler = {
     const url = req.url;
     if (isBot(req.get('user-agent'))) {
       logger.info(`Handing bot request for ${url}`);
+      // TODO: Handle errors.
       return handler.handleBotRequest(req, res);
     }
     logger.info(`Handing regular request for ${url}`);
