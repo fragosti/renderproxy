@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import isBot from 'isbot';
-import request from 'request-promise';
+import request from 'request';
 
 import { requestTypesToRedirect } from './constants';
 import logger from './util/logger';
