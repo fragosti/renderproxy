@@ -8,5 +8,5 @@
   "aws_profile": "default",
   "aws_region": "us-west-2",
   "cdn": true,
-  "dns_configured": false
+  "dns_configured": true
 }

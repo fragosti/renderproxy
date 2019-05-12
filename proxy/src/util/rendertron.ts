@@ -1,8 +1,8 @@
-import axios, { AxiosAdapter, AxiosResponse } from 'axios';
+import request from 'request-promise';
 
 export const rendertron = {
-  render: async (url: string): Promise<AxiosResponse> => {
-    const response = await axios.get(`${process.env.RENDERTRON_URL}/render/${url}`);
+  render: async (url: string): Promise<string> => {
+    const response = await request(`${process.env.RENDERTRON_URL}/render/${url}`);
     return response;
   },
 };

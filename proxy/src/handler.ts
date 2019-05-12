@@ -1,22 +1,21 @@
 import { NextFunction, Request, Response } from 'express';
-import proxy from 'express-http-proxy';
 import isBot from 'isbot';
+import request from 'request-promise';
 
 import { requestTypesToRedirect } from './constants';
 import logger from './util/logger';
 import { rendertron } from './util/rendertron';
 
-const originUrl = 'http://samples3spasite.com.s3-website-us-west-2.amazonaws.com';
+const originUrl = 'https://d1zqpb9e5b92wt.cloudfront.net';
 
 export const handler = {
   handleBotRequest: async (req: Request, res: Response): Promise<void> => {
     logger.info('Called root endpoint');
     // TODO: Remove base= html tag from rendertron response.
     const response = await rendertron.render(originUrl);
-    res.send(response.data);
+    res.send(response);
   },
   handleRegularRequest: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const proxyHandler = proxy(originUrl);
     const url = req.url;
     if (
       requestTypesToRedirect.reduce((acc, fileType) => acc || url.endsWith(fileType), false)
@@ -26,7 +25,7 @@ export const handler = {
       return res.redirect(redirectUrl);
     }
     logger.info(`Proxying request for ${req.url} content from ${originUrl}`);
-    return proxyHandler(req, res, next);
+    req.pipe(request({ qs: req.query, uri: originUrl  })).pipe(res);
   },
   root: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const url = req.url;
