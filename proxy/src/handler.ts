@@ -7,6 +7,7 @@ import logger from './util/logger';
 import { rendertron } from './util/rendertron';
 
 const originUrl = 'https://d1zqpb9e5b92wt.cloudfront.net';
+// const originUrl = 'https://postman-echo.com/get';
 
 export const handler = {
   handleBotRequest: async (req: Request, res: Response): Promise<void> => {
@@ -25,7 +26,8 @@ export const handler = {
       return res.redirect(redirectUrl);
     }
     logger.info(`Proxying request for ${req.url} content from ${originUrl}`);
-    req.pipe(request({ qs: req.query, uri: originUrl, headers: req.headers })).pipe(res);
+    const { host, ...restHeaders } = req.headers;
+    req.pipe(request({ qs: req.query, uri: originUrl, headers: restHeaders })).pipe(res);
   },
   root: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const url = req.url;
