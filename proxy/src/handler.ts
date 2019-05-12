@@ -25,7 +25,7 @@ export const handler = {
       return res.redirect(redirectUrl);
     }
     logger.info(`Proxying request for ${req.url} content from ${originUrl}`);
-    req.pipe(request({ qs: req.query, uri: originUrl  })).pipe(res);
+    req.pipe(request({ qs: req.query, uri: originUrl, headers: req.headers })).pipe(res);
   },
   root: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const url = req.url;
