@@ -1,7 +1,7 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "description": "Prerender API",
+  "description": "Proxy",
   "main": "index.js",
   "scripts": {
     "start": "dotenv -e prod.env node dist/index.js",
@@ -11,18 +11,20 @@
     "test": "mocha test/**/*.ts --exit",
     "test:debug": "mocha --inspect-brk test/**/*.ts --exit",
     "lint": "tslint --format stylish --project .",
-    "deploy": "yarn build && eb deploy"
+    "deploy": "yarn build && eb deploy",
+    "logs": "eb logs"
   },
   "dependencies": {
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.4",
     "express": "^4.16.4",
+    "greenlock-express": "^2.7.9",
+    "greenlock-storage-s3": "^1.1.1",
     "isbot": "^2.2.1",
     "pino": "^5.11.1",
     "request": "^2.88.0",
-    "request-promise": "^4.2.4",
-    "swagger-express-middleware": "^2.0.1"
+    "request-promise": "^4.2.4"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.26",
