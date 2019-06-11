@@ -1,6 +1,8 @@
 import Greenlock from 'greenlock-express';
 import GreenlockStorageS3 from 'greenlock-storage-s3';
+
 import { app } from './app';
+import { TLS_CONNECTION_PORT } from './constants';
 
 const tcpPort = parseInt(process.env.PORT, 10);
 
@@ -20,9 +22,9 @@ Greenlock.create({
   // Let's Encrypt v2 is ACME draft 11
   version: 'draft-11',
 
-  // server: 'https://acme-v02.api.letsencrypt.org/directory',
+  server: 'https://acme-v02.api.letsencrypt.org/directory',
   // Note: If at first you don't succeed, stop and switch to staging
-  server: 'https://acme-staging-v02.api.letsencrypt.org/directory',
+  // server: 'https://acme-staging-v02.api.letsencrypt.org/directory',
 
   // You MUST change this to a valid email address
   email: 'agostif93@gmail.com',
@@ -42,4 +44,4 @@ Greenlock.create({
   // communityMember: true
 
   //, debug: true
-}).listen(tcpPort, 443);
+}).listen(tcpPort, TLS_CONNECTION_PORT);

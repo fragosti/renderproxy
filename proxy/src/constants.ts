@@ -30,3 +30,5 @@ export const requestTypesToRedirect = [
   'oga',
   'ogx',
 ];
+
+export const TLS_CONNECTION_PORT = 443;
