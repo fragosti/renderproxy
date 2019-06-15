@@ -3,7 +3,7 @@ import isBot from 'isbot';
 import request from 'request';
 
 import { requestTypesToRedirect } from './constants';
-import logger from './util/logger';
+import { logger } from './util/logger';
 import { rendertron } from './util/rendertron';
 
 const originUrl = 'https://d1zqpb9e5b92wt.cloudfront.net';
