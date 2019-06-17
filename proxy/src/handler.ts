@@ -11,7 +11,6 @@ const originUrl = 'https://d1zqpb9e5b92wt.cloudfront.net';
 
 export const handler = {
   handleBotRequest: async (req: Request, res: Response): Promise<void> => {
-    logger.info('Called root endpoint');
     // TODO: Remove base= html tag from rendertron response.
     const response = await rendertron.render(originUrl);
     res.send(response);

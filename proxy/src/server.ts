@@ -5,6 +5,7 @@ import http from 'http';
 import os from 'os';
 
 import { TLS_CONNECTION_PORT } from './constants';
+import { aws } from './util/aws';
 import { logger } from './util/logger';
 
 export const createServer = (app: Application) => {
@@ -27,13 +28,12 @@ export const createDevServer = (app: Application, port: number) => {
 };
 
 const store = GreenlockStorageS3.create({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   accountsDir: 'accounts/',
   bucketName: process.env.AWS_S3_BUCKET_NAME,
   bucketRegion: process.env.AWS_S3_BUCKET_REGION,
   configDir: 'acme/',
   debug: true,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  ...aws.credentials,
 });
 
 const approveDomains = (opts, certs, cb) => {

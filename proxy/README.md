@@ -45,6 +45,12 @@ or debug it
 yarn run dev:debug
 ```
 
+If you want to run a local instance of dynamoDB, run:
+
+```shell
+docker run -p 8000:8000 amazon/dynamodb-local
+```
+
 #### Run in *production* mode:
 
 Compiles the application and starts it in production production mode.
