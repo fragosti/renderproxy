@@ -3,39 +3,39 @@ import isBot from 'isbot';
 import request from 'request';
 
 import { requestTypesToRedirect } from './constants';
+import { database } from './util/database';
 import { logger } from './util/logger';
 import { rendertron } from './util/rendertron';
-
-const originUrl = 'https://d1zqpb9e5b92wt.cloudfront.net';
-// const originUrl = 'https://postman-echo.com/get';
+import { url } from './util/url';
 
 export const handler = {
-  handleBotRequest: async (req: Request, res: Response): Promise<void> => {
+  handleBotRequest: async (proxyToUrl: string, req: Request, res: Response): Promise<void> => {
     // TODO: Remove base= html tag from rendertron response.
-    const response = await rendertron.render(originUrl);
+    const response = await rendertron.render(proxyToUrl);
     res.send(response);
+    return;
   },
-  handleRegularRequest: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const url = req.url;
+  handleRegularRequest: async (proxyToUrl: string, req: Request, res: Response, next: NextFunction): Promise<void> => {
     if (
-      requestTypesToRedirect.reduce((acc, fileType) => acc || url.endsWith(fileType), false)
+      requestTypesToRedirect.reduce((acc, fileType) => acc || req.url.endsWith(fileType), false)
     ) {
-      const redirectUrl = `${originUrl}${req.url}`;
+      const redirectUrl = `${proxyToUrl}${req.url}`;
       logger.info(`Redirecting to ${redirectUrl}`);
       return res.redirect(redirectUrl);
     }
-    logger.info(`Proxying request for ${req.url} content from ${originUrl}`);
+    logger.info(`Proxying request for ${req.url} content from ${proxyToUrl}`);
     const { host, ...restHeaders } = req.headers;
-    req.pipe(request({ qs: req.query, uri: originUrl, headers: restHeaders })).pipe(res);
+    req.pipe(request({ qs: req.query, uri: proxyToUrl, headers: restHeaders })).pipe(res);
   },
   root: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const url = req.url;
-    if (isBot(req.get('user-agent'))) {
-      logger.info(`Handing bot request for ${url}`);
+    const fullUrl = url.fullFromRequest(req);
+    const isRequestFromBot = isBot(req.get('user-agent'));
+    logger.info(`Handling request for ${fullUrl}. Is bot: ${isRequestFromBot}`);
+    const { proxyToUrl } = await database.getItemAsync(req.get('host'));
+    if (isRequestFromBot) {
       // TODO: Handle errors.
-      return handler.handleBotRequest(req, res);
+      return handler.handleBotRequest(proxyToUrl, req, res);
     }
-    logger.info(`Handing regular request for ${url}`);
-    return handler.handleRegularRequest(req, res, next);
+    return handler.handleRegularRequest(proxyToUrl, req, res, next);
   },
 };
