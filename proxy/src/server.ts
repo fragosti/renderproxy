@@ -1,7 +1,9 @@
 import { Application } from 'express';
+import fs from 'fs';
 import Greenlock from 'greenlock-express';
 import GreenlockStorageS3 from 'greenlock-storage-s3';
 import http from 'http';
+import https from 'https';
 import os from 'os';
 
 import { AWS_CREDENTIALS, TLS_CONNECTION_PORT } from './constants';
@@ -17,13 +19,22 @@ export const createServer = (app: Application) => {
 };
 
 export const createDevServer = (app: Application, port: number) => {
-  const httpServer = http.createServer(app).listen(port, () => {
+  http.createServer(app).listen(port, () => {
     logger.info(
-      `up and running in ${process.env.NODE_ENV ||
+      `http up and running in ${process.env.NODE_ENV ||
         'development'} @: ${os.hostname()} on port: ${port}}`,
     );
   });
-  return httpServer;
+  const credentials = {
+    key: fs.readFileSync('dev_certs/localhost.key'),
+    cert: fs.readFileSync('dev_certs/localhost.crt'),
+  };
+  https.createServer(credentials, app).listen(TLS_CONNECTION_PORT, () => {
+    logger.info(
+      `https up and running in ${process.env.NODE_ENV ||
+        'development'} @: ${os.hostname()} on port: ${TLS_CONNECTION_PORT}}`,
+    );
+  });
 };
 
 const store = GreenlockStorageS3.create({
