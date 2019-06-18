@@ -11,15 +11,15 @@ import { url } from './util/url';
 export const handler = {
   handleBotRequest: async (proxyToUrl: string, req: Request, res: Response): Promise<void> => {
     // TODO: Remove base= html tag from rendertron response.
+    // TODO: handle error
     const response = await rendertron.render(proxyToUrl);
     res.send(response);
     return;
   },
   handleRegularRequest: async (proxyToUrl: string, req: Request, res: Response, next: NextFunction): Promise<void> => {
     const fullProxyToUrl = `${proxyToUrl}${req.url}`;
-    if (
-      requestTypesToRedirect.reduce((acc, fileType) => acc || req.url.endsWith(fileType), false)
-    ) {
+    const fileType = url.getFileTypeFromRequest(req);
+    if (fileType && requestTypesToRedirect.has(url.getFileTypeFromRequest(req))) {
       logger.info(`Redirecting to ${fullProxyToUrl}`);
       return res.redirect(fullProxyToUrl);
     }
@@ -34,7 +34,6 @@ export const handler = {
     // TODO: Handle errors.
     const { proxyToUrl } = await database.getItemAsync(req.get('host'));
     if (isRequestFromBot) {
-      // TODO: Handle errors.
       return handler.handleBotRequest(proxyToUrl, req, res);
     }
     return handler.handleRegularRequest(proxyToUrl, req, res, next);

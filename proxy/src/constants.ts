@@ -1,4 +1,4 @@
-export const requestTypesToRedirect = [
+export const requestTypesToRedirect = new Set([
   'css',
   'jpeg',
   'jpg',
@@ -29,7 +29,7 @@ export const requestTypesToRedirect = [
   'oga',
   'oga',
   'ogx',
-];
+]);
 
 export const TLS_CONNECTION_PORT = 443;
 
