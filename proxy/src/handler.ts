@@ -16,21 +16,22 @@ export const handler = {
     return;
   },
   handleRegularRequest: async (proxyToUrl: string, req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const fullProxyToUrl = `${proxyToUrl}${req.url}`;
     if (
       requestTypesToRedirect.reduce((acc, fileType) => acc || req.url.endsWith(fileType), false)
     ) {
-      const redirectUrl = `${proxyToUrl}${req.url}`;
-      logger.info(`Redirecting to ${redirectUrl}`);
-      return res.redirect(redirectUrl);
+      logger.info(`Redirecting to ${fullProxyToUrl}`);
+      return res.redirect(fullProxyToUrl);
     }
     logger.info(`Proxying request for ${req.url} content from ${proxyToUrl}`);
     const { host, ...restHeaders } = req.headers;
-    req.pipe(request({ qs: req.query, uri: proxyToUrl, headers: restHeaders })).pipe(res);
+    req.pipe(request({ qs: req.query, uri: fullProxyToUrl, headers: restHeaders })).pipe(res);
   },
   root: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const fullUrl = url.fullFromRequest(req);
     const isRequestFromBot = isBot(req.get('user-agent'));
     logger.info(`Handling request for ${fullUrl}. Is bot: ${isRequestFromBot}`);
+    // TODO: Handle errors.
     const { proxyToUrl } = await database.getItemAsync(req.get('host'));
     if (isRequestFromBot) {
       // TODO: Handle errors.
