@@ -2,17 +2,15 @@ import Bluebird from 'bluebird';
 import { AWS } from './aws';
 import { logger } from './logger';
 
+import { ProxySettings } from '../types';
+
 const TABLE_NAME = 'ProxyTable';
 
 const dynamoDb = new AWS.DynamoDB();
 const documentClient = Bluebird.promisifyAll(new AWS.DynamoDB.DocumentClient()) as any;
 
-export interface DatabaseItem {
-  proxyToUrl: string;
-}
-
 export const database = {
-  getItemAsync: async (domain: string): Promise<DatabaseItem> => {
+  getItemAsync: async (domain: string): Promise<ProxySettings> => {
     const itemWrapper = await documentClient.getAsync({
       TableName: TABLE_NAME,
       Key: {
