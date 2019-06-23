@@ -7,34 +7,38 @@ import https from 'https';
 import os from 'os';
 
 import { AWS_CREDENTIALS, TLS_CONNECTION_PORT } from './constants';
+import { database } from './util/database';
 import { logger } from './util/logger';
 
 export const createServer = (app: Application) => {
   const port = parseInt(process.env.PORT, 10);
-  if (process.env.NODE_ENV === 'production') {
+  const shouldEnableHTTPs = process.env.ENABLE_HTTPS === 'true';
+  if (process.env.NODE_ENV === 'production' && shouldEnableHTTPs) {
     createGreenlockServer(app, port);
   } else {
-    createDevServer(app, port);
+    createNodeServer(app, port, shouldEnableHTTPs);
   }
 };
 
-export const createDevServer = (app: Application, port: number) => {
+export const createNodeServer = (app: Application, port: number, shouldEnableHTTPs: boolean) => {
   http.createServer(app).listen(port, () => {
     logger.info(
       `http up and running in ${process.env.NODE_ENV ||
         'development'} @: ${os.hostname()} on port: ${port}}`,
     );
   });
-  const credentials = {
-    key: fs.readFileSync('dev_certs/localhost.key'),
-    cert: fs.readFileSync('dev_certs/localhost.crt'),
-  };
-  https.createServer(credentials, app).listen(TLS_CONNECTION_PORT, () => {
-    logger.info(
-      `https up and running in ${process.env.NODE_ENV ||
-        'development'} @: ${os.hostname()} on port: ${TLS_CONNECTION_PORT}}`,
-    );
-  });
+  if (shouldEnableHTTPs) {
+    const credentials = {
+      key: fs.readFileSync('dev_certs/localhost.key'),
+      cert: fs.readFileSync('dev_certs/localhost.crt'),
+    };
+    https.createServer(credentials, app).listen(TLS_CONNECTION_PORT, () => {
+      logger.info(
+        `https up and running in ${process.env.NODE_ENV ||
+          'development'} @: ${os.hostname()} on port: ${TLS_CONNECTION_PORT}}`,
+      );
+    });
+  }
 };
 
 const store = GreenlockStorageS3.create({
