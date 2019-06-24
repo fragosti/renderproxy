@@ -31,13 +31,18 @@ export const handler = {
   },
   root: async (req: Request, res: Response): Promise<void> => {
     const fullUrl = url.fullFromRequest(req);
-    const isRequestFromBot = isBot(req.get('user-agent'));
-    logger.info(`Handling request for ${fullUrl}. Is bot: ${isRequestFromBot}`);
-    // TODO: Handle errors.
-    const proxySettings = await database.getItemAsync(req.get('host'));
-    if (isRequestFromBot) {
-      return handler.handleBotRequest(proxySettings, req, res);
-    }
-    return handler.handleRegularRequest(proxySettings, req, res);
-  },
+    logger.info(`Got request for ${fullUrl}`);
+    res.redirect('https://www.google.com/');
+    return;
+  //   const fullUrl = url.fullFromRequest(req);
+  //   const isRequestFromBot = isBot(req.get('user-agent'));
+  //   logger.info(`Handling request for ${fullUrl}. Is bot: ${isRequestFromBot}`);
+  //   // TODO: Handle errors.
+  //   const proxySettings = await database.getItemAsync(req.get('host'));
+  //   if (isRequestFromBot) {
+  //     return handler.handleBotRequest(proxySettings, req, res);
+  //   }
+  //   return handler.handleRegularRequest(proxySettings, req, res);
+  // },
+    },
 };
