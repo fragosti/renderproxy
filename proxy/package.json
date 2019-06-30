@@ -11,8 +11,8 @@
     "test": "mocha test/**/*.ts --exit",
     "test:debug": "mocha --inspect-brk test/**/*.ts --exit",
     "lint": "tslint --format stylish --project .",
-    "deploy": "yarn build && eb deploy",
-    "logs": "eb logs"
+    "deploy": "yarn build && eb deploy prod",
+    "logs": "eb logs prod"
   },
   "dependencies": {
     "aws-sdk": "^2.476.0",

@@ -77,6 +77,6 @@ export const createGreenlockServer = (app: Application, port: number) => {
 
     app,
 
-    // debug: true,
+    debug: true,
   }).listen(port, TLS_CONNECTION_PORT);
 };

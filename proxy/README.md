@@ -2,8 +2,8 @@
 
 Prerender Proxy
 
-Available at http://proxy-prod.jscysrqm63.us-west-2.elasticbeanstalk.com/
-IP address: 34.220.121.154
+Available at http://prod.jscysrqm63.us-west-2.elasticbeanstalk.com 
+IP address: 34.212.13.125
 
 
 ## Quick Start
