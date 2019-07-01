@@ -30,7 +30,7 @@ export const handler = {
     req.pipe(request({ qs: req.query, uri: fullProxyToUrl, headers: restHeaders })).pipe(res);
   },
   root: async (req: Request, res: Response): Promise<void> => {
-    res.send('HELLO');
+    res.send('HELLO WORLD');
     // const fullUrl = url.fullFromRequest(req);
     // const isRequestFromBot = isBot(req.get('user-agent'));
     // logger.info(`Handling request for ${fullUrl}. Is bot: ${isRequestFromBot}`);
