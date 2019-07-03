@@ -33,12 +33,11 @@ export const handler = {
     const fullUrl = url.fullFromRequest(req);
     const isRequestFromBot = isBot(req.get('user-agent'));
     logger.info(`Handling request for ${fullUrl}. Is bot: ${isRequestFromBot}`);
-    res.send('HELLO WORLD 7');
-    // // TODO: Handle errors.
-    // const proxySettings = await database.getItemAsync(req.get('host'));
-    // if (isRequestFromBot) {
-    //   return handler.handleBotRequest(proxySettings, req, res);
-    // }
-    // return handler.handleRegularRequest(proxySettings, req, res);
+    // TODO: Handle errors.
+    const proxySettings = await database.getItemAsync(req.get('host'));
+    if (isRequestFromBot) {
+      return handler.handleBotRequest(proxySettings, req, res);
+    }
+    return handler.handleRegularRequest(proxySettings, req, res);
     },
 };
