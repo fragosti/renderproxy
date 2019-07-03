@@ -30,10 +30,10 @@ export const handler = {
     req.pipe(request({ qs: req.query, uri: fullProxyToUrl, headers: restHeaders })).pipe(res);
   },
   root: async (req: Request, res: Response): Promise<void> => {
-    res.send('HELLO WORLD');
-    // const fullUrl = url.fullFromRequest(req);
-    // const isRequestFromBot = isBot(req.get('user-agent'));
-    // logger.info(`Handling request for ${fullUrl}. Is bot: ${isRequestFromBot}`);
+    const fullUrl = url.fullFromRequest(req);
+    const isRequestFromBot = isBot(req.get('user-agent'));
+    logger.info(`Handling request for ${fullUrl}. Is bot: ${isRequestFromBot}`);
+    res.send('HELLO WORLD 7');
     // // TODO: Handle errors.
     // const proxySettings = await database.getItemAsync(req.get('host'));
     // if (isRequestFromBot) {

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Proxy",
   "main": "index.js",
+  "license": "MIT",
   "scripts": {
     "start": "dotenv -e prod.env node dist/index.js",
     "build": "tsc",
@@ -19,6 +20,7 @@
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.4",
+    "dotenv-cli": "^2.0.0",
     "express": "^4.16.4",
     "greenlock-express": "^2.7.9",
     "greenlock-storage-s3": "^1.1.1",
@@ -37,7 +39,6 @@
     "@types/request": "^2.48.1",
     "@types/request-promise": "^4.1.43",
     "chai": "^4.2.0",
-    "dotenv-cli": "^2.0.0",
     "mocha": "^6.0.2",
     "nodemon": "^1.18.10",
     "pino-pretty": "^2.5.0",
@@ -48,5 +49,5 @@
     "tslint": "^5.16.0",
     "typescript": "^3.3.3333"
   },
-  "author": "Francesco Agosti"
+  "author": "fragosti"
 }
