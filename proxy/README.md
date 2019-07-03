@@ -2,9 +2,8 @@
 
 Prerender Proxy
 
-Available at http://prod.jscysrqm63.us-west-2.elasticbeanstalk.com 
-IP address: 34.212.13.125
-
+Available at
+IP address: 35.193.207.37
 
 ## Quick Start
 
@@ -32,7 +31,9 @@ yarn install
 ```
 
 ## Run It
-#### Run in *development* mode:
+
+#### Run in _development_ mode:
+
 Runs the application is development mode. Should not be used in production
 
 ```shell
@@ -45,13 +46,7 @@ or debug it
 yarn run dev:debug
 ```
 
-If you want to run a local instance of dynamoDB, run:
-
-```shell
-docker run -p 8000:8000 amazon/dynamodb-local
-```
-
-#### Run in *production* mode:
+#### Run in _production_ mode:
 
 Compiles the application and starts it in production production mode.
 
@@ -90,12 +85,4 @@ yarn run test:debug
 
 #### Deploy
 
-You can deploy using `yarn deploy` assuming you have the AWS elastic beanstalk set up in as described [here](../README.md).
-
-#### Creating a new Elastic Beanstalk Environment
-
-Make sure to use the "network" ELB type, so as to obtain a static IP.
-
-```
-$ eb create <ENV_NAME> --elb-type network
-```
+You can deploy using `./scripts/deploy.sh` assuming you have set up google cloud and kubectl as described [here](../README.md).

@@ -1,22 +1,20 @@
 # Prerender.dev
 
-## Elastic Beanstalk Environment
+# Google cloud set up
 
-All services are deployed using elastic beanstalk.
-
-To install virtualenv and create an env to install awsebcli.
+Install the [Google Cloud SDK](https://cloud.google.com/sdk/docs/quickstarts), which includes the gcloud command-line tool.
+Using the gcloud command line tool, install the Kubernetes command-line tool. kubectl is used to communicate with Kubernetes, which is the cluster orchestration system of GKE clusters:
 
 ```
-$ pip install --user virtualenv
-$ virtualenv eb-env
-$ source eb-env/bin/activate
-$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-$ python get-pip.py
-$ pip install awsebcli --upgrade
+gcloud components install kubectl
 ```
 
-You need the correct acccess keys in ~/.aws/config with profile `eb-cli` to deploy the EB instance.
+To save time typing your project ID and Compute Engine zone options in the gcloud command-line tool, you can set the defaults:
 
-Once you have `awsebcli` installed, you can follow the instructions [here](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-configuration.html).
+```
+gcloud auth login
+gcloud auth configure-docker
 
-TL;DR; `eb init`, `eb create <ENV>`
+gcloud config set project [PROJECT_ID]
+gcloud config set compute/zone us-central1-b
+```
