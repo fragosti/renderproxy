@@ -1,7 +1,7 @@
 export enum PrerenderSetting {
-  None,
-  BotOnly,
-  All,
+  None = 'none',
+  BotOnly = 'botOnly',
+  All = 'all',
 }
 
 export interface ProxySettings {
