@@ -16,6 +16,7 @@
     "logs": "eb logs prod"
   },
   "dependencies": {
+    "@interactivetraining/le-store-gcloud-storage": "^0.0.2",
     "aws-sdk": "^2.476.0",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",

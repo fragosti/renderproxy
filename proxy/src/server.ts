@@ -1,13 +1,12 @@
+import { GCloudStoreCreate } from '@interactivetraining/le-store-gcloud-storage';
 import { Application } from 'express';
 import fs from 'fs';
 import Greenlock from 'greenlock-express';
-import GreenlockStorageS3 from 'greenlock-storage-s3';
 import http from 'http';
 import https from 'https';
 import os from 'os';
 
-import { AWS_CREDENTIALS, TLS_CONNECTION_PORT } from './constants';
-import { database } from './util/database';
+import { TLS_CONNECTION_PORT } from './constants';
 import { logger } from './util/logger';
 
 export const createServer = (app: Application) => {
@@ -20,7 +19,11 @@ export const createServer = (app: Application) => {
   }
 };
 
-export const createNodeServer = (app: Application, port: number, shouldEnableHTTPs: boolean) => {
+export const createNodeServer = (
+  app: Application,
+  port: number,
+  shouldEnableHTTPs: boolean,
+) => {
   http.createServer(app).listen(port, () => {
     logger.info(
       `http up and running in ${process.env.NODE_ENV ||
@@ -41,15 +44,6 @@ export const createNodeServer = (app: Application, port: number, shouldEnableHTT
   }
 };
 
-const store = GreenlockStorageS3.create({
-  accountsDir: 'accounts/',
-  bucketName: process.env.AWS_S3_BUCKET_NAME,
-  bucketRegion: process.env.AWS_S3_BUCKET_REGION,
-  configDir: 'acme/',
-  debug: true,
-  ...AWS_CREDENTIALS,
-});
-
 const approveDomains = (opts, certs, cb) => {
   logger.info(opts.domains);
   logger.info(certs && certs.altnames);
@@ -63,6 +57,14 @@ const approveDomains = (opts, certs, cb) => {
 };
 
 export const createGreenlockServer = (app: Application, port: number) => {
+  const store = GCloudStoreCreate({
+    bucketName: process.env.CLOUD_STORAGE_BUCKET_NAME,
+    projectId: process.env.CLOUD_PROJECT_ID,
+    privateKey: process.env.CLOUD_PRIVATE_KEY,
+    clientEmail: process.env.CLOUD_CLIENT_EMAIL,
+    dbFileName: 'proxy-certs.json',
+  });
+
   Greenlock.create({
     // Let's Encrypt v2 is ACME draft 11
     version: 'draft-11',

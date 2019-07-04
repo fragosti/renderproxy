@@ -8,3 +8,4 @@ node_modules
 eb-env
 .DS_STORE
 *.log
+google-cloud-key-file.json
