@@ -5,6 +5,11 @@ Prerender Proxy
 Available at
 IP address: 35.193.207.37
 
+## Config Requirements
+
+- Define a `prod.env` and `dev.env` file.
+- Get a `google-cloud-key-file.json` auth file for the Google cloud project.
+
 ## Quick Start
 
 Get started developing...
