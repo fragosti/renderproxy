@@ -32,8 +32,3 @@ export const requestTypesToRedirect = new Set([
 ]);
 
 export const TLS_CONNECTION_PORT = 443;
-
-export const AWS_CREDENTIALS = {
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-};

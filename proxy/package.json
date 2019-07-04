@@ -11,27 +11,23 @@
     "dev:debug": "nodemon --exec 'node -r ts-node/register --inspect-brk' src/index.ts | pino-pretty",
     "test": "mocha test/**/*.ts --exit",
     "test:debug": "mocha --inspect-brk test/**/*.ts --exit",
-    "lint": "tslint --format stylish --project .",
-    "deploy": "yarn build && eb deploy prod",
-    "logs": "eb logs prod"
+    "lint": "tslint --format stylish --project ."
   },
   "dependencies": {
+    "@google-cloud/firestore": "^2.2.3",
     "@interactivetraining/le-store-gcloud-storage": "^0.0.2",
-    "aws-sdk": "^2.476.0",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.4",
     "dotenv-cli": "^2.0.0",
     "express": "^4.16.4",
     "greenlock-express": "^2.7.9",
-    "greenlock-storage-s3": "^1.1.1",
     "isbot": "^2.2.1",
     "pino": "^5.11.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.4"
   },
   "devDependencies": {
-    "@types/aws-sdk": "^2.7.0",
     "@types/bluebird": "^3.5.26",
     "@types/chai": "^4.1.7",
     "@types/express": "^4.16.1",
