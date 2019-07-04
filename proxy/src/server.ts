@@ -7,6 +7,7 @@ import https from 'https';
 import os from 'os';
 
 import { TLS_CONNECTION_PORT } from './constants';
+import { database } from './util/database';
 import { logger } from './util/logger';
 
 export const createServer = (app: Application) => {
@@ -44,16 +45,31 @@ export const createNodeServer = (
   }
 };
 
-const approveDomains = (opts, certs, cb) => {
+const approveDomains = async (opts, certs, cb) => {
   logger.info(opts.domains);
   logger.info(certs && certs.altnames);
+  // TODO: change email to final domain email once decided
   opts.email = 'agostif93@gmail.com';
   opts.agreeTos = true;
   if (certs) {
     opts.domains = [certs.subject].concat(certs.altnames);
   }
-  // TODO: query cache to see if we want to attempt an issue for this domain.
-  cb(null, { options: opts, certs });
+  const doDomainsExistPromises = (opts.domains as string[]).map(async (domain) => {
+    try {
+      await database.getItemAsync(domain);
+      return true;
+    } catch (err) {
+      logger.info(err);
+      return false;
+    }
+  });
+  const doDomainsExist = await Promise.all(doDomainsExistPromises);
+  const shouldIssueCertificates = doDomainsExist.every((exists) => exists);
+  if (shouldIssueCertificates) {
+    cb(null, { options: opts, certs });
+  } else {
+    cb(new Error(`${opts.domains.join(', ')} was not found in the database. Not issuing cert.`));
+  }
 };
 
 export const createGreenlockServer = (app: Application, port: number) => {
