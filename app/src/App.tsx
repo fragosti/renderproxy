@@ -1,6 +1,7 @@
 import React from 'react';
-
 import { BrowserRouter, Route, Switch } from "react-router-dom";
+
+import { PrivateRoute } from './components/PrivateRoute';
 import { Auth0Provider } from './util/Auth0';
 import { AUTH0_CLIENT_ID, AUTH0_DOMAIN } from './constants';
 import { Navbar } from './components/Navbar';
@@ -32,7 +33,7 @@ export const App: React.FC = () => {
         </header>
         <Switch>
           <Route path="/" exact />
-          <Route path="/profile" component={Profile} />
+          <PrivateRoute path="/profile" Component={Profile} />
         </Switch>
       </BrowserRouter>
       </div>
