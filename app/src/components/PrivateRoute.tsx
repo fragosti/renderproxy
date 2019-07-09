@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import { Route } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { Route } from 'react-router-dom';
 
-import { useAuth0 } from "../util/Auth0";
+import { useAuth0 } from '../util/Auth0';
 
 export interface PrivateRouteProps {
   Component: React.FC;
@@ -15,7 +15,7 @@ export const PrivateRoute: React.FC<PrivateRouteProps> = ({ Component, path, ...
     const fn = async () => {
       if (!isAuthenticated) {
         const redirectOptions = {
-          appState: { targetUrl: path }
+          appState: { targetUrl: path },
         };
         await loginWithRedirect(redirectOptions as any);
       }

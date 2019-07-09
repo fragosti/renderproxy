@@ -1,26 +1,29 @@
-import React, { useState, useEffect, useContext, StatelessComponent } from "react";
-import * as Auth0SpaJs from "@auth0/auth0-spa-js";
-import Auth0Client from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
+/* tslint:disable */
+import * as Auth0SpaJs from '@auth0/auth0-spa-js';
+import Auth0Client from '@auth0/auth0-spa-js/dist/typings/Auth0Client';
+import React, { StatelessComponent, useContext, useEffect, useState } from 'react';
 
-import { noop, noopAsync, noopAsyncThrow } from '../util/util'; 
+import { noop, noopAsync, noopAsyncThrow } from '../util/util';
 
 const createAuth0Client = Auth0SpaJs.default;
 
-const DEFAULT_REDIRECT_CALLBACK = () =>
-  window.history.replaceState({}, document.title, window.location.pathname);
+const DEFAULT_REDIRECT_CALLBACK = () => window.history.replaceState({}, document.title, window.location.pathname);
 
 export interface Auth0ProviderProps extends Auth0ClientOptions {
-  onRedirectCallback: (appState: any) => void,
+  onRedirectCallback: (appState: any) => void;
 }
 
-export interface Auth0Context extends Pick<Auth0Client, 'getIdTokenClaims' | 'loginWithRedirect' | 'getTokenSilently' | 'getTokenWithPopup' | 'logout' > {
+export interface Auth0Context
+  extends Pick<
+    Auth0Client,
+    'getIdTokenClaims' | 'loginWithRedirect' | 'getTokenSilently' | 'getTokenWithPopup' | 'logout'
+  > {
   isAuthenticated: boolean;
   user: any;
   isLoading: boolean;
   isPopupOpen: boolean;
-  loginWithPopup: () => Promise<void>; 
+  loginWithPopup: () => Promise<void>;
   handleRedirectCallback: () => Promise<void>;
-
 }
 
 const defaultContext: Auth0Context = {
@@ -35,7 +38,7 @@ const defaultContext: Auth0Context = {
   getTokenSilently: noopAsyncThrow,
   getTokenWithPopup: noopAsyncThrow,
   logout: noop,
-}
+};
 export const Auth0Context = React.createContext(defaultContext);
 export const useAuth0 = () => useContext(Auth0Context);
 export const Auth0Provider: StatelessComponent<Auth0ProviderProps> = ({
@@ -54,7 +57,7 @@ export const Auth0Provider: StatelessComponent<Auth0ProviderProps> = ({
       const auth0FromHook = await createAuth0Client(initOptions);
       setAuth0(auth0FromHook);
 
-      if (window.location.search.includes("code=")) {
+      if (window.location.search.includes('code=')) {
         const { appState } = await auth0FromHook.handleRedirectCallback();
         onRedirectCallback(appState);
       }
@@ -97,23 +100,17 @@ export const Auth0Provider: StatelessComponent<Auth0ProviderProps> = ({
     setUser(user);
   };
   const value: Auth0Context = {
-      isAuthenticated,
-      user,
-      isLoading,
-      isPopupOpen,
-      loginWithPopup,
-      handleRedirectCallback,
-      getIdTokenClaims: (...args) => auth0Client.getIdTokenClaims(...args),
-      loginWithRedirect: (...args) => auth0Client.loginWithRedirect(...args),
-      getTokenSilently: (...args) => auth0Client.getTokenSilently(...args),
-      getTokenWithPopup: (...args) => auth0Client.getTokenWithPopup(...args),
-      logout: (...args) => auth0Client.logout(...args),
-  }
-  return (
-    <Auth0Context.Provider
-      value={value}
-    >
-      {children}
-    </Auth0Context.Provider>
-  );
+    isAuthenticated,
+    user,
+    isLoading,
+    isPopupOpen,
+    loginWithPopup,
+    handleRedirectCallback,
+    getIdTokenClaims: (...args) => auth0Client.getIdTokenClaims(...args),
+    loginWithRedirect: (...args) => auth0Client.loginWithRedirect(...args),
+    getTokenSilently: (...args) => auth0Client.getTokenSilently(...args),
+    getTokenWithPopup: (...args) => auth0Client.getTokenWithPopup(...args),
+    logout: (...args) => auth0Client.logout(...args),
+  };
+  return <Auth0Context.Provider value={value}>{children}</Auth0Context.Provider>;
 };
