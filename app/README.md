@@ -33,7 +33,7 @@ Fix linting issues in the code
 
 ### `yarn deploy`
 
-Deploy the `build` directory to google cloud storage.
+Deploy the `build` directory to netlify.
 
 ### `yarn eject`
 
@@ -51,12 +51,15 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 
 To learn React, check out the [React documentation](https://reactjs.org/).
 
-## Deploying to a new Cloud Storage bucket
+## Deploying to netlify
+
+Follow docs here https://www.netlify.com/docs/cli/#netlify-dev-beta
+
+## Deploying to a Cloud Storage bucket
 
 ```
 $ gsutil mb gs://dash.renderproxy.com
 $ gsutil rsync -R public gs://dash.renderproxy.com
 $ gsutil iam ch allUsers:objectViewer gs://dash.renderproxy.com
 $ gsutil web set -m index.html -e index.html gs://dash.renderproxy.com
-
 ```
