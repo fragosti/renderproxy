@@ -7,6 +7,9 @@ set -e
 PROJECT_ID="$(gcloud config get-value project -q)"
 TIMESTAMP=$(date +%s)
 
+gcloud config set compute/zone us-central1-b
+gcloud container clusters get-credentials proxy-cluster
+
 echo "Building image"
 docker build -t gcr.io/${PROJECT_ID}/proxy:${TIMESTAMP} .
 

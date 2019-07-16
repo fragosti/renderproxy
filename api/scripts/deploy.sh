@@ -3,9 +3,11 @@
 # Terminate if any commands fail
 set -e
 
-
 PROJECT_ID="$(gcloud config get-value project -q)"
 TIMESTAMP=$(date +%s)
+
+gcloud config set compute/zone us-west1-a
+gcloud container clusters get-credentials api
 
 echo "Building image"
 docker build -t gcr.io/${PROJECT_ID}/api:${TIMESTAMP} .

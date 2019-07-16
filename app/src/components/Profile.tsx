@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth0 } from '../util/Auth0';
 
+import { API_ENDPOINT } from '../constants';
+
 export const Profile: React.StatelessComponent = () => {
   const { isLoading, user, getTokenSilently } = useAuth0();
   const [apiMessage, setApiMessage] = useState('');
@@ -12,14 +14,14 @@ export const Profile: React.StatelessComponent = () => {
     try {
       const token = await getTokenSilently();
 
-      const response = await fetch('http://localhost:3002/proxy_setting', {
+      const response = await fetch(`${API_ENDPOINT}/proxy_setting`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          domain: 'google3.com',
+          domain: 'google4.com',
           urlToProxy: 'https://codenail.com',
         }),
       });
