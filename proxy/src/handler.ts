@@ -12,9 +12,9 @@ import { url } from './util/url';
 export const handler = {
   handlePrerenderedRequest: async (proxySettings: ProxySettings, req: Request, res: Response): Promise<void> => {
     // TODO: Remove base= html tag from rendertron response.
-    const fullProxyToUrl = url.getUrlToProxyTo(req, proxySettings);
+    const urlToProxy = url.getUrlToProxyTo(req, proxySettings);
     try {
-      const response = await rendertron.render(fullProxyToUrl);
+      const response = await rendertron.render(urlToProxy);
       res.send(response);
     } catch (err) {
       logger.error(err);
@@ -23,16 +23,16 @@ export const handler = {
     }
   },
   handleRegularRequest: async (proxySettings: ProxySettings, req: Request, res: Response): Promise<void> => {
-    const { proxyToUrl, shouldRedirectIfPossible } = proxySettings;
-    const fullProxyToUrl = url.getUrlToProxyTo(req, proxySettings);
+    const { urlToProxy: proxyToUrl, shouldRedirectIfPossible } = proxySettings;
+    const urlToProxy = url.getUrlToProxyTo(req, proxySettings);
     const fileType = url.getFileType(req);
     if (shouldRedirectIfPossible && req.protocol === 'https' && fileType && requestTypesToRedirect.has(fileType)) {
-      logger.info(`Redirecting to ${fullProxyToUrl}`);
-      return res.redirect(fullProxyToUrl);
+      logger.info(`Redirecting to ${urlToProxy}`);
+      return res.redirect(urlToProxy);
     }
     logger.info(`Proxying request for ${req.url} content from ${proxyToUrl}`);
     const { host, ...restHeaders } = req.headers;
-    req.pipe(request({ qs: req.query, uri: fullProxyToUrl, headers: restHeaders })).pipe(res);
+    req.pipe(request({ qs: req.query, uri: urlToProxy, headers: restHeaders })).pipe(res);
   },
   root: async (req: Request, res: Response): Promise<void> => {
     const fullUrl = url.fullFromRequest(req);

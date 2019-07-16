@@ -10,6 +10,6 @@ export const url = {
     return (req.url.match( /\.([0-9a-z]+)(?:[\?#]|$)/i) || []).pop();
   },
   getUrlToProxyTo: (req: Request, proxySettings: ProxySettings) => {
-    return `${proxySettings.proxyToUrl}${req.url.slice(1)}`;
+    return `${proxySettings.urlToProxy}${req.url.slice(1)}`;
   },
 };

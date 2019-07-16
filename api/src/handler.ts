@@ -14,7 +14,7 @@ export const handler = {
     // TODO: assert values are correct.
     // TODO: don't allow overwrites of other people.
     const proxySettings: ProxySettings = {
-      proxyToUrl: urlToProxy,
+      urlToProxy,
       shouldRedirectIfPossible: true,
       prerenderSetting: 'none',
     }

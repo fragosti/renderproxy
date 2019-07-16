@@ -1,7 +1,7 @@
 export type PrerenderSetting = 'none' | 'all' | 'bot';
 
 export interface ProxySettings {
-  proxyToUrl: string;
+  urlToProxy: string;
   shouldRedirectIfPossible: boolean;
   prerenderSetting: PrerenderSetting;
 }

@@ -19,7 +19,7 @@ export const Profile: React.StatelessComponent = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          domain: 'google.com',
+          domain: 'google3.com',
           urlToProxy: 'https://codenail.com',
         }),
       });
