@@ -5,7 +5,7 @@ import './App.css';
 import { Navbar } from './components/Navbar';
 import { PrivateRoute } from './components/PrivateRoute';
 import { Profile } from './components/Profile';
-import { AUTH0_CLIENT_ID, AUTH0_DOMAIN } from './constants';
+import { AUTH0_AUDIENCE, AUTH0_CLIENT_ID, AUTH0_DOMAIN } from './constants';
 import { Auth0Provider } from './util/Auth0';
 
 const onRedirectCallback = (appState: any) => {
@@ -22,16 +22,17 @@ export const App: React.FC = () => {
       domain={AUTH0_DOMAIN}
       client_id={AUTH0_CLIENT_ID}
       redirect_uri={window.location.origin}
+      audience={AUTH0_AUDIENCE}
       onRedirectCallback={onRedirectCallback}
     >
-      <div className='App'>
+      <div className="App">
         <BrowserRouter>
           <header>
             <Navbar />
           </header>
           <Switch>
-            <Route path='/' exact={true} />
-            <PrivateRoute path='/profile' Component={Profile} />
+            <Route path="/" exact={true} />
+            <PrivateRoute path="/profile" Component={Profile} />
           </Switch>
         </BrowserRouter>
       </div>

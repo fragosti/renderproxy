@@ -1,8 +1,4 @@
-export enum PrerenderSetting {
-  None = 'none',
-  BotOnly = 'botOnly',
-  All = 'all',
-}
+export type PrerenderSetting = 'none' | 'all' | 'bot';
 
 export interface ProxySettings {
   proxyToUrl: string;

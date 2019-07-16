@@ -14,4 +14,7 @@ export const database = {
     }
     return settingsDoc.data() as ProxySettings;
   },
+  addItemAsync: async (domain: string, settings: ProxySettings): Promise<void> => {
+    await proxySettingsCollection.doc(domain).set(settings);
+  },
 };
