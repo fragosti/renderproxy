@@ -1,13 +1,12 @@
 import { GCloudStoreCreate } from '@interactivetraining/le-store-gcloud-storage';
 import { Application } from 'express';
-import Greenlock from 'greenlock-express';
 import fs from 'fs';
+import Greenlock from 'greenlock-express';
 import http from 'http';
 import https from 'https';
 import os from 'os';
 
 import { TLS_CONNECTION_PORT } from './constants';
-import { database } from './util/database';
 import { logger } from './util/logger';
 
 export const createServer = (app: Application) => {

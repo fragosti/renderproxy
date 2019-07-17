@@ -1,5 +1,5 @@
 import { Application, Request, Response } from 'express';
-import { check, validationResult } from 'express-validator';
+import { check } from 'express-validator';
 
 import { checkJwt } from './middleware/jwt';
 import { AuthorizedUser, ProxySettings } from './types';

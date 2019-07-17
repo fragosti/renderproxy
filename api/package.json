@@ -11,7 +11,7 @@
     "dev:debug": "nodemon --exec 'node -r ts-node/register --inspect-brk' src/index.ts | pino-pretty",
     "test": "mocha test/**/*.ts --exit",
     "test:debug": "mocha --inspect-brk test/**/*.ts --exit",
-    "lint": "tslint --format stylish --project ."
+    "lint": "tslint --format stylish --project . 'src/**/*.ts'"
   },
   "dependencies": {
     "@google-cloud/firestore": "^2.2.3",
