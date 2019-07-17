@@ -21,11 +21,11 @@ export const Profile: React.StatelessComponent = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          domain: 'google4.com',
+          domain: 'google6.com',
           urlToProxy: 'https://codenail.com',
+          userId: user.sub,
         }),
       });
-
       const responseData = await response.json();
 
       setApiMessage(responseData);
