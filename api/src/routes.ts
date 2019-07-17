@@ -26,6 +26,7 @@ export const apply = (app: Application) => {
       const existingProxySettings = await database.getItemAsync(domain);
       if (existingProxySettings && existingProxySettings.userId !== userId) {
         res.status(400).json({ type: 'domain_claimed' });
+        return;
       }
 
       const proxySettings: ProxySettings = {
@@ -35,8 +36,7 @@ export const apply = (app: Application) => {
         userId,
       };
       try {
-        await database.addUserDomainAsync(userId, domain);
-        await database.addItemAsync(domain, proxySettings);
+        await database.addProxySettingsForUser(userId, domain, proxySettings);
         logger.info(`User ${userId} successfully added proxy ${urlToProxy} for ${domain}`);
         res.status(201);
       } catch (err) {

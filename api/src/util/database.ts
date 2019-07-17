@@ -16,19 +16,21 @@ export const database = {
     }
     return settingsDoc.data() as ProxySettings;
   },
-  addItemAsync: async (domain: string, settings: ProxySettings): Promise<void> => {
-    await proxySettingsCollection.doc(domain).set(settings);
-  },
-  addUserDomainAsync: async (userId: string, domain: string): Promise<void> => {
-    const userDoc = await userCollection.doc(userId).get();
-    if (userDoc.exists) {
-      await userCollection.doc(userId).update({
+  addProxySettingsForUser: async (userId: string, domain: string, settings: ProxySettings): Promise<void> => {
+    const proxySettingsDoc = proxySettingsCollection.doc(domain);
+    const userDoc = userCollection.doc(userId);
+    const user = await userCollection.doc(userId).get();
+    const batch = db.batch();
+    batch.set(proxySettingsDoc, settings);
+    if (user.exists) {
+      batch.update(userDoc, {
         domains: firestore.FieldValue.arrayUnion(domain),
       });
     } else {
-      await userCollection.doc(userId).set({
+      batch.set(userDoc, {
         domains: [domain],
       });
     }
+    await batch.commit();
   },
 };
