@@ -25,14 +25,14 @@ export const App: React.FC = () => {
       audience={AUTH0_AUDIENCE}
       onRedirectCallback={onRedirectCallback}
     >
-      <div className="App">
+      <div className='App'>
         <BrowserRouter>
           <header>
             <Navbar />
           </header>
           <Switch>
-            <Route path="/" exact={true} />
-            <PrivateRoute path="/profile" Component={Profile} />
+            <Route path='/' exact={true} />
+            <PrivateRoute path='/profile' Component={Profile} />
           </Switch>
         </BrowserRouter>
       </div>

@@ -19,19 +19,19 @@ export const Profile: React.StatelessComponent = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          domain: 'google1.com',
-          urlToProxy: 'https://codenail.com',
+          domain: 'sample-s3-spa.com',
+          urlToProxy: 'https://medium.com/the-mission',
           userId: user.sub,
         }),
       });
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
   return (
     <>
-      <img src={user.picture} alt="Profile" />
+      <img src={user.picture} alt='Profile' />
       <button onClick={callApi}> Ping API</button>
       <h2>{user.name}</h2>
       <p>{user.email}</p>
