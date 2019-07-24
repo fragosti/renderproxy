@@ -4,10 +4,11 @@
     "exclude": ["node_modules/**/*.ts"]
   },
   "rules": {
-    "quotemark": [true, "single"],
+    "quotemark": [true, "single", "jsx-double"],
     "no-unused-variable": true,
     "object-literal-sort-keys": false,
     "jsx-no-lambda": false,
-    "interface-name": [true, "never-prefix"]
+    "interface-name": [true, "never-prefix"],
+    "no-console": [true, "log"]
   }
 }

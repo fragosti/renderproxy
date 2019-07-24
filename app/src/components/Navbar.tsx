@@ -24,8 +24,8 @@ export const Navbar = () => {
       )}
       {isAuthenticated && (
         <span>
-          <Link to='/'>Home</Link>&nbsp;
-          <Link to='/profile'>Profile</Link>
+          <Link to="/">Home</Link>&nbsp;
+          <Link to="/profile">Profile</Link>
         </span>
       )}
     </div>
