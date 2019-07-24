@@ -18,7 +18,7 @@ export interface Auth0Context
     Auth0Client,
     'getIdTokenClaims' | 'loginWithRedirect' | 'getTokenSilently' | 'getTokenWithPopup' | 'logout'
   > {
-  isAuthenticated: boolean;
+  isAuthenticated: boolean | null;
   user: any;
   isLoading: boolean;
   isPopupOpen: boolean;
@@ -27,7 +27,7 @@ export interface Auth0Context
 }
 
 const defaultContext: Auth0Context = {
-  isAuthenticated: false,
+  isAuthenticated: null,
   user: null,
   isLoading: true,
   isPopupOpen: false,
@@ -39,8 +39,11 @@ const defaultContext: Auth0Context = {
   getTokenWithPopup: noopAsyncThrow,
   logout: noop,
 };
+
 export const Auth0Context = React.createContext(defaultContext);
+
 export const useAuth0 = () => useContext(Auth0Context);
+
 export const Auth0Provider: StatelessComponent<Auth0ProviderProps> = ({
   children,
   onRedirectCallback = DEFAULT_REDIRECT_CALLBACK,
@@ -62,7 +65,7 @@ export const Auth0Provider: StatelessComponent<Auth0ProviderProps> = ({
         onRedirectCallback(appState);
       }
       // Typings are incorrect
-      const isAuthenticated = await (auth0FromHook as any).isAuthenticated();
+      const isAuthenticated: boolean = await (auth0FromHook as any).isAuthenticated();
 
       setIsAuthenticated(isAuthenticated);
 

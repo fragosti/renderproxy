@@ -1,10 +1,10 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Switch } from 'react-router-dom';
 
 import './App.css';
+import { Dash } from './components/Dash';
 import { Navbar } from './components/Navbar';
 import { PrivateRoute } from './components/PrivateRoute';
-import { Profile } from './components/Profile';
 import { AUTH0_AUDIENCE, AUTH0_CLIENT_ID, AUTH0_DOMAIN } from './constants';
 import { Auth0Provider } from './util/Auth0';
 
@@ -31,8 +31,7 @@ export const App: React.FC = () => {
             <Navbar />
           </header>
           <Switch>
-            <Route path="/" exact={true} />
-            <PrivateRoute path="/profile" Component={Profile} />
+            <PrivateRoute exact={true} path="/" Component={Dash} />
           </Switch>
         </BrowserRouter>
       </div>

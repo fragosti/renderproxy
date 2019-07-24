@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth0 } from '../util/Auth0';
 
 import { API_ENDPOINT } from '../constants';
 
-export const Profile: React.StatelessComponent = () => {
+export const Dash: React.StatelessComponent = () => {
   const { isLoading, user, getTokenSilently } = useAuth0();
   if (isLoading || !user) {
     return <>Loading...</>;

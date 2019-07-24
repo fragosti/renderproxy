@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { RETURN_TO_URL } from '../constants';
 import { useAuth0 } from '../util/Auth0';
 
-export const Navbar = () => {
+export const Navbar: React.FC = () => {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
 
   return (
