@@ -47,7 +47,7 @@ export const handler = {
       return handler.handleRegularRequest(proxySettings, req, res);
     } catch (err) {
       logger.error(err);
-      // TODO: Redirect to sign up page.
+      // TODO: Redirect to sign up page or error page for all errors.
       res.send(`Could not find a proxy entry for ${domain}.`);
     }
   },
