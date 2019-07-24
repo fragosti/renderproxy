@@ -21,7 +21,6 @@ export const Profile: React.StatelessComponent = () => {
         body: JSON.stringify({
           domain: 'sample-s3-spa.com',
           urlToProxy: 'https://medium.com/the-mission',
-          userId: user.sub,
         }),
       });
     } catch (error) {
