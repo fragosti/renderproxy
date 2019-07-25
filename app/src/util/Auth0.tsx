@@ -13,13 +13,23 @@ export interface Auth0ProviderProps extends Auth0ClientOptions {
   onRedirectCallback: (appState: any) => void;
 }
 
+export interface User {
+  given_name: string;
+  family_name: string;
+  nickname: string;
+  name: string;
+  picture: string;
+  email: string;
+  sub: string;
+}
+
 export interface Auth0Context
   extends Pick<
     Auth0Client,
     'getIdTokenClaims' | 'loginWithRedirect' | 'getTokenSilently' | 'getTokenWithPopup' | 'logout'
   > {
   isAuthenticated: boolean | null;
-  user: any;
+  user: User | null;
   isLoading: boolean;
   isPopupOpen: boolean;
   loginWithPopup: () => Promise<void>;

@@ -1,3 +1,4 @@
+import { ThemeProvider } from '@material-ui/styles';
 import React from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
@@ -6,6 +7,7 @@ import { Dash } from './components/Dash';
 import { Navbar } from './components/Navbar';
 import { PrivateRoute } from './components/PrivateRoute';
 import { AUTH0_AUDIENCE, AUTH0_CLIENT_ID, AUTH0_DOMAIN } from './constants';
+import { theme } from './style/theme';
 import { Auth0Provider } from './util/Auth0';
 
 const onRedirectCallback = (appState: any) => {
@@ -25,16 +27,18 @@ export const App: React.FC = () => {
       audience={AUTH0_AUDIENCE}
       onRedirectCallback={onRedirectCallback}
     >
-      <div className="App">
-        <BrowserRouter>
-          <header>
-            <Navbar />
-          </header>
-          <Switch>
-            <PrivateRoute exact={true} path="/" Component={Dash} />
-          </Switch>
-        </BrowserRouter>
-      </div>
+      <ThemeProvider theme={theme}>
+        <div className="App">
+          <BrowserRouter>
+            <header>
+              <Navbar />
+            </header>
+            <Switch>
+              <PrivateRoute exact={true} path="/" Component={Dash} />
+            </Switch>
+          </BrowserRouter>
+        </div>
+      </ThemeProvider>
     </Auth0Provider>
   );
 };
