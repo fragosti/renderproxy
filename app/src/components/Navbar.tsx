@@ -1,4 +1,4 @@
-import { AppBar, Box, Grid, IconButton, Toolbar, Tooltip } from '@material-ui/core';
+import { AppBar, Avatar, Box, Grid, IconButton, Toolbar, Tooltip } from '@material-ui/core';
 import InputIcon from '@material-ui/icons/Input';
 import * as React from 'react';
 
@@ -18,8 +18,13 @@ export const Navbar: React.FC = () => {
           </Box>
           <Box display="flex" alignItems="center">
             {user && (
-              <Box mr={3} fontWeight="fontWeightBold">
+              <Box mr={2} fontWeight="fontWeightBold">
                 {user.email || user.nickname}
+              </Box>
+            )}
+            {user && (
+              <Box mr={3} width={30}>
+                <Avatar alt={user.name} src={user.picture} />
               </Box>
             )}
             <Tooltip title="Log Out">
