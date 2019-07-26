@@ -9,8 +9,4 @@ export const theme = createMuiTheme({
       main: '#f7806e',
     },
   },
-  typography: {
-    // Use the system font instead of the default Roboto font.
-    fontFamily: ['"Lato"', 'sans-serif'].join(','),
-  },
 });
