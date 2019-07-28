@@ -14,7 +14,7 @@ export const apply = (app: Application) => {
   app.get('/', (req: Request, res: Response) => {
     res.send('renderproxy API root');
   });
-  app.post('/proxy_setting',
+  app.post('/proxy_settings',
     [
       checkJwt,
       check('domain').exists(),
@@ -30,6 +30,7 @@ export const apply = (app: Application) => {
       }
 
       const proxySettings: ProxySettings = {
+        domain,
         urlToProxy,
         shouldRedirectIfPossible: true,
         prerenderSetting: 'none',
@@ -43,5 +44,17 @@ export const apply = (app: Application) => {
         res.status(500).json({ type: 'add_failure', err });
         logger.error(`Failed to add proxy ${urlToProxy} for ${domain}`);
       }
+  });
+  app.get('/proxy_settings', checkJwt, async (req: AuthorizedRequest, res: Response): Promise<void> => {
+    const userId = req.user.sub;
+    try {
+      const userProxySettings = await database.getProxySettingsForUser(userId);
+      const domains = userProxySettings.map((setting) => setting.domain).join(', ');
+      logger.info(`Successfully got proxySettings [${domains}] for ${userId}`);
+      res.status(200).json(userProxySettings);
+    } catch (err) {
+      logger.error(`Failed to get proxy settings for ${userId}`);
+      res.status(500).json({ type: 'get_user_settings_failure', err });
+    }
   });
 };

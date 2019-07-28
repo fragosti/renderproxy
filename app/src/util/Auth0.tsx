@@ -4,6 +4,7 @@ import Auth0Client from '@auth0/auth0-spa-js/dist/typings/Auth0Client';
 import React, { StatelessComponent, useContext, useEffect, useState } from 'react';
 
 import { noop, noopAsync, noopAsyncThrow } from '../util/util';
+import { API } from '../util/api';
 
 const createAuth0Client = Auth0SpaJs.default;
 
@@ -28,6 +29,7 @@ export interface Auth0Context
     Auth0Client,
     'getIdTokenClaims' | 'loginWithRedirect' | 'getTokenSilently' | 'getTokenWithPopup' | 'logout'
   > {
+  api: API | null;
   isAuthenticated: boolean | null;
   user: User | null;
   isLoading: boolean;
@@ -37,6 +39,7 @@ export interface Auth0Context
 }
 
 const defaultContext: Auth0Context = {
+  api: null,
   isAuthenticated: null,
   user: null,
   isLoading: true,
@@ -61,6 +64,7 @@ export const Auth0Provider: StatelessComponent<Auth0ProviderProps> = ({
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState();
+  const [api, setApi] = useState();
   const [auth0Client, setAuth0] = useState() as [Auth0Client, React.Dispatch<any>];
   const [isLoading, setLoading] = useState(true);
   const [isPopupOpen, setPopupOpen] = useState(false);
@@ -81,7 +85,9 @@ export const Auth0Provider: StatelessComponent<Auth0ProviderProps> = ({
 
       if (isAuthenticated) {
         const user = await auth0FromHook.getUser();
+        const token = await auth0FromHook.getTokenSilently();
         setUser(user);
+        setApi(new API(token));
       }
 
       setLoading(false);
@@ -100,7 +106,9 @@ export const Auth0Provider: StatelessComponent<Auth0ProviderProps> = ({
       setPopupOpen(false);
     }
     const user = await auth0Client.getUser();
+    const token = await auth0Client.getTokenSilently();
     setUser(user);
+    setApi(new API(token));
     setIsAuthenticated(true);
   };
 
@@ -108,11 +116,14 @@ export const Auth0Provider: StatelessComponent<Auth0ProviderProps> = ({
     setLoading(true);
     await auth0Client.handleRedirectCallback();
     const user = await auth0Client.getUser();
-    setLoading(false);
-    setIsAuthenticated(true);
+    const token = await auth0Client.getTokenSilently();
+    setApi(new API(token));
     setUser(user);
+    setIsAuthenticated(true);
+    setLoading(false);
   };
   const value: Auth0Context = {
+    api,
     isAuthenticated,
     user,
     isLoading,
