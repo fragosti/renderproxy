@@ -4,23 +4,16 @@ import { useAuth0 } from '../util/Auth0';
 import { ProxySettings } from '../types';
 
 export const Dash: React.StatelessComponent = () => {
-  const { isLoading, user, api } = useAuth0();
+  const { user, api } = useAuth0();
   const [proxySettings, setProxySettings] = useState<ProxySettings[]>([]);
 
   useEffect(() => {
-    if (api) {
-      const getUserProxySettings = async () => {
-        const userProxySettings = await api.getUserProxySettingsAsync();
-        setProxySettings(userProxySettings);
-      };
-      getUserProxySettings();
-    }
-  }, [api]);
-
-  if (isLoading || !user || !api) {
-    return <>Loading...</>;
-  }
-
+    const getUserProxySettings = async () => {
+      const userProxySettings = await api.getUserProxySettingsAsync();
+      setProxySettings(userProxySettings);
+    };
+    getUserProxySettings();
+  }, []);
   return (
     <>
       <img src={user.picture} alt="Profile" />

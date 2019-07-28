@@ -9,10 +9,10 @@ export interface PrivateRouteProps extends RouteProps {
 }
 
 export const PrivateRoute: React.FC<PrivateRouteProps> = ({ Component, path, ...rest }) => {
-  const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
   useEffect(() => {
     const fn = async () => {
-      if (!isLoading && isAuthenticated === false) {
+      if (isAuthenticated === false) {
         const redirectOptions = {
           appState: { targetUrl: path },
         };
@@ -20,7 +20,7 @@ export const PrivateRoute: React.FC<PrivateRouteProps> = ({ Component, path, ...
       }
     };
     fn();
-  }, [isAuthenticated, isLoading, loginWithRedirect, path]);
+  }, [isAuthenticated, loginWithRedirect, path]);
 
   const render = (props: any) => (isAuthenticated === true ? <Component {...props} /> : null);
 

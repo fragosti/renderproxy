@@ -2,6 +2,7 @@
 import * as Auth0SpaJs from '@auth0/auth0-spa-js';
 import Auth0Client from '@auth0/auth0-spa-js/dist/typings/Auth0Client';
 import React, { StatelessComponent, useContext, useEffect, useState } from 'react';
+import { Box, CircularProgress } from '@material-ui/core';
 
 import { noop, noopAsync, noopAsyncThrow } from '../util/util';
 import { API } from '../util/api';
@@ -29,20 +30,16 @@ export interface Auth0Context
     Auth0Client,
     'getIdTokenClaims' | 'loginWithRedirect' | 'getTokenSilently' | 'getTokenWithPopup' | 'logout'
   > {
-  api: API | null;
-  isAuthenticated: boolean | null;
-  user: User | null;
-  isLoading: boolean;
+  api: API;
+  isAuthenticated: boolean;
+  user: User;
   isPopupOpen: boolean;
   loginWithPopup: () => Promise<void>;
   handleRedirectCallback: () => Promise<void>;
 }
 
-const defaultContext: Auth0Context = {
-  api: null,
-  isAuthenticated: null,
-  user: null,
-  isLoading: true,
+const defaultContext: Partial<Auth0Context> = {
+  isAuthenticated: false,
   isPopupOpen: false,
   loginWithPopup: noopAsync,
   handleRedirectCallback: noopAsync,
@@ -53,9 +50,9 @@ const defaultContext: Auth0Context = {
   logout: noop,
 };
 
-export const Auth0Context = React.createContext(defaultContext);
+export const Auth0Context = React.createContext(defaultContext as any);
 
-export const useAuth0 = () => useContext(Auth0Context);
+export const useAuth0 = () => useContext<Auth0Context>(Auth0Context);
 
 export const Auth0Provider: StatelessComponent<Auth0ProviderProps> = ({
   children,
@@ -110,6 +107,7 @@ export const Auth0Provider: StatelessComponent<Auth0ProviderProps> = ({
     setUser(user);
     setApi(new API(token));
     setIsAuthenticated(true);
+    setLoading(false);
   };
 
   const handleRedirectCallback = async () => {
@@ -126,7 +124,6 @@ export const Auth0Provider: StatelessComponent<Auth0ProviderProps> = ({
     api,
     isAuthenticated,
     user,
-    isLoading,
     isPopupOpen,
     loginWithPopup,
     handleRedirectCallback,
@@ -136,5 +133,13 @@ export const Auth0Provider: StatelessComponent<Auth0ProviderProps> = ({
     getTokenWithPopup: (...args) => auth0Client.getTokenWithPopup(...args),
     logout: (...args) => auth0Client.logout(...args),
   };
+  // TODO: handle case when auth fails.
+  if (isLoading) {
+    return (
+      <Box display="flex" height="100vh" width="100%" justifyContent="center" alignItems="center">
+        <CircularProgress />
+      </Box>
+    );
+  }
   return <Auth0Context.Provider value={value}>{children}</Auth0Context.Provider>;
 };
