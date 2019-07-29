@@ -25,6 +25,7 @@ export const apply = (app: Application) => {
       const { domain, urlToProxy } = req.body;
       const existingProxySettings = await database.getItemAsync(domain);
       if (existingProxySettings && existingProxySettings.userId !== userId) {
+        logger.info(`${userId} failed adding ${domain}. It belongs to ${existingProxySettings.userId}`);
         res.status(400).json({ type: 'domain_claimed' });
         return;
       }
@@ -52,6 +53,22 @@ export const apply = (app: Application) => {
       const domains = userProxySettings.map((setting) => setting.domain).join(', ');
       logger.info(`Successfully got proxySettings [${domains}] for ${userId}`);
       res.status(200).json(userProxySettings);
+    } catch (err) {
+      logger.error(`Failed to get proxy settings for ${userId}`);
+      res.status(500).json({ type: 'get_user_settings_failure', err });
+    }
+  });
+  app.get('/proxy_settings/:domain', checkJwt, async (req: AuthorizedRequest, res: Response): Promise<void> => {
+    const userId = req.user.sub;
+    const { domain } = req.params;
+    try {
+      const proxySettings = await database.getItemAsync(domain);
+      if (!proxySettings || proxySettings.userId !== userId) {
+        logger.info(`${userId} failed reading ${domain}. It belongs to ${proxySettings.userId}`);
+        res.status(400).json({ type: 'not_allowed'});
+      }
+      logger.info(`${userId} successfully read settings for ${domain}`);
+      res.status(200).json(proxySettings);
     } catch (err) {
       logger.error(`Failed to get proxy settings for ${userId}`);
       res.status(500).json({ type: 'get_user_settings_failure', err });
