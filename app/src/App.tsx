@@ -36,7 +36,7 @@ export const App: React.FC = () => {
             </header>
             <Switch>
               <PrivateRoute exact={true} path="/" Component={Dash} />
-              <PrivateRoute path="/edit/:proxy_domain" Component={EditProxySettings} />
+              <PrivateRoute path="/edit/:domain" Component={EditProxySettings as any} />
             </Switch>
           </BrowserRouter>
         </div>

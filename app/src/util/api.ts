@@ -21,6 +21,12 @@ export class API {
     return settings;
   }
 
+  public async getProxySettingsForDomainAsync(domain: string): Promise<ProxySettings> {
+    const resp = await this._fetchAsync(`${APIPaths.proxySettings}/${domain}`, 'GET');
+    const settings = await resp.json();
+    return settings;
+  }
+
   private async _fetchAsync(path: string, method: 'POST' | 'GET', body?: any): Promise<Response> {
     return fetch(`${API_ENDPOINT}/${path}`, {
       method,

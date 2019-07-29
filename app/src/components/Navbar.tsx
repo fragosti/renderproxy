@@ -1,6 +1,7 @@
 import { AppBar, Avatar, Box, Grid, IconButton, Toolbar, Tooltip, Typography } from '@material-ui/core';
 import { Input as InputIcon } from '@material-ui/icons';
 import * as React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 import { Logo } from '../components/Logo';
 import { RETURN_TO_URL } from '../constants';
@@ -13,9 +14,11 @@ export const Navbar: React.FC = () => {
     <AppBar color="secondary" position="static">
       <Toolbar>
         <Grid container={true} spacing={3} justify="space-between" alignItems="center">
-          <Box ml={10} p={4}>
-            <Logo height={36} />
-          </Box>
+          <RouterLink to="/">
+            <Box ml={10} p={4}>
+              <Logo height={36} />
+            </Box>
+          </RouterLink>
           <Box display="flex" alignItems="center">
             {user && (
               <Typography>

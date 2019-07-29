@@ -1,9 +1,10 @@
 import { Box, Container, Divider, IconButton, Link, Paper, Tooltip, Typography } from '@material-ui/core';
-import { ArrowForward as ArrowForwardIcon, Settings as SettingsIcon } from '@material-ui/icons';
-import React, { useEffect, useState } from 'react';
+import { ArrowForward as ArrowForwardIcon, Home as HomeIcon, Settings as SettingsIcon } from '@material-ui/icons';
+import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
+import { BreadCrumbs } from '../components/BreadCrumbs';
 import { useUserProxySettings } from '../hooks/useUserProxySettings';
-import { ProxySettings } from '../types';
 
 // api.addNewProxySettingsAsync({
 //   domain: 'googles.com',
@@ -17,6 +18,16 @@ export const Dash: React.StatelessComponent = () => {
 
   return (
     <Container maxWidth="md">
+      <Box marginTop={3}>
+        <BreadCrumbs
+          crumbs={[
+            {
+              Icon: HomeIcon,
+              text: 'Dashboard',
+            },
+          ]}
+        />
+      </Box>
       <Typography align="left" variant="h3">
         <Box marginY={4} display="flex" fontWeight="bold" justifyContent="space-between">
           Proxied Sites
@@ -29,7 +40,7 @@ export const Dash: React.StatelessComponent = () => {
               <Box display="flex" justifyContent="space-between" key={settings.domain} paddingY={2} paddingX={3}>
                 <Box key={settings.domain} display="flex" alignItems="center">
                   <Typography>
-                    <Link href={settings.domain} target="_blank" color="inherit">
+                    <Link href={`http://${settings.domain}`} target="_blank" color="inherit">
                       <Box fontWeight="bold" fontFamily="Monospace" fontSize={18}>
                         {settings.domain}
                       </Box>
@@ -48,9 +59,11 @@ export const Dash: React.StatelessComponent = () => {
                 </Box>
                 <Box>
                   <Tooltip title="Configure">
-                    <IconButton>
-                      <SettingsIcon fontSize="large" />
-                    </IconButton>
+                    <RouterLink to={`edit/${settings.domain}`}>
+                      <IconButton>
+                        <SettingsIcon fontSize="large" />
+                      </IconButton>
+                    </RouterLink>
                   </Tooltip>
                 </Box>
               </Box>
