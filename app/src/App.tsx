@@ -4,6 +4,7 @@ import { BrowserRouter, Switch } from 'react-router-dom';
 
 import './App.css';
 import { Dash } from './components/Dash';
+import { EditProxySettings } from './components/EditProxySettings';
 import { Navbar } from './components/Navbar';
 import { PrivateRoute } from './components/PrivateRoute';
 import { AUTH0_AUDIENCE, AUTH0_CLIENT_ID, AUTH0_DOMAIN } from './constants';
@@ -35,6 +36,7 @@ export const App: React.FC = () => {
             </header>
             <Switch>
               <PrivateRoute exact={true} path="/" Component={Dash} />
+              <PrivateRoute path="/edit/:proxy_domain" Component={EditProxySettings} />
             </Switch>
           </BrowserRouter>
         </div>
