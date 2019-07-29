@@ -28,7 +28,7 @@ export const App: React.FC = () => {
       onRedirectCallback={onRedirectCallback}
     >
       <ThemeProvider theme={theme}>
-        <div className="App">
+        <div>
           <BrowserRouter>
             <header>
               <Navbar />

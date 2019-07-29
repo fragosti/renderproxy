@@ -1,5 +1,5 @@
 import { AppBar, Avatar, Box, Grid, IconButton, Toolbar, Tooltip, Typography } from '@material-ui/core';
-import InputIcon from '@material-ui/icons/Input';
+import { Input as InputIcon } from '@material-ui/icons';
 import * as React from 'react';
 
 import { Logo } from '../components/Logo';
@@ -10,7 +10,7 @@ export const Navbar: React.FC = () => {
   const { user, logout } = useAuth0();
   const handleLogoutClick = () => logout({ returnTo: RETURN_TO_URL });
   return (
-    <AppBar color="secondary">
+    <AppBar color="secondary" position="static">
       <Toolbar>
         <Grid container={true} spacing={3} justify="space-between" alignItems="center">
           <Box ml={10} p={4}>
