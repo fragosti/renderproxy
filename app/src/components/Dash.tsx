@@ -1,10 +1,13 @@
-import { Box, Container, Divider, IconButton, Link, Paper, Tooltip, Typography } from '@material-ui/core';
+import { Box, Container, Divider, IconButton, Paper, Tooltip, Typography } from '@material-ui/core';
 import { ArrowForward as ArrowForwardIcon, Home as HomeIcon, Settings as SettingsIcon } from '@material-ui/icons';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 import { BreadCrumbs } from '../components/BreadCrumbs';
+import { HOMEPAGE_TITLE } from '../constants';
 import { useUserProxySettings } from '../hooks/useUserProxySettings';
+import { Link } from './Link';
+import { Text } from './Text';
 
 // api.addNewProxySettingsAsync({
 //   domain: 'googles.com',
@@ -23,37 +26,34 @@ export const Dash: React.StatelessComponent = () => {
           crumbs={[
             {
               Icon: HomeIcon,
-              text: 'Dashboard',
+              text: HOMEPAGE_TITLE,
             },
           ]}
         />
       </Box>
-      <Typography align="left" variant="h3">
-        <Box marginY={4} display="flex" fontWeight="bold" justifyContent="space-between">
-          Proxied Sites
-        </Box>
-      </Typography>
-      <Box>
+      <Box marginY={3}>
         <Paper elevation={1}>
-          {userProxySettings.map((settings, index) => (
-            <>
-              <Box display="flex" justifyContent="space-between" key={settings.domain} paddingY={2} paddingX={3}>
+          <Box display="flex" justifyContent="space-between" paddingY={2} paddingX={3}>
+            <Text align="left" variant="h5" fontWeight="bold">
+              Proxied Sites
+            </Text>
+          </Box>
+          {userProxySettings.map(settings => (
+            <Box key={settings.domain}>
+              <Divider />
+              <Box display="flex" justifyContent="space-between" paddingY={1} paddingX={3}>
                 <Box key={settings.domain} display="flex" alignItems="center">
                   <Typography>
-                    <Link href={`http://${settings.domain}`} target="_blank" color="inherit">
-                      <Box fontWeight="bold" fontFamily="Monospace" fontSize={18}>
-                        {settings.domain}
-                      </Box>
+                    <Link href={`http://${settings.domain}`} fontSize={18} fontWeight="bold">
+                      {settings.domain}
                     </Link>
                   </Typography>
                   <Box marginX={2} marginTop={1}>
                     <ArrowForwardIcon />
                   </Box>
                   <Typography>
-                    <Link href={settings.urlToProxy} target="_blank" color="inherit">
-                      <Box fontFamily="Monospace" fontSize={18}>
-                        {settings.urlToProxy}
-                      </Box>
+                    <Link href={settings.urlToProxy} fontSize={18}>
+                      {settings.urlToProxy}
                     </Link>
                   </Typography>
                 </Box>
@@ -67,8 +67,7 @@ export const Dash: React.StatelessComponent = () => {
                   </Tooltip>
                 </Box>
               </Box>
-              {index + 1 !== userProxySettings.length && <Divider />}
-            </>
+            </Box>
           ))}
         </Paper>
       </Box>

@@ -1,10 +1,12 @@
-import { Box, Container, Link, Typography } from '@material-ui/core';
+import { Box, Container, Typography } from '@material-ui/core';
 import { Home as HomeIcon, Settings as SettingsIcon } from '@material-ui/icons';
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
 import { BreadCrumbs } from '../components/BreadCrumbs';
+import { HOMEPAGE_TITLE } from '../constants';
 import { useProxySettingsForDomain } from '../hooks/useProxySettingsForDomain';
+import { Link } from './Link';
 
 interface Params {
   domain: string;
@@ -23,7 +25,7 @@ export const EditProxySettings: React.FC<EditProxySettingsProps> = props => {
             {
               to: '/',
               Icon: HomeIcon,
-              text: 'Dashboard',
+              text: HOMEPAGE_TITLE,
             },
             {
               Icon: SettingsIcon,
@@ -32,10 +34,8 @@ export const EditProxySettings: React.FC<EditProxySettingsProps> = props => {
           ]}
         />
         <Typography align="left" variant="h3">
-          <Link href={`http://${domain}`} target="_blank" color="inherit">
-            <Box marginY={4} display="flex" fontWeight="bold" justifyContent="space-between">
-              {domain}
-            </Box>
+          <Link href={`http://${domain}`} fontWeight="bold">
+            {domain}
           </Link>
         </Typography>
       </Box>

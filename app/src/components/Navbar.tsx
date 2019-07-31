@@ -1,4 +1,4 @@
-import { AppBar, Avatar, Box, Grid, IconButton, Toolbar, Tooltip, Typography } from '@material-ui/core';
+import { AppBar, Avatar, Box, Grid, IconButton, Toolbar, Tooltip } from '@material-ui/core';
 import { Input as InputIcon } from '@material-ui/icons';
 import * as React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -6,6 +6,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Logo } from '../components/Logo';
 import { RETURN_TO_URL } from '../constants';
 import { useAuth0 } from '../util/Auth0';
+import { Text } from './Text';
 
 export const Navbar: React.FC = () => {
   const { user, logout } = useAuth0();
@@ -21,11 +22,9 @@ export const Navbar: React.FC = () => {
           </RouterLink>
           <Box display="flex" alignItems="center">
             {user && (
-              <Typography>
-                <Box mr={2} fontSize={15} fontWeight="fontWeightBold" fontFamily="Monospace">
-                  {user.email || user.nickname}
-                </Box>
-              </Typography>
+              <Text mr={2} fontSize={15} fontWeight="fontWeightBold" fontFamily="Monospace" component="span">
+                {user.email || user.nickname}
+              </Text>
             )}
             {user && (
               <Box mr={3} width={30}>
