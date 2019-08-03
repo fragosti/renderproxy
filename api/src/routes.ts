@@ -40,7 +40,7 @@ export const apply = (app: Application) => {
       try {
         await database.addProxySettingsForUser(userId, domain, proxySettings);
         logger.info(`User ${userId} successfully added proxy ${urlToProxy} for ${domain}`);
-        res.status(201);
+        res.status(201).json({ type: 'success', message: 'Successfully added domain.'});
       } catch (err) {
         res.status(500).json({ type: 'add_failure', err });
         logger.error(`Failed to add proxy ${urlToProxy} for ${domain}`);
