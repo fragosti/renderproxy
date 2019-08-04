@@ -55,7 +55,7 @@ export const apply = (app: Application) => {
       res.status(200).json(userProxySettings);
     } catch (err) {
       logger.error(`Failed to get proxy settings for ${userId}`);
-      res.status(500).json({ type: 'get_user_settings_failure', err });
+      res.status(500).json({ type: 'get_user_settings_failure', err:'' });
     }
   });
   app.get('/proxy_settings/:domain', checkJwt, async (req: AuthorizedRequest, res: Response): Promise<void> => {

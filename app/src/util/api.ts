@@ -17,6 +17,9 @@ export class API {
 
   public async getUserProxySettingsAsync(): Promise<ProxySettings[]> {
     const resp = await this._fetchAsync(APIPaths.proxySettings, 'GET');
+    if (!resp.ok){
+      throw new Error('Failed to fetch user proxy settings.');
+    }
     return resp.json();
   }
 

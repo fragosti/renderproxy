@@ -28,7 +28,7 @@ import { Text } from './Text';
 export type DashProps = RouteComponentProps;
 
 export const Dash: React.FC<DashProps> = props => {
-  const userProxySettings = useUserProxySettings();
+  const [userProxySettings, didError] = useUserProxySettings();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const closeDialog = () => setIsDialogOpen(false);
   const openDialog = () => setIsDialogOpen(true);
@@ -60,14 +60,21 @@ export const Dash: React.FC<DashProps> = props => {
                 <AddIcon style={{ left: '3px', position: 'relative' }} />
               </Button>
             </Box>
-            {!userProxySettings ? (
+            {didError ? (
+              <>
+                <Divider />
+                <Box display="flex" paddingY={2} alignItems="center" justifyContent="center">
+                  <Text>Something went wrong. Please try refreshing or coming back later.</Text>
+                </Box>
+              </>
+            ) : !userProxySettings ? (
               <>
                 <Divider />
                 <Box display="flex" paddingY={2} alignItems="center" justifyContent="center">
                   <CircularProgress color="secondary" />
                 </Box>
               </>
-            ) : (
+            ): (
               userProxySettings.map(settings => (
                 <Box key={settings.domain}>
                   <Divider />
