@@ -1,4 +1,14 @@
-import { Box, Button, Container, Divider, IconButton, Paper, Tooltip, Typography } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Divider,
+  IconButton,
+  Paper,
+  Tooltip,
+  Typography,
+} from '@material-ui/core';
 import {
   Add as AddIcon,
   ArrowForward as ArrowForwardIcon,
@@ -50,37 +60,46 @@ export const Dash: React.FC<DashProps> = props => {
                 <AddIcon style={{ left: '3px', position: 'relative' }} />
               </Button>
             </Box>
-            {userProxySettings.map(settings => (
-              <Box key={settings.domain}>
+            {!userProxySettings ? (
+              <>
                 <Divider />
-                <Box display="flex" justifyContent="space-between" paddingY={1} paddingX={3}>
-                  <Box key={settings.domain} display="flex" alignItems="center">
-                    <Typography>
-                      <Link href={`http://${settings.domain}`} fontSize={18} fontWeight="bold">
-                        {settings.domain}
-                      </Link>
-                    </Typography>
-                    <Box marginX={2} marginTop={1}>
-                      <ArrowForwardIcon />
+                <Box display="flex" paddingY={2} alignItems="center" justifyContent="center">
+                  <CircularProgress color="secondary" />
+                </Box>
+              </>
+            ) : (
+              userProxySettings.map(settings => (
+                <Box key={settings.domain}>
+                  <Divider />
+                  <Box display="flex" justifyContent="space-between" paddingY={1} paddingX={3}>
+                    <Box key={settings.domain} display="flex" alignItems="center">
+                      <Typography>
+                        <Link href={`http://${settings.domain}`} fontSize={18} fontWeight="bold">
+                          {settings.domain}
+                        </Link>
+                      </Typography>
+                      <Box marginX={2} marginTop={1}>
+                        <ArrowForwardIcon />
+                      </Box>
+                      <Typography>
+                        <Link href={settings.urlToProxy || undefined} fontSize={18}>
+                          {settings.urlToProxy || 'The URL to proxy has not yet been set.'}
+                        </Link>
+                      </Typography>
                     </Box>
-                    <Typography>
-                      <Link href={settings.urlToProxy} fontSize={18}>
-                        {settings.urlToProxy}
-                      </Link>
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <Tooltip title="Configure">
-                      <RouterLink to={`edit/${settings.domain}`}>
-                        <IconButton>
-                          <SettingsIcon fontSize="large" />
-                        </IconButton>
-                      </RouterLink>
-                    </Tooltip>
+                    <Box>
+                      <Tooltip title="Configure">
+                        <RouterLink to={`edit/${settings.domain}`}>
+                          <IconButton>
+                            <SettingsIcon fontSize="large" />
+                          </IconButton>
+                        </RouterLink>
+                      </Tooltip>
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
-            ))}
+              ))
+            )}
           </Paper>
         </Box>
       </Container>
