@@ -74,7 +74,7 @@ export const Dash: React.FC<DashProps> = props => {
                   <CircularProgress color="secondary" />
                 </Box>
               </>
-            ): (
+            ) : (
               userProxySettings.map(settings => (
                 <Box key={settings.domain}>
                   <Divider />
