@@ -83,7 +83,7 @@ export const Dash: React.FC<DashProps> = props => {
                       </Box>
                       <Typography>
                         <Link href={settings.urlToProxy || undefined} fontSize={18}>
-                          {settings.urlToProxy || 'The URL to proxy has not yet been set.'}
+                          {settings.urlToProxy || <i>The URL to proxy has not yet been set.</i>}
                         </Link>
                       </Typography>
                     </Box>

@@ -44,7 +44,7 @@
     ]
   },
   "devDependencies": {
-    "@types/ramda": "^0.26.15",
+    "@types/ramda": "^0.26.18",
     "@types/react-router-dom": "^4.3.4",
     "netlify-cli": "^2.11.23",
     "prettier": "^1.18.2",
