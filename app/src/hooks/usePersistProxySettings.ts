@@ -10,7 +10,7 @@ interface MessageStruct {
   message: string;
 }
 type Message = MessageStruct | undefined;
-type MessageSetter = (message: Message | undefined) => void;
+type MessageResetter = () => void;
 type SuccessHandler = (domain: string) => void;
 
 const messages = {
@@ -21,7 +21,7 @@ const messages = {
 
 export const usePersistProxySettings = (
   onSuccess?: SuccessHandler,
-): [ProxySettingsSetter, LoadingStatus, Message, MessageSetter] => {
+): [ProxySettingsSetter, LoadingStatus, Message, MessageResetter] => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<Message | undefined>();
   const { api } = useAuth0();
@@ -62,5 +62,5 @@ export const usePersistProxySettings = (
       setIsLoading(false);
     }
   };
-  return [persistProxySettings, isLoading, message, setMessage];
+  return [persistProxySettings, isLoading, message, () => setMessage(undefined)];
 };

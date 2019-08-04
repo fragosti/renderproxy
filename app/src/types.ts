@@ -6,3 +6,7 @@ export interface ProxySettings {
   shouldRedirectIfPossible: boolean;
   prerenderSetting: PrerenderSetting;
 }
+
+export interface ObjectMap<T> {
+  [key: string]: T | undefined;
+}

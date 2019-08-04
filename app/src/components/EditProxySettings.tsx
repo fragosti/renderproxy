@@ -20,6 +20,7 @@ import { BreadCrumbs } from '../components/BreadCrumbs';
 import { HOMEPAGE_TITLE } from '../constants';
 import { usePersistProxySettings } from '../hooks/usePersistProxySettings';
 import { useProxySettingsForDomain } from '../hooks/useProxySettingsForDomain';
+import { useValidateProxySettings } from '../hooks/useValidateProxySettings';
 import { ProxySettings } from '../types';
 import { Link } from './Link';
 import { SnackbarMessage } from './SnackbarMessage';
@@ -65,15 +66,22 @@ type ProxySettingsFormProps = ProxySettings;
 const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
   const [newSettings, setNewSettings] = useState(R.clone(props));
   const areSettingsEqual = R.equals(props, newSettings);
-  const [persistProxySettings, isLoading, message, setMessage] = usePersistProxySettings();
-  const createOnChange = (propertyName: string) => (e: React.ChangeEvent<any>) => {
-    setNewSettings({
+  const [persistProxySettings, isLoading, message, resetMessage] = usePersistProxySettings();
+  const [validateProxySettings, validations, resetValidations] = useValidateProxySettings();
+  const createOnChange = (propertyName: string) => (event: React.ChangeEvent<any>) => {
+    resetValidations();
+    const settings = {
       ...newSettings,
-      [propertyName]: e.target.value,
-    });
+      [propertyName]: event.target.value,
+    };
+    setNewSettings(settings);
   };
-  const resetMessage = () => setMessage(undefined);
-  const onSave = () => persistProxySettings(newSettings);
+  const onSave = () => {
+    const validatedSettings = validateProxySettings(newSettings);
+    if (validatedSettings) {
+      persistProxySettings(validatedSettings);
+    }
+  };
   return (
     <>
       <Box marginY={3}>
@@ -93,6 +101,8 @@ const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
         </Box>
         <Box marginY={2}>
           <TextField
+            error={!!validations.urlToProxy}
+            helperText={validations.urlToProxy}
             type="url"
             label="Origin URL"
             placeholder="http://youroriginurl.com/"
@@ -100,7 +110,7 @@ const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
             fullWidth={true}
             onChange={createOnChange('urlToProxy')}
             value={newSettings.urlToProxy}
-            style={{ backgroundColor: 'white' }}
+            inputProps={{ style: { backgroundColor: 'white' } }}
           />
         </Box>
         <Box marginY={2}>
@@ -108,10 +118,10 @@ const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
             variant="contained"
             color="primary"
             style={{ color: 'white' }}
-            disabled={areSettingsEqual}
+            disabled={areSettingsEqual || !R.isEmpty(validations) || isLoading}
             onClick={onSave}
           >
-            Save
+            {isLoading ? 'Saving...' : 'Save'}
             <DoneIcon style={{ left: '3px', position: 'relative' }} />
           </Button>
         </Box>

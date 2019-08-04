@@ -9,6 +9,7 @@ import TextField from '@material-ui/core/TextField';
 import React, { useState } from 'react';
 
 import { usePersistProxySettings } from '../hooks/usePersistProxySettings';
+import { useValidateProxySettings } from '../hooks/useValidateProxySettings';
 import { SnackbarMessage } from './SnackbarMessage';
 
 export interface AddProxyDialogProps extends DialogProps {
@@ -19,18 +20,25 @@ export interface AddProxyDialogProps extends DialogProps {
 export const AddProxyDialog: React.FC<AddProxyDialogProps> = props => {
   const { onSuccess, ...dialogProps } = props;
   const [domain, setDomain] = useState<string>('');
-  const [persistProxySettings, isLoading, message, setMessage] = usePersistProxySettings(onSuccess);
-  const resetMessage = () => setMessage(undefined);
+  const [persistProxySettings, isLoading, message, resetMessage] = usePersistProxySettings(onSuccess);
+  const [validateProxySettings, validations, resetValidations] = useValidateProxySettings();
+  const onTextInputChange = (event: React.ChangeEvent<any>) => {
+    setDomain(event.target.value);
+    resetValidations();
+  };
   const onSubmit = async () => {
     if (!domain) {
       throw new Error('Tried to submit an empty domain.');
     }
-    persistProxySettings({
+    const proxySettings = validateProxySettings({
       domain,
       urlToProxy: '',
       shouldRedirectIfPossible: false,
       prerenderSetting: 'none',
     });
+    if (proxySettings) {
+      persistProxySettings(proxySettings);
+    }
   };
   return (
     <>
@@ -41,14 +49,17 @@ export const AddProxyDialog: React.FC<AddProxyDialogProps> = props => {
             Get started by entering the domain (eg. mywebsite.com) you would like to set up a proxy for.
           </DialogContentText>
           <TextField
+            error={!!validations.domain}
+            helperText={validations.domain}
             autoFocus={true}
             margin="dense"
             id="name"
             label="Domain"
             type="text"
+            placeholder="domain.com"
             variant="outlined"
             fullWidth={true}
-            onChange={event => setDomain(event.target.value)}
+            onChange={onTextInputChange}
             value={domain}
           />
         </DialogContent>
