@@ -42,7 +42,7 @@ export const apply = (app: Application) => {
         logger.info(`User ${userId} successfully added proxy ${urlToProxy} for ${domain}`);
         res.status(201).json({ type: 'success', message: 'Successfully added domain.'});
       } catch (err) {
-        res.status(500).json({ type: 'add_failure', err });
+        res.status(500).json({ type: 'add_failure', message: err });
         logger.error(`Failed to add proxy ${urlToProxy} for ${domain}`);
       }
   });
@@ -65,13 +65,25 @@ export const apply = (app: Application) => {
       const proxySettings = await database.getItemAsync(domain);
       if (!proxySettings || proxySettings.userId !== userId) {
         logger.info(`${userId} failed reading ${domain}. It belongs to ${proxySettings.userId}`);
-        res.status(400).json({ type: 'not_allowed'});
+        res.status(400).json({ type: 'not_allowed' });
       }
       logger.info(`${userId} successfully read settings for ${domain}`);
       res.status(200).json(proxySettings);
     } catch (err) {
       logger.error(`Failed to get proxy settings for ${userId}`);
-      res.status(500).json({ type: 'get_user_settings_failure', err });
+      res.status(500).json({ type: 'get_user_settings_failure', message: err });
+    }
+  });
+  app.delete('/proxy_settings/:domain', checkJwt, async (req: AuthorizedRequest, res: Response): Promise<void> => {
+    const userId = req.user.sub;
+    const { domain } = req.params;
+    try {
+      await database.deleteProxySettingsForUser(userId, domain);
+      logger.info(`${userId} successfully deleted settings for ${domain}`);
+      res.status(200).json({ type: 'delete_settings_success'});
+    } catch (err) {
+      logger.error(`Failed to delete ${domain} proxy settings for ${userId}`);
+      res.status(500).json({ type: 'delete_settings_failure', message: err });
     }
   });
 };

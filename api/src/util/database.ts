@@ -17,6 +17,16 @@ export const database = {
     }
     return settingsDoc.data() as ProxySettings;
   },
+  deleteProxySettingsForUser: async (userId: string, domain: string): Promise<void> => {
+    const proxySettingsDoc = proxySettingsCollection.doc(domain);
+    const userDoc = userCollection.doc(userId);
+    const batch = db.batch();
+    batch.delete(proxySettingsDoc);
+    batch.update(userDoc, {
+      domains: firestore.FieldValue.arrayRemove(domain),
+    })
+    await batch.commit();
+  },
   addProxySettingsForUser: async (userId: string, domain: string, settings: ProxySettings): Promise<void> => {
     const proxySettingsDoc = proxySettingsCollection.doc(domain);
     const userDoc = userCollection.doc(userId);
