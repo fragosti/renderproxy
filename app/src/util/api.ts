@@ -25,7 +25,12 @@ export class API {
     return resp.json();
   }
 
-  private async _fetchAsync(path: string, method: 'POST' | 'GET', body?: any): Promise<Response> {
+  public async deleteProxySettingsForDomainAsync(domain: string): Promise<ProxySettings> {
+    const resp = await this._fetchAsync(`${APIPaths.proxySettings}/${domain}`, 'DELETE');
+    return resp.json();
+  }
+
+  private async _fetchAsync(path: string, method: 'POST' | 'GET' | 'DELETE', body?: any): Promise<Response> {
     const resp = await fetch(`${API_ENDPOINT}/${path}`, {
       method,
       headers: {

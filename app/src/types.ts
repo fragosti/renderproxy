@@ -10,3 +10,14 @@ export interface ProxySettings {
 export interface ObjectMap<T> {
   [key: string]: T | undefined;
 }
+
+export interface MessageStruct {
+  variant: 'success' | 'error';
+  message: string;
+}
+
+export type Message = MessageStruct | undefined;
+
+export type MessageResetter = () => void;
+
+export type LoadingStatus = boolean;

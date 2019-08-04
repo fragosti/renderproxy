@@ -1,20 +1,13 @@
 import { useState } from 'react';
 
-import { ProxySettings } from '../types';
+import { LoadingStatus, Message, MessageResetter, ProxySettings } from '../types';
 import { useAuth0 } from '../util/Auth0';
 
 type ProxySettingsSetter = (settings: ProxySettings) => Promise<void>;
-type LoadingStatus = boolean;
-interface MessageStruct {
-  variant: 'success' | 'error';
-  message: string;
-}
-type Message = MessageStruct | undefined;
-type MessageResetter = () => void;
 type SuccessHandler = (domain: string) => void;
 
 const messages = {
-  domainClaimed: (domain: string) => `The domain ${domain} already has settings for it.`,
+  domainClaimed: (domain: string) => `The domain ${domain} already has already been claimed.`,
   genericError: 'Something went wrong. Please try again later.',
   success: (domain: string) => `Successfully saved ${domain} settings.`,
 };

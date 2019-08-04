@@ -11,12 +11,13 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
-import { Done as DoneIcon, Home as HomeIcon, Settings as SettingsIcon } from '@material-ui/icons';
+import { Delete as DeleteIcon, Done as DoneIcon, Home as HomeIcon, Settings as SettingsIcon } from '@material-ui/icons';
 import * as R from 'ramda';
 import React, { useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
 import { BreadCrumbs } from '../components/BreadCrumbs';
+import { DeleteProxyDialog } from '../components/DeleteProxyDialog';
 import { HOMEPAGE_TITLE } from '../constants';
 import { usePersistProxySettings } from '../hooks/usePersistProxySettings';
 import { useProxySettingsForDomain } from '../hooks/useProxySettingsForDomain';
@@ -33,8 +34,15 @@ export interface EditProxySettingsProps extends RouteComponentProps<Params> {}
 
 export const EditProxySettings: React.FC<EditProxySettingsProps> = props => {
   const { domain } = props.match.params;
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const closeDialog = () => setIsDialogOpen(false);
+  const openDialog = () => setIsDialogOpen(true);
   const proxySettings = useProxySettingsForDomain(domain);
+  const handleSuccessfulDeletion = () => {
+    props.history.replace('/');
+  };
   return (
+    <>
     <Container maxWidth="md">
       <Box marginTop={3}>
         <BreadCrumbs
@@ -56,15 +64,20 @@ export const EditProxySettings: React.FC<EditProxySettingsProps> = props => {
           </Link>
         </Typography>
       </Box>
-      {proxySettings && <ProxySettingForm {...proxySettings} />}
+      {proxySettings && <ProxySettingForm onDeleteClick={openDialog} {...proxySettings} />}
     </Container>
+    <DeleteProxyDialog domain={domain} onSuccess={handleSuccessfulDeletion} open={isDialogOpen} onClose={closeDialog} />
+    </>
   );
 };
 
-type ProxySettingsFormProps = ProxySettings;
+interface ProxySettingsFormProps extends ProxySettings {
+  onDeleteClick: () => void;
+}
 
 const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
-  const [newSettings, setNewSettings] = useState(R.clone(props));
+  const { onDeleteClick, ...proxySettings } = props;
+  const [newSettings, setNewSettings] = useState(R.clone(proxySettings));
   const areSettingsEqual = R.equals(props, newSettings);
   const [persistProxySettings, isLoading, message, resetMessage] = usePersistProxySettings();
   const [validateProxySettings, validations, resetValidations] = useValidateProxySettings();
@@ -76,7 +89,7 @@ const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
     };
     setNewSettings(settings);
   };
-  const onSave = () => {
+  const onSaveClick = () => {
     const validatedSettings = validateProxySettings(newSettings);
     if (validatedSettings) {
       persistProxySettings(validatedSettings);
@@ -113,16 +126,22 @@ const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
             inputProps={{ style: { backgroundColor: 'white' } }}
           />
         </Box>
-        <Box marginY={2}>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ color: 'white' }}
-            disabled={areSettingsEqual || !R.isEmpty(validations) || isLoading}
-            onClick={onSave}
-          >
-            {isLoading ? 'Saving...' : 'Save'}
-            <DoneIcon style={{ left: '3px', position: 'relative' }} />
+        <Box marginY={2} display="flex">
+          <Box marginRight={1}>
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ color: 'white' }}
+              disabled={areSettingsEqual || !R.isEmpty(validations) || isLoading}
+              onClick={onSaveClick}
+            >
+              {isLoading ? 'Saving...' : 'Save'}
+              <DoneIcon style={{ left: '3px', position: 'relative' }} />
+            </Button>
+          </Box>
+          <Button variant="contained" color="secondary" style={{ color: 'white' }} onClick={onDeleteClick}>
+            Remove
+            <DeleteIcon style={{ left: '3px', position: 'relative' }} />
           </Button>
         </Box>
       </Box>
