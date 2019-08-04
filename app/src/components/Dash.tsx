@@ -51,7 +51,7 @@ export const Dash: React.FC<DashProps> = props => {
         </Box>
         <Box marginY={3}>
           <Paper elevation={1}>
-            <Box display="flex" justifyContent="space-between" paddingY={2} paddingX={3}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" paddingY={2} paddingX={3}>
               <Text align="left" variant="h5" fontWeight="bold">
                 Proxied Sites
               </Text>
