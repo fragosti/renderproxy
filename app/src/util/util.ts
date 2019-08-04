@@ -38,15 +38,17 @@ export const correctedDomain = (domain: string): string | null => {
   return null;
 };
 
+const matchURL = (str: string) => str.match(/^(?:http(s)?:\/\/)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/g);
+
 export const correctedURL = (url: string): string | null => {
-  const match = url.match(/^(?:http(s)?:\/\/)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/g);
+  let match = matchURL(url);
   if (match) {
     return R.head(match);
   }
-  const domain = correctedDomain(url);
-  if (domain) {
-    // Assume redirect or no HTTPS.
-    return `http://${domain}/`;
+  // Assume they forgot the protocol and try again.
+  match = matchURL(`http://${url}`);
+  if (match) {
+    return R.head(match);
   }
   return null;
 };
