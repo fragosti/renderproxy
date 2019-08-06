@@ -1,8 +1,9 @@
 import { API_ENDPOINT } from '../constants';
-import { ProxySettings } from '../types';
+import { GetCustomerResponse, ProxySettings } from '../types';
 
 export const APIPaths = {
   proxySettings: 'proxy_settings',
+  customer: 'customer',
 };
 
 export class API {
@@ -17,7 +18,7 @@ export class API {
 
   public async getUserProxySettingsAsync(): Promise<ProxySettings[]> {
     const resp = await this._fetchAsync(APIPaths.proxySettings, 'GET');
-    if (!resp.ok){
+    if (!resp.ok) {
       throw new Error('Failed to fetch user proxy settings.');
     }
     return resp.json();
@@ -31,6 +32,20 @@ export class API {
   public async deleteProxySettingsForDomainAsync(domain: string): Promise<ProxySettings> {
     const resp = await this._fetchAsync(`${APIPaths.proxySettings}/${domain}`, 'DELETE');
     return resp.json();
+  }
+
+  public async createCustomerAsync(cardToken: string): Promise<Response> {
+    return this._fetchAsync(APIPaths.customer, 'POST', {
+      cardToken,
+    });
+  }
+
+  public async getCustomerAsync(): Promise<GetCustomerResponse> {
+    const resp = await this._fetchAsync(APIPaths.customer, 'GET');
+    if (resp.ok) {
+      return resp.json();
+    }
+    throw new Error(`Fetching customer information for user failed.`);
   }
 
   private async _fetchAsync(path: string, method: 'POST' | 'GET' | 'DELETE', body?: any): Promise<Response> {

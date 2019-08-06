@@ -1,3 +1,5 @@
+import Stripe from 'stripe';
+
 export type PrerenderSetting = 'none' | 'all' | 'bot';
 
 export interface ProxySettings {
@@ -21,3 +23,15 @@ export type Message = MessageStruct | undefined;
 export type MessageResetter = () => void;
 
 export type LoadingStatus = boolean;
+
+export interface GetCustomerResponse {
+  customer?: Stripe.customers.ICustomer;
+}
+
+export interface StripeCard {
+  brand: string;
+  funding: string;
+  last4: string;
+  exp_month: number;
+  exp_year: number;
+}

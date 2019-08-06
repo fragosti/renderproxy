@@ -17,11 +17,13 @@ import {
 } from '@material-ui/icons';
 import React, { useState } from 'react';
 import { Link as RouterLink, RouteComponentProps } from 'react-router-dom';
+import { Elements } from 'react-stripe-elements';
 
 import { BreadCrumbs } from '../components/BreadCrumbs';
 import { HOMEPAGE_TITLE } from '../constants';
 import { useUserProxySettings } from '../hooks/useUserProxySettings';
 import { AddProxyDialog } from './AddProxyDialog';
+import { BillingCard } from './BillingCard';
 import { Link } from './Link';
 import { Text } from './Text';
 
@@ -108,6 +110,11 @@ export const Dash: React.FC<DashProps> = props => {
               ))
             )}
           </Paper>
+        </Box>
+        <Box marginTop={3}>
+          <Elements>
+            <BillingCard />
+          </Elements>
         </Box>
       </Container>
       <AddProxyDialog onSuccess={handleSuccessfulAdd} open={isDialogOpen} onClose={closeDialog} />

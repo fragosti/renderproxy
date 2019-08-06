@@ -1,13 +1,14 @@
 import { ThemeProvider } from '@material-ui/styles';
 import React from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
+import { StripeProvider } from 'react-stripe-elements';
 
 import './App.css';
 import { Dash } from './components/Dash';
 import { EditProxySettings } from './components/EditProxySettings';
 import { Navbar } from './components/Navbar';
 import { PrivateRoute } from './components/PrivateRoute';
-import { AUTH0_AUDIENCE, AUTH0_CLIENT_ID, AUTH0_DOMAIN } from './constants';
+import { AUTH0_AUDIENCE, AUTH0_CLIENT_ID, AUTH0_DOMAIN, STRIPE_PUBLIC_KEY } from './constants';
 import { theme } from './style/theme';
 import { Auth0Provider } from './util/Auth0';
 
@@ -29,17 +30,19 @@ export const App: React.FC = () => {
       onRedirectCallback={onRedirectCallback}
     >
       <ThemeProvider theme={theme}>
-        <div>
-          <BrowserRouter>
-            <header>
-              <Navbar />
-            </header>
-            <Switch>
-              <PrivateRoute exact={true} path="/" Component={Dash as any} />
-              <PrivateRoute path="/edit/:domain" Component={EditProxySettings as any} />
-            </Switch>
-          </BrowserRouter>
-        </div>
+        <StripeProvider apiKey={STRIPE_PUBLIC_KEY}>
+          <div>
+            <BrowserRouter>
+              <header>
+                <Navbar />
+              </header>
+              <Switch>
+                <PrivateRoute exact={true} path="/" Component={Dash as any} />
+                <PrivateRoute path="/edit/:domain" Component={EditProxySettings as any} />
+              </Switch>
+            </BrowserRouter>
+          </div>
+        </StripeProvider>
       </ThemeProvider>
     </Auth0Provider>
   );

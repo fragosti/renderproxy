@@ -6,3 +6,7 @@ export const API_ENDPOINT =
 export const RETURN_TO_URL =
   process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://renderproxy.com';
 export const HOMEPAGE_TITLE = 'Home';
+export const STRIPE_PUBLIC_KEY =
+  process.env.NODE_ENV === 'development'
+    ? 'pk_test_a3HL1b2vANClXKfrB05OySs000dF8F2LLM'
+    : 'pk_live_EHJOyKGGdURSBHb4g2AQZTt900AIZ0ORmD';
