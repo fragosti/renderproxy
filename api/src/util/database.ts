@@ -1,7 +1,7 @@
 import { Firestore } from '@google-cloud/firestore';
 import { firestore } from 'firebase-admin';
 
-import { ProxySettings } from '../types';
+import { DatabaseUser, ProxySettings } from '../types';
 import { logger } from './logger';
 
 const db = new Firestore();
@@ -24,13 +24,13 @@ export const database = {
     batch.delete(proxySettingsDoc);
     batch.update(userDoc, {
       domains: firestore.FieldValue.arrayRemove(domain),
-    })
+    });
     await batch.commit();
   },
   addProxySettingsForUser: async (userId: string, domain: string, settings: ProxySettings): Promise<void> => {
     const proxySettingsDoc = proxySettingsCollection.doc(domain);
     const userDoc = userCollection.doc(userId);
-    const user = await userCollection.doc(userId).get();
+    const user = await userDoc.get();
     const batch = db.batch();
     batch.set(proxySettingsDoc, settings);
     if (user.exists) {
@@ -58,5 +58,15 @@ export const database = {
     });
     // Filter out undefined values;
     return proxySettingsOrUndefined.filter((setting) => setting);
+  },
+  addCustomerIdToUser: async (userId: string, customerId: string): Promise<void> => {
+    const userDomainsDoc = await userCollection.doc(userId);
+    await userDomainsDoc.update({ customerId });
+  },
+  getUser: async (userId: string): Promise<DatabaseUser> => {
+    const user = await userCollection.doc(userId).get();
+    if (user.exists) {
+      return (user.data() as DatabaseUser);
+    }
   },
 };

@@ -350,6 +350,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/stripe@^6.31.13":
+  version "6.31.13"
+  resolved "https://registry.yarnpkg.com/@types/stripe/-/stripe-6.31.13.tgz#e0907e9cabb92f33d484b3af4cb5e28eca6688c6"
+  integrity sha512-SxztgUkPWuN0Xf+E3DXJ3cOY1Wwpg0gYdRs5riBDNzQKYbm14M2ytet4jWwrseuvIVdtHkAfFqDIrClbjW5i6A==
+  dependencies:
+    "@types/node" "*"
+
 "@types/tough-cookie@*":
   version "2.3.5"
   resolved "https://registry.yarnpkg.com/@types/tough-cookie/-/tough-cookie-2.3.5.tgz#9da44ed75571999b65c37b60c9b2b88db54c585d"
@@ -3033,7 +3040,7 @@ pyconf@^1.1.7:
   dependencies:
     safe-replace "^1.0.2"
 
-qs@6.7.0:
+qs@6.7.0, qs@^6.6.0:
   version "6.7.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.7.0.tgz#41dc1a015e3d581f1621776be31afb2876a9b1bc"
   integrity sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==
@@ -3550,6 +3557,13 @@ strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
   integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
+
+stripe@^7.6.0:
+  version "7.6.0"
+  resolved "https://registry.yarnpkg.com/stripe/-/stripe-7.6.0.tgz#1af4eb1e491d7c727afb899d7045a55e19aef058"
+  integrity sha512-HRdRhg4r1ZfLUOY7r1SMqkteoeZE28hIAbHAIbgghnl7wft/Pvd+eD9w9yTmOy8VfGJoiCxddUyXOYYlNhkRuw==
+  dependencies:
+    qs "^6.6.0"
 
 stubs@^3.0.0:
   version "3.0.0"

@@ -11,3 +11,8 @@ export interface ProxySettings {
 export interface AuthorizedUser {
   sub: string;
 }
+
+export interface DatabaseUser {
+  domains: [string];
+  customerId?: string;
+}

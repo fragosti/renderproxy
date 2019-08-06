@@ -5,6 +5,7 @@ import { checkJwt } from './middleware/jwt';
 import { AuthorizedUser, ProxySettings } from './types';
 import { database } from './util/database';
 import { logger } from './util/logger';
+import { stripe } from './util/stripe';
 
 export interface AuthorizedRequest extends Request {
   user: AuthorizedUser;
@@ -55,7 +56,7 @@ export const apply = (app: Application) => {
       res.status(200).json(userProxySettings);
     } catch (err) {
       logger.error(`Failed to get proxy settings for ${userId}`);
-      res.status(500).json({ type: 'get_user_settings_failure', err:'' });
+      res.status(500).json({ type: 'get_user_settings_failure', err: '' });
     }
   });
   app.get('/proxy_settings/:domain', checkJwt, async (req: AuthorizedRequest, res: Response): Promise<void> => {
@@ -84,6 +85,43 @@ export const apply = (app: Application) => {
     } catch (err) {
       logger.error(`Failed to delete ${domain} proxy settings for ${userId}`);
       res.status(500).json({ type: 'delete_settings_failure', message: err });
+    }
+  });
+  app.post('/customer', [
+    checkJwt,
+    check('cardToken').exists(),
+  ], async (req: AuthorizedRequest, res: Response): Promise<void> => {
+    const { sub } = req.user;
+    const { cardToken } = req.body;
+    try {
+      const customer = await stripe.customers.create({
+        source: cardToken,
+        metadata: {
+          id: sub,
+        },
+      });
+      logger.info(`Successfully create customer ${customer.id}`);
+      await database.addCustomerIdToUser(sub, customer.id);
+      logger.info(`Successfully created ${customer.id} entity for user ${sub}`);
+      res.status(200).json({ type: 'create_customer_success' });
+    } catch (err) {
+      logger.error(`Failed to create customer for ${sub}`);
+      res.status(500).json({ type: 'create_customer_failure', message: err });
+    }
+  });
+  app.get('/customer', checkJwt, async (req: AuthorizedRequest, res: Response): Promise<void> => {
+    const userId = req.user.sub;
+    try {
+      const user = await database.getUser(req.user.sub);
+      let customer;
+      if (user.customerId) {
+        customer = await stripe.customers.retrieve(user.customerId);
+      }
+      logger.info(`Successfully read customer with id ${userId} and customer id ${customer.id}`);
+      res.status(200).json({ customer });
+    } catch (err) {
+      logger.error(`Failed to read customer with id ${userId}`);
+      res.status(500).json({ type: 'read_customer'});
     }
   });
 };
