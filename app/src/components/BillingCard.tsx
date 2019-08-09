@@ -123,16 +123,18 @@ export const BillingCard = injectStripe(props => {
         <Box marginBottom={2} paddingY={1}>
           <CardElement {...cardOptions} />
         </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          style={{ color: 'white' }}
-          onClick={onSubmit}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Submitting...' : 'Submit'}
-          <DoneIcon style={{ left: '3px', position: 'relative' }} />
-        </Button>
+        <Box paddingBottom={1}>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ color: 'white' }}
+            onClick={onSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit'}
+            <DoneIcon style={{ left: '3px', position: 'relative' }} />
+          </Button>
+        </Box>
       </>
     );
   };
@@ -144,7 +146,7 @@ export const BillingCard = injectStripe(props => {
         </Text>
       </Box>
       <Divider />
-      <Box paddingY={2} paddingX={3}>
+      <Box paddingY={1} paddingX={3}>
         {renderContent()}
       </Box>
     </Paper>

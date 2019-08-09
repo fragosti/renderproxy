@@ -20,15 +20,14 @@ export const RemoveCustomerDialog: React.FC<RemoveCustomerDialogProps> = props =
   const [removeCustomer, isLoading, message, resetMessage] = useRemoveCustomer(onSuccess);
   const onSubmit = async () => {
     await removeCustomer();
-    console.log('customer deleted');
   };
   return (
     <>
       <Dialog {...dialogProps} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">Are you sure you want to remove this proxy?</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Are you sure you want to your billing information?</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {`This means that requests  to  will no longer be supported.`}
+            This will automatically cancel all your paid subscriptions.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
