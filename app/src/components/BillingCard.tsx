@@ -1,12 +1,12 @@
 import { Box, Breadcrumbs, Button, CircularProgress, Divider, IconButton, Paper } from '@material-ui/core';
-import { Done as DoneIcon, Delete as DeleteIcon } from '@material-ui/icons';
+import { Delete as DeleteIcon, Done as DoneIcon } from '@material-ui/icons';
 import * as R from 'ramda';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { CardElement, injectStripe } from 'react-stripe-elements';
 import Stripe from 'stripe';
 
-import { RemoveCustomerDialog } from './RemoveCustomerDialog';
 import { useAuth0 } from '../util/Auth0';
+import { RemoveCustomerDialog } from './RemoveCustomerDialog';
 import { Text } from './Text';
 
 const cardOptions: any = {
@@ -36,7 +36,7 @@ export const BillingCard = injectStripe(props => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const closeDialog = () => setIsDialogOpen(false);
   const openDialog = () => setIsDialogOpen(true);
-  const fetchCustomerAsync = async () => {
+  const fetchCustomerAsync = useCallback(async () => {
     setFetchingState('progress');
     try {
       const customerResponse = await api.getCustomerAsync();
@@ -46,7 +46,7 @@ export const BillingCard = injectStripe(props => {
       console.error(err);
       setFetchingState('failure');
     }
-  };
+  }, [api]);
   const onSubmit = async () => {
     if (props.stripe) {
       const { token } = await props.stripe.createToken();
@@ -71,7 +71,7 @@ export const BillingCard = injectStripe(props => {
   };
   useEffect(() => {
     fetchCustomerAsync();
-  }, [api]);
+  }, [fetchCustomerAsync]);
 
   const renderContent = (): React.ReactNode => {
     if (fetchingState === 'progress') {

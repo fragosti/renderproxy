@@ -84,7 +84,7 @@ export const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
                 inputProps={{ style: { backgroundColor: 'white' } }}
               />
             </Box>
-            <Box marginY={3} display="flex">
+            <Box marginTop={3} marginBottom={1} display="flex">
               <Box marginRight={1}>
                 <Button
                   variant="contained"
