@@ -101,7 +101,7 @@ export const apply = (app: Application) => {
         },
       });
       logger.info(`Successfully create customer ${customer.id}`);
-      await database.addCustomerIdToUser(sub, customer.id);
+      await database.addCustomerToUser(sub, customer.id);
       logger.info(`Successfully created ${customer.id} entity for user ${sub}`);
       res.status(200).json({ type: 'create_customer_success' });
     } catch (err) {
@@ -121,7 +121,23 @@ export const apply = (app: Application) => {
       res.status(200).json({ customer });
     } catch (err) {
       logger.error(`Failed to read customer with id ${userId}`);
-      res.status(500).json({ type: 'read_customer'});
+      res.status(500).json({ type: 'read_customer_failure', message: err});
     }
+  });
+  app.delete('/customer', checkJwt, async (req: AuthorizedRequest, res: Response): Promise<void> => {
+    const userId = req.user.sub;
+    try {
+      const user = await database.getUser(userId);
+      if (user.customerId) {
+        await stripe.customers.del(user.customerId);
+        await database.removeCustomerFromUser(userId);
+        logger.info(`Successfully deleted customer ${user.customerId} from ${userId}`);
+      }
+      res.status(200).json({ type: 'delete_customer_success' });
+    } catch (err) {
+      logger.error(`Failed to delete customer from ${userId}`);
+      res.status(500).json({ type: 'delete_customer_failure', message: err});
+    }
+
   });
 };

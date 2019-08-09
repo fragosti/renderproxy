@@ -45,11 +45,11 @@ export const database = {
     await batch.commit();
   },
   getProxySettingsForUser: async (userId: string): Promise<ProxySettings[]> => {
-    const userDomainsDoc = await userCollection.doc(userId).get();
-    if (!userDomainsDoc.exists) {
+    const userDocSnap = await userCollection.doc(userId).get();
+    if (!userDocSnap.exists) {
       return [];
     }
-    const userDomains: string[] = (await userDomainsDoc.data()).domains;
+    const userDomains: string[] = (await userDocSnap.data()).domains;
     const proxySettingsOrUndefined = await Promise.all(userDomains.map((domain) => database.getItemAsync(domain)));
     proxySettingsOrUndefined.forEach((proxySettings: ProxySettings | undefined, index: number) => {
       if (proxySettings === undefined) {
@@ -59,14 +59,20 @@ export const database = {
     // Filter out undefined values;
     return proxySettingsOrUndefined.filter((setting) => setting);
   },
-  addCustomerIdToUser: async (userId: string, customerId: string): Promise<void> => {
-    const userDomainsDoc = await userCollection.doc(userId);
-    await userDomainsDoc.update({ customerId });
+  addCustomerToUser: async (userId: string, customerId: string): Promise<void> => {
+    const userDoc = await userCollection.doc(userId);
+    await userDoc.update({ customerId, hasBillingInfo: true });
+  },
+  removeCustomerFromUser: async (userId: string): Promise<void> => {
+    const userDoc = await userCollection.doc(userId);
+    // Don't delete customerId since stripe does not delete them.
+    await userDoc.update({ hasBillingInfo: false });
   },
   getUser: async (userId: string): Promise<DatabaseUser> => {
     const user = await userCollection.doc(userId).get();
     if (user.exists) {
       return (user.data() as DatabaseUser);
     }
+    throw new Error(`Database request for user of id ${userId} failed`);
   },
 };
