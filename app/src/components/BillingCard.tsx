@@ -1,17 +1,18 @@
-import { Box, Breadcrumbs, Button, CircularProgress, Divider, Paper } from '@material-ui/core';
-import { Done as DoneIcon } from '@material-ui/icons';
+import { Box, Breadcrumbs, Button, CircularProgress, Divider, IconButton, Paper } from '@material-ui/core';
+import { Done as DoneIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import * as R from 'ramda';
 import React, { useEffect, useState } from 'react';
 import { CardElement, injectStripe } from 'react-stripe-elements';
 import Stripe from 'stripe';
 
+import { RemoveCustomerDialog } from './RemoveCustomerDialog';
 import { useAuth0 } from '../util/Auth0';
 import { Text } from './Text';
 
 const cardOptions: any = {
   style: {
     base: {
-      fontSize: '18px',
+      fontSize: '20px',
       color: '#424770',
       letterSpacing: '0.025em',
       fontFamily: 'Roboto, monospace',
@@ -31,43 +32,58 @@ export const BillingCard = injectStripe(props => {
   const { api } = useAuth0();
   const [customer, setCustomer] = useState<Stripe.customers.ICustomer | undefined>();
   const [fetchingState, setFetchingState] = useState<FetchingState>('progress');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const closeDialog = () => setIsDialogOpen(false);
+  const openDialog = () => setIsDialogOpen(true);
+  const fetchCustomerAsync = async () => {
+    setFetchingState('progress');
+    try {
+      const customerResponse = await api.getCustomerAsync();
+      setCustomer(customerResponse.customer);
+      setFetchingState('success');
+    } catch (err) {
+      console.error(err);
+      setFetchingState('failure');
+    }
+  };
   const onSubmit = async () => {
     if (props.stripe) {
       const { token } = await props.stripe.createToken();
       if (token) {
-        // TODO: handle failed
-        const resp = await api.createCustomerAsync(token.id);
+        setIsSubmitting(true);
+        try {
+          await api.createCustomerAsync(token.id);
+          await fetchCustomerAsync();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setIsSubmitting(false);
+        }
       }
     } else {
       console.error('Stripe.js not loaded');
     }
   };
+  const onRemoveSuccess = async () => {
+    await fetchCustomerAsync();
+    closeDialog();
+  };
   useEffect(() => {
-    const getCustomer = async () => {
-      setFetchingState('progress');
-      try {
-        const customerResponse = await api.getCustomerAsync();
-        setCustomer(customerResponse.customer);
-        setFetchingState('success');
-      } catch (err) {
-        console.error(err);
-        setFetchingState('failure');
-      }
-    };
-    getCustomer();
+    fetchCustomerAsync();
   }, [api]);
 
   const renderContent = (): React.ReactNode => {
     if (fetchingState === 'progress') {
       return (
-        <Box display="flex" paddingY={1} alignItems="center" justifyContent="center">
+        <Box display="flex" alignItems="center" justifyContent="center">
           <CircularProgress color="secondary" />
         </Box>
       );
     }
     if (fetchingState === 'failure') {
       return (
-        <Box display="flex" paddingY={1} alignItems="center" justifyContent="center">
+        <Box display="flex" alignItems="center" justifyContent="center">
           Something went wrong. Please try again later.
         </Box>
       );
@@ -75,34 +91,46 @@ export const BillingCard = injectStripe(props => {
     if (customer && customer.sources) {
       const card: any = R.head(customer.sources.data);
       return (
-        <Box display="flex" paddingY={1} alignItems="center">
-          <Breadcrumbs>
-            <Text fontWeight="bold" fontFamily="monospace" fontSize={18} color={'textPrimary' as any}>
-              {`${card.brand.toUpperCase()} ${card.funding}`.toUpperCase()}
-            </Text>
-            <Text
-              fontWeight="bold"
-              fontFamily="monospace"
-              fontSize={18}
-              color={'textPrimary' as any}
-            >{`•••• •••• •••• ${card.last4}`}</Text>
-            <Text
-              fontWeight="bold"
-              fontFamily="monospace"
-              fontSize={18}
-              color={'textPrimary' as any}
-            >{`${card.exp_month}-${card.exp_year}`}</Text>
-          </Breadcrumbs>
-        </Box>
+        <>
+          <Box display="flex" alignItems="center" justifyContent="space-between">
+            <Breadcrumbs>
+              <Text fontWeight="bold" fontFamily="monospace" fontSize={18} color={'textPrimary' as any}>
+                {`${card.brand.toUpperCase()} ${card.funding}`.toUpperCase()}
+              </Text>
+              <Text
+                fontWeight="bold"
+                fontFamily="monospace"
+                fontSize={18}
+                color={'textPrimary' as any}
+              >{`•••• •••• •••• ${card.last4}`}</Text>
+              <Text
+                fontWeight="bold"
+                fontFamily="monospace"
+                fontSize={18}
+                color={'textPrimary' as any}
+              >{`${card.exp_month}-${card.exp_year}`}</Text>
+            </Breadcrumbs>
+            <IconButton onClick={openDialog}>
+              <DeleteIcon fontSize="large" />
+            </IconButton>
+          </Box>
+          <RemoveCustomerDialog onSuccess={onRemoveSuccess} open={isDialogOpen} onClose={closeDialog} />
+        </>
       );
     }
     return (
       <>
-        <Box marginBottom={2}>
+        <Box marginBottom={2} paddingY={1}>
           <CardElement {...cardOptions} />
         </Box>
-        <Button variant="contained" color="primary" style={{ color: 'white' }} onClick={onSubmit}>
-          Submit
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ color: 'white' }}
+          onClick={onSubmit}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Submitting...' : 'Submit'}
           <DoneIcon style={{ left: '3px', position: 'relative' }} />
         </Button>
       </>
@@ -116,7 +144,7 @@ export const BillingCard = injectStripe(props => {
         </Text>
       </Box>
       <Divider />
-      <Box paddingY={1} paddingX={3}>
+      <Box paddingY={2} paddingX={3}>
         {renderContent()}
       </Box>
     </Paper>

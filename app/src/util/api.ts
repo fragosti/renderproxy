@@ -48,6 +48,14 @@ export class API {
     throw new Error(`Fetching customer information for user failed.`);
   }
 
+  public async deleteCustomerAsync(): Promise<void> {
+    const resp = await this._fetchAsync(APIPaths.customer, 'DELETE');
+    if (resp.ok) {
+      return;
+    }
+    throw new Error('Failed to delete customer.');
+  }
+
   private async _fetchAsync(path: string, method: 'POST' | 'GET' | 'DELETE', body?: any): Promise<Response> {
     const resp = await fetch(`${API_ENDPOINT}/${path}`, {
       method,

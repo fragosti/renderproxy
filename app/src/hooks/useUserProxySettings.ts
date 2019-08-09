@@ -13,6 +13,7 @@ export const useUserProxySettings = (): [ProxySettings[] | undefined, boolean] =
         const settings = await api.getUserProxySettingsAsync();
         setUserProxySettings(settings);
       } catch (err) {
+        console.error(err);
         setDidError(true);
       }
     };
