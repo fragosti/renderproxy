@@ -6,6 +6,7 @@ export interface ProxySettings {
   shouldRedirectIfPossible: boolean;
   prerenderSetting: PrerenderSetting;
   userId: string;
+  subscriptionId?: string;
 }
 
 export interface AuthorizedUser {

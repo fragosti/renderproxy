@@ -1,4 +1,4 @@
-import { Firestore } from '@google-cloud/firestore';
+import { FieldValue, Firestore } from '@google-cloud/firestore';
 import { firestore } from 'firebase-admin';
 
 import { DatabaseUser, ProxySettings } from '../types';
@@ -10,7 +10,7 @@ const proxySettingsCollection = db.collection('proxySettings');
 const userCollection = db.collection('users');
 
 export const database = {
-  getItemAsync: async (domain: string): Promise<ProxySettings | undefined> => {
+  getProxySettingsAsync: async (domain: string): Promise<ProxySettings | undefined> => {
     const settingsDoc = await proxySettingsCollection.doc(domain).get();
     if (!settingsDoc.exists) {
       return undefined;
@@ -50,7 +50,9 @@ export const database = {
       return [];
     }
     const userDomains: string[] = (await userDocSnap.data()).domains;
-    const proxySettingsOrUndefined = await Promise.all(userDomains.map((domain) => database.getItemAsync(domain)));
+    const proxySettingsOrUndefined = await Promise.all(
+      userDomains.map((domain) => database.getProxySettingsAsync(domain)),
+    );
     proxySettingsOrUndefined.forEach((proxySettings: ProxySettings | undefined, index: number) => {
       if (proxySettings === undefined) {
         logger.error(`Could not find a setting for domain ${userDomains[index]}`);
@@ -67,6 +69,16 @@ export const database = {
     const userDoc = await userCollection.doc(userId);
     // Don't delete customerId since stripe does not delete them.
     await userDoc.update({ hasBillingInfo: false });
+  },
+  addSubscriptionIdToDomain: async (domain: string, subscriptionId: string): Promise<void> => {
+    const proxySettingsDoc = proxySettingsCollection.doc(domain);
+    await proxySettingsDoc.update({ subscriptionId });
+  },
+  removeSubscriptionIdFromDomain: async (domain: string): Promise<void> => {
+    const proxySettingsDoc = proxySettingsCollection.doc(domain);
+    await proxySettingsDoc.update({
+      subscriptionId: FieldValue.delete(),
+    });
   },
   getUser: async (userId: string): Promise<DatabaseUser> => {
     const user = await userCollection.doc(userId).get();

@@ -24,7 +24,7 @@ export const apply = (app: Application) => {
     async (req: AuthorizedRequest, res: Response): Promise<void> => {
       const userId = req.user.sub;
       const { domain, urlToProxy } = req.body;
-      const existingProxySettings = await database.getItemAsync(domain);
+      const existingProxySettings = await database.getProxySettingsAsync(domain);
       if (existingProxySettings && existingProxySettings.userId !== userId) {
         logger.info(`${userId} failed adding ${domain}. It belongs to ${existingProxySettings.userId}`);
         res.status(400).json({ type: 'domain_claimed' });
@@ -63,7 +63,7 @@ export const apply = (app: Application) => {
     const userId = req.user.sub;
     const { domain } = req.params;
     try {
-      const proxySettings = await database.getItemAsync(domain);
+      const proxySettings = await database.getProxySettingsAsync(domain);
       if (!proxySettings || proxySettings.userId !== userId) {
         logger.info(`${userId} failed reading ${domain}. It belongs to ${proxySettings.userId}`);
         res.status(400).json({ type: 'not_allowed' });
@@ -116,6 +116,8 @@ export const apply = (app: Application) => {
       let customer;
       if (user.customerId) {
         customer = await stripe.customers.retrieve(user.customerId);
+      } else {
+        throw new Error(`User ${userId} does not have billing information.`);
       }
       logger.info(`Successfully read customer with id ${userId} and customer id ${customer.id}`);
       res.status(200).json({ customer });
@@ -132,12 +134,64 @@ export const apply = (app: Application) => {
         await stripe.customers.del(user.customerId);
         await database.removeCustomerFromUser(userId);
         logger.info(`Successfully deleted customer ${user.customerId} from ${userId}`);
+      } else {
+        throw new Error(`User ${userId} does not have billing information.`);
       }
       res.status(200).json({ type: 'delete_customer_success' });
     } catch (err) {
       logger.error(`Failed to delete customer from ${userId}`);
       res.status(500).json({ type: 'delete_customer_failure', message: err});
     }
-
   });
+  app.post('/subscribe',
+    [
+      checkJwt,
+      check('planId').exists(),
+      check('domain').exists(),
+    ],
+    async (req: AuthorizedRequest, res: Response): Promise<void> => {
+      const userId = req.user.sub;
+      const { planId, domain } = req.body;
+      try {
+        const user = await database.getUser(userId);
+        if (user.customerId) {
+          const proxySettings = await database.getProxySettingsAsync(domain);
+          if (proxySettings.subscriptionId) {
+            if (planId === 'free') {
+              await stripe.subscriptions.del(proxySettings.subscriptionId);
+              await database.removeSubscriptionIdFromDomain(domain);
+            } else {
+              const subscription = await stripe.subscriptions.retrieve(proxySettings.subscriptionId);
+              await stripe.subscriptions.update(proxySettings.subscriptionId, {
+                items: [
+                  {
+                    id: subscription.items.data[0].id,
+                    plan: planId,
+                  },
+                ],
+              });
+            }
+          } else {
+            const subscription = await stripe.subscriptions.create({
+              customer: user.customerId,
+              items: [
+                {
+                  plan: planId,
+                },
+              ],
+              metadata: {
+                domain,
+              },
+            });
+            await database.addSubscriptionIdToDomain(domain, subscription.id);
+          }
+          res.status(200).json({ type: 'subscribe_customer_success' });
+        } else {
+          throw new Error(`User ${userId} does not have billing information.`);
+        }
+      } catch (err) {
+        logger.error(`Failed to subscribe ${userId} to ${planId} for ${domain}`);
+        res.status(500).json({ type: 'subscribe_user_failure', message: err});
+      }
+    });
 };
