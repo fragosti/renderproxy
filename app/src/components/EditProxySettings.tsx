@@ -6,6 +6,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { BreadCrumbs } from '../components/BreadCrumbs';
 import { DeleteProxyDialog } from '../components/DeleteProxyDialog';
 import { ProxySettingForm } from '../components/ProxySettingForm';
+import { SubscriptionCard } from '../components/SubscriptionCard';
 import { HOMEPAGE_TITLE } from '../constants';
 import { useProxySettingsForDomain } from '../hooks/useProxySettingsForDomain';
 import { Link } from './Link';
@@ -48,7 +49,10 @@ export const EditProxySettings: React.FC<EditProxySettingsProps> = props => {
             </Link>
           </Typography>
         </Box>
-        {proxySettings && <ProxySettingForm onDeleteClick={openDialog} {...proxySettings} />}
+        <Box marginY={3}>
+          <SubscriptionCard domain={domain} />
+        </Box>
+        <Box marginY={3}>{proxySettings && <ProxySettingForm onDeleteClick={openDialog} {...proxySettings} />}</Box>
       </Container>
       <DeleteProxyDialog
         domain={domain}

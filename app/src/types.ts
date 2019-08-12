@@ -35,3 +35,18 @@ export interface StripeCard {
   exp_month: number;
   exp_year: number;
 }
+
+export enum PlanId {
+  Free = 'free',
+  Starter = 'starter',
+  Pro = 'pro',
+  Metered = 'metered',
+}
+
+export interface SubscriptionTierInfo {
+  id: PlanId;
+  name: string;
+  price: string;
+  properties: string[];
+  ctaText?: string;
+}

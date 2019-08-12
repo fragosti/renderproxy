@@ -1,9 +1,10 @@
 import { API_ENDPOINT } from '../constants';
-import { GetCustomerResponse, ProxySettings } from '../types';
+import { GetCustomerResponse, PlanId, ProxySettings } from '../types';
 
 export const APIPaths = {
   proxySettings: 'proxy_settings',
   customer: 'customer',
+  subscribe: 'subscribe',
 };
 
 export class API {
@@ -54,6 +55,13 @@ export class API {
       return;
     }
     throw new Error('Failed to delete customer.');
+  }
+
+  public async subscribeUserAsync(planId: PlanId, domain: string): Promise<Response> {
+    return this._fetchAsync(APIPaths.subscribe, 'POST', {
+      planId,
+      domain,
+    });
   }
 
   private async _fetchAsync(path: string, method: 'POST' | 'GET' | 'DELETE', body?: any): Promise<Response> {

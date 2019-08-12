@@ -1,7 +1,7 @@
 import { Box, Breadcrumbs, Button, CircularProgress, Divider, IconButton, Paper } from '@material-ui/core';
 import { Delete as DeleteIcon, Done as DoneIcon } from '@material-ui/icons';
 import * as R from 'ramda';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { CardElement, injectStripe } from 'react-stripe-elements';
 import Stripe from 'stripe';
 
@@ -83,7 +83,7 @@ export const BillingCard = injectStripe(props => {
     }
     if (fetchingState === 'failure') {
       return (
-        <Box display="flex" alignItems="center" justifyContent="center">
+        <Box display="flex" alignItems="center" justifyContent="center" paddingY={2}>
           Something went wrong. Please try again later.
         </Box>
       );

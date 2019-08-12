@@ -1,3 +1,5 @@
+import { ObjectMap, PlanId, SubscriptionTierInfo } from './types';
+
 export const AUTH0_DOMAIN = 'renderproxy.auth0.com';
 export const AUTH0_CLIENT_ID = 'ZgLSqr5Q2cgUhgWKDRZrhz9YPRWDM1Ag';
 export const AUTH0_AUDIENCE = 'https://api.renderproxy.com';
@@ -10,3 +12,53 @@ export const STRIPE_PUBLIC_KEY =
   process.env.NODE_ENV === 'development'
     ? 'pk_test_a3HL1b2vANClXKfrB05OySs000dF8F2LLM'
     : 'pk_live_EHJOyKGGdURSBHb4g2AQZTt900AIZ0ORmD';
+export const subscriptionTiers: SubscriptionTierInfo[] = [
+  {
+    id: PlanId.Free,
+    name: 'Free',
+    price: '$0',
+    properties: ['100 requests / month', 'Free TLS certificates', 'Bot-only prerendering', 'Unlimited pages'],
+    ctaText: 'Select',
+  },
+  {
+    id: PlanId.Starter,
+    name: 'Starter',
+    price: '$20 / month',
+    properties: [
+      '10,000 requests / month',
+      'No renderproxy badge',
+      'Free TLS certificates',
+      'Bot-only prerendering',
+      'Unlimited pages',
+    ],
+    ctaText: 'Select',
+  },
+  {
+    id: PlanId.Pro,
+    name: 'Pro',
+    price: '$50 / month',
+    properties: [
+      '100,000 requests / month',
+      'No renderproxy badge',
+      'Free TLS certificates',
+      'Always pre-render',
+      'Unlimited pages',
+    ],
+    ctaText: 'Select',
+  },
+  {
+    id: PlanId.Metered,
+    name: 'Metered',
+    price: 'Contact Us',
+    properties: ['Unlimited requests / month', 'No renderproxy badge', 'Free TLS certiciates', 'Unlimited pages'],
+    ctaText: 'Contact',
+  },
+];
+
+export const subscriptionTierInfoMap: ObjectMap<SubscriptionTierInfo> = subscriptionTiers.reduce(
+  (acc: ObjectMap<SubscriptionTierInfo>, sub) => {
+    acc[sub.id] = sub;
+    return acc;
+  },
+  {},
+);
