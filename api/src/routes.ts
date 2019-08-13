@@ -116,10 +116,8 @@ export const apply = (app: Application) => {
       let customer;
       if (user.customerId) {
         customer = await stripe.customers.retrieve(user.customerId);
-      } else {
-        throw new Error(`User ${userId} does not have billing information.`);
       }
-      logger.info(`Successfully read customer with id ${userId} and customer id ${customer.id}`);
+      logger.info(`Successfully read customer from user ${userId} if exists`);
       res.status(200).json({ customer });
     } catch (err) {
       logger.error(`Failed to read customer with id ${userId}`);
