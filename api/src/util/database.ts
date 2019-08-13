@@ -91,11 +91,17 @@ export const database = {
       subscriptionId: FieldValue.delete(),
     });
   },
-  getUser: async (userId: string): Promise<DatabaseUser> => {
-    const user = await userCollection.doc(userId).get();
-    if (user.exists) {
-      return (user.data() as DatabaseUser);
+  getUserOrCreate: async (userId: string): Promise<DatabaseUser> => {
+    const userDoc = userCollection.doc(userId);
+    const userDocSnap = await userDoc.get();
+    if (userDocSnap.exists) {
+      return (userDocSnap.data() as DatabaseUser);
+    } else {
+      const newUser: DatabaseUser = {
+        domains: [],
+      };
+      await userDoc.set(newUser);
+      return newUser;
     }
-    throw new Error(`Database request for user of id ${userId} failed`);
   },
 };

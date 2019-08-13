@@ -115,8 +115,14 @@ export const apply = (app: Application) => {
   });
   app.get('/customer', checkJwt, async (req: AuthorizedRequest, res: Response): Promise<void> => {
     const userId = req.user.sub;
+    let user;
     try {
-      const user = await database.getUser(req.user.sub);
+      user = await database.getUserOrCreate(req.user.sub);
+    } catch (err) {
+      logger.info(`There was no user with ${userId}.`);
+      res.status(200).json({ customer: undefined });
+    }
+    try {
       let customer;
       if (user.customerId) {
         customer = await stripe.customers.retrieve(user.customerId);
@@ -131,7 +137,7 @@ export const apply = (app: Application) => {
   app.delete('/customer', checkJwt, async (req: AuthorizedRequest, res: Response): Promise<void> => {
     const userId = req.user.sub;
     try {
-      const user = await database.getUser(userId);
+      const user = await database.getUserOrCreate(userId);
       if (user.customerId) {
         await stripe.customers.del(user.customerId);
         await database.removeCustomerFromUser(userId);
@@ -155,7 +161,7 @@ export const apply = (app: Application) => {
       const userId = req.user.sub;
       const { planId, domain } = req.body;
       try {
-        const user = await database.getUser(userId);
+        const user = await database.getUserOrCreate(userId);
         if (user.customerId && user.hasBillingInfo) {
           const proxySettings = await database.getProxySettingsAsync(domain);
           if (proxySettings.subscriptionId) {
