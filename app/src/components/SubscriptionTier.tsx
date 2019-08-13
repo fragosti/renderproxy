@@ -1,4 +1,5 @@
 import { Box, Button, Card, CardActions, CardContent, Typography } from '@material-ui/core';
+import { Done as DoneIcon } from '@material-ui/icons';
 import React, { useState } from 'react';
 import { Elements } from 'react-stripe-elements';
 
@@ -60,8 +61,8 @@ export const SubscriptionTier: React.FC<SubscriptionTierProps> = ({
         )}
         {isActive && (
           <CardActions>
-            <Text padding={2} color={'primary' as any} fontSize="14px" fontWeight={500}>
-              SELECTED
+            <Text padding={1} color={'primary' as any} fontSize="14px" fontWeight={500}>
+              SELECTED <DoneIcon style={{ top: '3px', position: 'relative' }} fontSize="small" />
             </Text>
           </CardActions>
         )}
