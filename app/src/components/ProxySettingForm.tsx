@@ -28,7 +28,7 @@ export interface ProxySettingsFormProps extends ProxySettings {
 export const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
   const { onDeleteClick, ...proxySettings } = props;
   const [newSettings, setNewSettings] = useState(R.clone(proxySettings));
-  const areSettingsEqual = R.equals(props, newSettings);
+  const areSettingsEqual = R.equals(proxySettings, newSettings);
   const [persistProxySettings, isLoading, message, resetMessage] = usePersistProxySettings();
   const [validateProxySettings, validations, resetValidations] = useValidateProxySettings();
   const createOnChange = (propertyName: string) => (event: React.ChangeEvent<any>) => {
