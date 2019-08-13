@@ -152,7 +152,7 @@ export const apply = (app: Application) => {
       const { planId, domain } = req.body;
       try {
         const user = await database.getUser(userId);
-        if (user.customerId) {
+        if (user.customerId && user.hasBillingInfo) {
           const proxySettings = await database.getProxySettingsAsync(domain);
           if (proxySettings.subscriptionId) {
             if (planId === 'free') {

@@ -16,4 +16,5 @@ export interface AuthorizedUser {
 export interface DatabaseUser {
   domains: [string];
   customerId?: string;
+  hasBillingInfo?: boolean;
 }

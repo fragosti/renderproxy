@@ -66,9 +66,20 @@ export const database = {
     await userDoc.update({ customerId, hasBillingInfo: true });
   },
   removeCustomerFromUser: async (userId: string): Promise<void> => {
-    const userDoc = await userCollection.doc(userId);
+    const userDoc = userCollection.doc(userId);
+    const userDocSnap = await userDoc.get();
+    const userDomains: string[] = (await userDocSnap.data()).domains;
+    const batch = db.batch();
     // Don't delete customerId since stripe does not delete them.
-    await userDoc.update({ hasBillingInfo: false });
+    batch.update(userDoc, { hasBillingInfo: false });
+    // Remove subscriptionId from all domains
+    for (const domain of userDomains) {
+      const proxySettingsDoc = proxySettingsCollection.doc(domain);
+      batch.update(proxySettingsDoc, {
+        subscriptionId: FieldValue.delete(),
+      });
+    }
+    await batch.commit();
   },
   addSubscriptionIdToDomain: async (domain: string, subscriptionId: string): Promise<void> => {
     const proxySettingsDoc = proxySettingsCollection.doc(domain);
