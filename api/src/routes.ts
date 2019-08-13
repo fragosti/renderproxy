@@ -79,6 +79,10 @@ export const apply = (app: Application) => {
     const userId = req.user.sub;
     const { domain } = req.params;
     try {
+      const proxySettings = await database.getProxySettingsAsync(domain);
+      if (proxySettings.subscriptionId) {
+        await stripe.subscriptions.del(proxySettings.subscriptionId);
+      }
       await database.deleteProxySettingsForUser(userId, domain);
       logger.info(`${userId} successfully deleted settings for ${domain}`);
       res.status(200).json({ type: 'delete_settings_success'});
