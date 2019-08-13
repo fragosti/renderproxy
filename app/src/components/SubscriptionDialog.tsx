@@ -8,11 +8,14 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Snackbar from '@material-ui/core/Snackbar';
-import React from 'react';
+import React, { useState } from 'react';
+import { injectStripe } from 'react-stripe-elements';
 
+import { CardInput, OnChangeEvent } from '../components/CardInput';
 import { subscriptionTierInfoMap } from '../constants';
 import { useSubscribeUser } from '../hooks/useSubscribeUser';
 import { PlanId } from '../types';
+import { useAuth0 } from '../util/Auth0';
 
 import { SnackbarMessage } from './SnackbarMessage';
 
@@ -21,18 +24,44 @@ export interface SubscriptionDialogProps extends DialogProps {
   planId: PlanId;
   onClose: () => void;
   onSuccess?: () => void;
+  requiresBillingInfo?: boolean;
 }
 
-export const SubscriptionDialog: React.FC<SubscriptionDialogProps> = props => {
-  const { onSuccess, domain, planId, ...dialogProps } = props;
+export const SubscriptionDialog = injectStripe<SubscriptionDialogProps>(props => {
+  const { api } = useAuth0();
+  const { onSuccess, domain, planId, requiresBillingInfo, ...dialogProps } = props;
+  const [latestChangeEvent, setLatestChangeEvent] = useState<OnChangeEvent>();
+  const [isCreatingCustomer, setIsCreatingCustomer] = useState(false);
   const [subscribeUser, isLoading, message, resetMessage] = useSubscribeUser(onSuccess);
   const onSubmit = async () => {
-    subscribeUser(planId, domain);
+    if (requiresBillingInfo) {
+      if (props.stripe) {
+        const { token } = await props.stripe.createToken();
+        if (token) {
+          setIsCreatingCustomer(true);
+          try {
+            await api.createCustomerAsync(token.id);
+            await subscribeUser(planId, domain);
+          } catch (err) {
+            console.error(err);
+          } finally {
+            setIsCreatingCustomer(false);
+          }
+        }
+      } else {
+        console.error('Stripe.js not loaded');
+      }
+    } else {
+      subscribeUser(planId, domain);
+    }
   };
   const subscriptionInfo = subscriptionTierInfoMap[planId];
   if (!subscriptionInfo) {
     return null;
   }
+  const canSubmit =
+    !requiresBillingInfo || (latestChangeEvent && latestChangeEvent.complete && !latestChangeEvent.error);
+  const isDisabled = !canSubmit || isLoading || isCreatingCustomer;
   return (
     <>
       <Dialog {...dialogProps} aria-labelledby="form-dialog-title">
@@ -45,20 +74,28 @@ export const SubscriptionDialog: React.FC<SubscriptionDialogProps> = props => {
               : 'is billed a month from today'}
             . The plan includes:
           </DialogContentText>
-          <Box display="flex">
+          <Box display="flex" marginBottom={2}>
             <List>
               {subscriptionInfo.properties.map(property => (
                 <ListItem key={property}>{property}</ListItem>
               ))}
             </List>
           </Box>
+          {requiresBillingInfo && (
+            <>
+              <DialogContentText>Please insert your billing information below to continue:</DialogContentText>
+              <Box border={1} padding={2} borderRadius={2} borderColor="secondary.main">
+                <CardInput onChange={setLatestChangeEvent} />
+              </Box>
+            </>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => props.onClose()} color="primary">
             Cancel
           </Button>
-          <Button onClick={onSubmit} color="primary" disabled={isLoading}>
-            {isLoading ? 'Subscribing...' : 'Subscribe'}
+          <Button onClick={onSubmit} color="primary" disabled={isDisabled}>
+            {isLoading || isCreatingCustomer ? 'Subscribing...' : 'Subscribe'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -75,4 +112,4 @@ export const SubscriptionDialog: React.FC<SubscriptionDialogProps> = props => {
       </Snackbar>
     </>
   );
-};
+});

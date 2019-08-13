@@ -1,52 +1,24 @@
 import { Box, Breadcrumbs, Button, CircularProgress, Divider, IconButton, Paper } from '@material-ui/core';
 import { Delete as DeleteIcon, Done as DoneIcon } from '@material-ui/icons';
 import * as R from 'ramda';
-import React, { useCallback, useEffect, useState } from 'react';
-import { CardElement, injectStripe } from 'react-stripe-elements';
-import Stripe from 'stripe';
+import React, { useEffect, useState } from 'react';
+import { injectStripe } from 'react-stripe-elements';
 
+import { useFetchCustomerAsync } from '../hooks/useFetchCustomerAsync';
 import { useAuth0 } from '../util/Auth0';
+import { CardInput } from './CardInput';
 import { RemoveCustomerDialog } from './RemoveCustomerDialog';
 import { Text } from './Text';
-
-const cardOptions: any = {
-  style: {
-    base: {
-      fontSize: '20px',
-      color: '#424770',
-      letterSpacing: '0.025em',
-      fontFamily: 'Roboto, monospace',
-      '::placeholder': {
-        color: '#aab7c4',
-      },
-    },
-    invalid: {
-      color: '#9e2146',
-    },
-  },
-};
 
 export type FetchingState = 'progress' | 'success' | 'failure';
 
 export const BillingCard = injectStripe(props => {
   const { api } = useAuth0();
-  const [customer, setCustomer] = useState<Stripe.customers.ICustomer | undefined>();
-  const [fetchingState, setFetchingState] = useState<FetchingState>('progress');
+  const [customer, fetchCustomerAsync, fetchingState] = useFetchCustomerAsync();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const closeDialog = () => setIsDialogOpen(false);
   const openDialog = () => setIsDialogOpen(true);
-  const fetchCustomerAsync = useCallback(async () => {
-    setFetchingState('progress');
-    try {
-      const customerResponse = await api.getCustomerAsync();
-      setCustomer(customerResponse.customer);
-      setFetchingState('success');
-    } catch (err) {
-      console.error(err);
-      setFetchingState('failure');
-    }
-  }, [api]);
   const onSubmit = async () => {
     if (props.stripe) {
       const { token } = await props.stripe.createToken();
@@ -121,7 +93,7 @@ export const BillingCard = injectStripe(props => {
     return (
       <>
         <Box marginBottom={2} paddingY={1}>
-          <CardElement {...cardOptions} />
+          <CardInput />
         </Box>
         <Box paddingBottom={1}>
           <Button

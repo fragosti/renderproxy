@@ -11,6 +11,8 @@ export const noopAsyncThrow = <T>(): Promise<T> => {
   throw new Error('Function not implemented');
 };
 
+export const sleepAsync = (ms: number): Promise<void> => new Promise(res => setTimeout(res, ms));
+
 const validationMessages = {
   domain: (domain: string): string => `The value '${domain}' is not a valid domain.`,
   urlToProxy: (url: string): string => `The value '${url}' is not a valid URL.`,

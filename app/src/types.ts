@@ -50,3 +50,5 @@ export interface SubscriptionTierInfo {
   properties: string[];
   ctaText?: string;
 }
+
+export type FetchingState = 'progress' | 'success' | 'failure';

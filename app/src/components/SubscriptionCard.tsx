@@ -1,15 +1,13 @@
 import { Box, Divider, Paper } from '@material-ui/core';
 import * as R from 'ramda';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Stripe from 'stripe';
 
 import { subscriptionTiers } from '../constants';
+import { useFetchCustomerAsync } from '../hooks/useFetchCustomerAsync';
 import { PlanId } from '../types';
-import { useAuth0 } from '../util/Auth0';
 import { SubscriptionTier } from './SubscriptionTier';
 import { Text } from './Text';
-
-export type FetchingState = 'progress' | 'success' | 'failure';
 
 export interface SubscriptionCardProps {
   domain: string;
@@ -40,24 +38,12 @@ const getPlanId = (customer: Stripe.customers.ICustomer | undefined, domain: str
 };
 
 export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ domain }) => {
-  const { api } = useAuth0();
-  const [customer, setCustomer] = useState<Stripe.customers.ICustomer | undefined>();
-  const [fetchingState, setFetchingState] = useState<FetchingState>('progress');
-  const fetchCustomerAsync = useCallback(async () => {
-    setFetchingState('progress');
-    try {
-      const customerResponse = await api.getCustomerAsync();
-      setCustomer(customerResponse.customer);
-      setFetchingState('success');
-    } catch (err) {
-      console.error(err);
-      setFetchingState('failure');
-    }
-  }, [api]);
+  const [customer, fetchCustomerAsync] = useFetchCustomerAsync();
   useEffect(() => {
     fetchCustomerAsync();
   }, [fetchCustomerAsync]);
   const planId = getPlanId(customer, domain);
+  const requiresBillingInfo = !customer || !customer.sources;
   return (
     <Paper elevation={1}>
       <Box display="flex" justifyContent="space-between" alignItems="center" paddingY={2} paddingX={3}>
@@ -68,7 +54,14 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ domain }) =>
       <Divider />
       <Box paddingY={1} paddingX={3} display="flex" justifyContent="space-between">
         {subscriptionTiers.map(tier => (
-          <SubscriptionTier key={tier.id} domain={domain} isActive={tier.id === planId} {...tier} />
+          <SubscriptionTier
+            key={tier.name}
+            domain={domain}
+            onSubscriptionChange={fetchCustomerAsync}
+            isActive={tier.id === planId}
+            requiresBillingInfo={requiresBillingInfo}
+            {...tier}
+          />
         ))}
       </Box>
     </Paper>

@@ -24,7 +24,7 @@ export const RemoveCustomerDialog: React.FC<RemoveCustomerDialogProps> = props =
   return (
     <>
       <Dialog {...dialogProps} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">Are you sure you want to your billing information?</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Are you sure you want to remove your billing information?</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             This will automatically cancel all your paid subscriptions.
