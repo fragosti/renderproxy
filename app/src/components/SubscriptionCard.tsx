@@ -5,7 +5,7 @@ import Stripe from 'stripe';
 
 import { subscriptionTiers } from '../constants';
 import { useFetchCustomerAsync } from '../hooks/useFetchCustomerAsync';
-import { PlanId } from '../types';
+import { FetchingState, PlanId } from '../types';
 import { SubscriptionTier } from './SubscriptionTier';
 import { Text } from './Text';
 
@@ -13,11 +13,15 @@ export interface SubscriptionCardProps {
   domain: string;
 }
 
-const getPlanId = (customer: Stripe.customers.ICustomer | undefined, domain: string): PlanId | undefined => {
-  if (!customer) {
+const getPlanId = (
+  customer: Stripe.customers.ICustomer | undefined,
+  domain: string,
+  fetchingState: FetchingState,
+): PlanId | undefined => {
+  if (fetchingState !== 'success') {
     return undefined;
   }
-  if (!customer.subscriptions) {
+  if (!customer || !customer.subscriptions) {
     return PlanId.Free;
   }
   const subscriptions = customer.subscriptions.data;
@@ -38,11 +42,11 @@ const getPlanId = (customer: Stripe.customers.ICustomer | undefined, domain: str
 };
 
 export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ domain }) => {
-  const [customer, fetchCustomerAsync] = useFetchCustomerAsync();
+  const [customer, fetchCustomerAsync, fetchingState] = useFetchCustomerAsync();
   useEffect(() => {
     fetchCustomerAsync();
   }, [fetchCustomerAsync]);
-  const planId = getPlanId(customer, domain);
+  const planId = getPlanId(customer, domain, fetchingState);
   const requiresBillingInfo = !customer || !customer.sources;
   return (
     <Paper elevation={1}>
