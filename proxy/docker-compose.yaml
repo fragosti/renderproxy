@@ -8,5 +8,4 @@ services:
       - /usr/src/app/node_modules
     ports:
       - 3000:3000
-      - 443:443
     command: yarn dev
