@@ -9,3 +9,4 @@ eb-env
 .DS_STORE
 *.log
 google-cloud-key-file.json
+*.env
