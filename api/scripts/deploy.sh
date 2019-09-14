@@ -4,19 +4,12 @@
 set -e
 
 PROJECT_ID="$(gcloud config get-value project -q)"
-TIMESTAMP=$(date +%s)
+SHA=$(git rev-parse HEAD)
 
-gcloud config set compute/zone us-west1-a
-gcloud container clusters get-credentials api
-
-echo "Building image"
-docker build -t gcr.io/${PROJECT_ID}/api:${TIMESTAMP} .
-
-echo "Pushing image up to GCR"
-docker push gcr.io/${PROJECT_ID}/api:${TIMESTAMP}
+gcloud config set compute/zone us-central1-a
 
 echo "Setting image of deployment"
-kubectl set image deployment/api api=gcr.io/${PROJECT_ID}/api:${TIMESTAMP}
+kubectl set image deployment/api api=gcr.io/${PROJECT_ID}/api:${SHA}
 
 echo "Pruning images after deploy"
 docker system prune -a
