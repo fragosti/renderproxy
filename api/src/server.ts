@@ -6,11 +6,11 @@ import http from 'http';
 import https from 'https';
 import os from 'os';
 
-import { TLS_CONNECTION_PORT } from './constants';
+import { CLOUD_PROJECT_ID, TLS_CONNECTION_PORT } from './constants';
 import { logger } from './util/logger';
 
 export const createServer = (app: Application) => {
-  const port = parseInt(process.env.PORT, 10);
+  const port = 3002;
   const shouldEnableHTTPs = process.env.ENABLE_HTTPS === 'true';
   if (process.env.NODE_ENV === 'production' && shouldEnableHTTPs) {
     createGreenlockServer(app, port);
@@ -46,8 +46,8 @@ export const createNodeServer = (
 
 export const createGreenlockServer = (app: Application, port: number) => {
   const store = GCloudStoreCreate({
+    projectId: CLOUD_PROJECT_ID,
     bucketName: process.env.CLOUD_STORAGE_BUCKET_NAME,
-    projectId: process.env.CLOUD_PROJECT_ID,
     privateKey: process.env.CLOUD_PRIVATE_KEY,
     clientEmail: process.env.CLOUD_CLIENT_EMAIL,
     dbFileName: 'proxy-certs.json',
@@ -63,7 +63,7 @@ export const createGreenlockServer = (app: Application, port: number) => {
 
     approveDomains: ['api.renderproxy.com'],
 
-    email: 'agostif93@gmail.com',
+    email: 'francesco.agosti@renderproxy.com',
     agreeTos: true,
 
     store,
