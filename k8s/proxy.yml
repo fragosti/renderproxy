@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: proxy
+  template:
+    metadata:
+      labels:
+        app: proxy
+    spec: 
+      containers:
+        - image: "gcr.io/renderproxy-247016/proxy@sha256:1f523c90533fe43d4f333d249fbbf97bc1defebebda3595c3e2f4715980eaa76"
+          name: proxy
+          imagePullPolicy: Always
+          ports: 
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: app-configmap
+            - secretRef:
+                name: app-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxy
+spec:
+  type: ClusterIP
+  selector: 
+    app: proxy
+  ports:
+    - port: 3000
+      targetPort: 3000
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+  name: proxy
+spec:
+  rules:
+    - http:
+        paths:
+        - path: /
+          backend:
+            serviceName: proxy
+            servicePort: 3000
+          

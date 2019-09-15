@@ -13,16 +13,16 @@ spec:
         app: api
     spec: 
       containers:
-        - image: "gcr.io/renderproxy-247016/api:a47fe7dd37fa77bbb313b2b61c5133e2ec099825"
+        - image: "gcr.io/renderproxy-247016/api@sha256:098334d6e0b39c9575996959fca70138ae46810f6030847a0adb96608ef6ca4c"
           name: api
           imagePullPolicy: Always
           ports: 
             - containerPort: 3002
           envFrom:
             - configMapRef:
-                name: api-configmap
+                name: app-configmap
             - secretRef:
-                name: api-secrets
+                name: app-secrets
 ---
 apiVersion: v1
 kind: Service
@@ -44,7 +44,8 @@ metadata:
   name: api
 spec:
   rules:
-    - http:
+    - host: api.renderproxy.com
+      http:
         paths:
         - path: /
           backend:
