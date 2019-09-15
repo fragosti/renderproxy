@@ -6,5 +6,4 @@ data:
   NODE_ENV: development
   ENABLE_HTTPS: "true"
   LOG_LEVEL: debug
-  STRIPE_PRIVATE_KEY: sk_test_LLId5eoB62UUgQwv2nLjuYOd00Vf24on0f
   GOOGLE_APPLICATION_CREDENTIALS: "./google-cloud-key-file.json"
