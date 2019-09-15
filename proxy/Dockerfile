@@ -6,4 +6,4 @@ RUN yarn
 RUN yarn build
 EXPOSE 8080
 EXPOSE 443
-CMD [ "yarn", "start" ]
+CMD [ "node", "dist/index.js" ]

@@ -6,12 +6,12 @@ import http from 'http';
 import https from 'https';
 import os from 'os';
 
-import { TLS_CONNECTION_PORT } from './constants';
+import { CLOUD_PROJECT_ID, TLS_CONNECTION_PORT } from './constants';
 import { database } from './util/database';
 import { logger } from './util/logger';
 
 export const createServer = (app: Application) => {
-  const port = parseInt(process.env.PORT, 10);
+  const port = 3000;
   const shouldEnableHTTPs = process.env.ENABLE_HTTPS === 'true';
   if (process.env.NODE_ENV === 'production' && shouldEnableHTTPs) {
     createGreenlockServer(app, port);
@@ -49,7 +49,7 @@ const approveDomains = async (opts, certs, cb) => {
   logger.info(opts.domains);
   logger.info(certs && certs.altnames);
   // TODO: change email to final domain email once decided
-  opts.email = 'agostif93@gmail.com';
+  opts.email = 'francesco.agosti@renderproxy.com';
   opts.agreeTos = true;
   if (certs) {
     opts.domains = [certs.subject].concat(certs.altnames);
@@ -75,7 +75,7 @@ const approveDomains = async (opts, certs, cb) => {
 export const createGreenlockServer = (app: Application, port: number) => {
   const store = GCloudStoreCreate({
     bucketName: process.env.CLOUD_STORAGE_BUCKET_NAME,
-    projectId: process.env.CLOUD_PROJECT_ID,
+    projectId: CLOUD_PROJECT_ID,
     privateKey: process.env.CLOUD_PRIVATE_KEY,
     clientEmail: process.env.CLOUD_CLIENT_EMAIL,
     dbFileName: 'proxy-certs.json',
