@@ -1,0 +1,11 @@
+kind: ConfigMap 
+apiVersion: v1 
+metadata:
+  name: app-configmap 
+data:
+  NODE_ENV: production
+  ENABLE_HTTPS: "true"
+  LOG_LEVEL: debug
+  GOOGLE_APPLICATION_CREDENTIALS: ./google-cloud-key-file.json
+  CLOUD_STORAGE_BUCKET_NAME: renderproxy-certs
+  CLOUD_CLIENT_EMAIL: renderproxy@renderproxy-247016.iam.gserviceaccount.com

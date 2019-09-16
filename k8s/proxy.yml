@@ -13,7 +13,7 @@ spec:
         app: proxy
     spec: 
       containers:
-        - image: "gcr.io/renderproxy-247016/proxy@sha256:1f523c90533fe43d4f333d249fbbf97bc1defebebda3595c3e2f4715980eaa76"
+        - image: "gcr.io/renderproxy-247016/proxy@sha256:a98d77ff4a03befb60a70074ba10a0bcae5ce7db4039e591e0568c35755990a5"
           name: proxy
           imagePullPolicy: Always
           ports: 
@@ -35,19 +35,4 @@ spec:
   ports:
     - port: 3000
       targetPort: 3000
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-  name: proxy
-spec:
-  rules:
-    - http:
-        paths:
-        - path: /
-          backend:
-            serviceName: proxy
-            servicePort: 3000
           

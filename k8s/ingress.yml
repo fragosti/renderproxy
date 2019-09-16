@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    ingress.kubernetes.io/rewrite-target: /
+  name: main-ingress
+spec:
+  rules:
+    - host: api.renderproxy.com
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: api
+            servicePort: 3002
+    - http:
+        paths:
+        - path: /
+          backend:
+            serviceName: proxy
+            servicePort: 3000
+          
