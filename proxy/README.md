@@ -1,6 +1,6 @@
 # proxy
 
-Prerender Proxy
+Render Proxy
 
 Available at
 IP address: 35.193.207.37

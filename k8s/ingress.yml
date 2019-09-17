@@ -4,6 +4,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "nginx"
     ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
   name: main-ingress
 spec:
   rules:
