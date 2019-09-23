@@ -4,6 +4,6 @@ metadata:
   name: app-configmap 
 data:
   NODE_ENV: development
-  ENABLE_HTTPS: "true"
+  ENABLE_HTTPS: "false"
   LOG_LEVEL: debug
   GOOGLE_APPLICATION_CREDENTIALS: "./google-cloud-key-file.json"
