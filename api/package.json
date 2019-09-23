@@ -23,7 +23,6 @@
     "express-jwt": "^5.3.1",
     "express-validator": "^6.1.1",
     "firebase-admin": "^8.2.0",
-    "greenlock-express": "^2.7.9",
     "jwks-rsa": "^1.6.0",
     "pino": "^5.11.1",
     "stripe": "^7.6.0"
