@@ -35,3 +35,21 @@ spec:
   ports:
     - port: 3002
       targetPort: 3002
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: api-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.frontend.passHostHeader: "true"
+    traefik.frontend.priority: "2"
+spec:
+  rules:
+  - host: api.renderproxy.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: api
+          servicePort: 3002

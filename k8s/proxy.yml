@@ -35,4 +35,20 @@ spec:
   ports:
     - port: 3000
       targetPort: 3000
-          
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: main-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.frontend.passHostHeader: "true"
+    traefik.frontend.priority: "1"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: proxy
+          servicePort: 3000
