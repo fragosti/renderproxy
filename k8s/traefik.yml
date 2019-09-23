@@ -57,6 +57,19 @@ subjects:
   name: traefik-ingress-controller
   namespace: default
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: certs-claim
+  name: certs-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
 # declare Traefik deployment
 kind: Deployment
 apiVersion: extensions/v1beta1
@@ -71,15 +84,30 @@ spec:
     spec:
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
+      volumes:
+        - name: certs-claim
+          persistentVolumeClaim:
+            claimName: certs-claim
       containers:
       - name: traefik
         image: "traefik:1.7-alpine"
+        volumeMounts:
+          - mountPath: /certs
+            name: certs-claim
         args:
         - "--api"
-        - "--entrypoints=Name:http Address::80"
-        - "--defaultentrypoints=http"
+        - "--entrypoints=Name:http Address::80 Redirect.EntryPoint:https"
+        - "--entrypoints=Name:https Address::443 TLS"
+        - "--defaultentrypoints=http,https"
         - "--kubernetes"
         - "--logLevel=DEBUG"
+        - "--acme"
+        - "--acme.storage=/certs/acme.json"
+        - "--acme.entryPoint=https"
+        - "--acme.httpChallenge.entryPoint=http"
+        - "--acme.OnHostRule=false"
+        - "--acme.onDemand=true"
+        - "--acme.email=francesco.agosti@renderproxy.com"
 ---
 # Declare Traefik ingress service
 kind: Service
@@ -92,6 +120,8 @@ spec:
   ports:
     - port: 80
       name: http
+    - port: 443
+      name: https
     - port: 8080
       name: admin
   type: LoadBalancer
