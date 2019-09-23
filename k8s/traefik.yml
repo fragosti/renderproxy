@@ -57,19 +57,6 @@ subjects:
   name: traefik-ingress-controller
   namespace: default
 ---
-# define Traefik configuration
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: traefik-config
-data:
-  traefik.toml: |
-    # traefik.toml
-    defaultEntryPoints = ["http"]
-    [entryPoints]
-      [entryPoints.http]
-      address = ":80"
----
 # declare Traefik deployment
 kind: Deployment
 apiVersion: extensions/v1beta1
@@ -84,21 +71,15 @@ spec:
     spec:
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
-      volumes:
-        - name: config
-          configMap:
-            name: traefik-config
       containers:
       - name: traefik
         image: "traefik:1.7-alpine"
-        volumeMounts:
-          - mountPath: "/etc/traefik/config"
-            name: config
         args:
-        - --configfile=/etc/traefik/config/traefik.toml
-        - --api
-        - --kubernetes
-        - --logLevel=DEBUG
+        - "--api"
+        - "--entrypoints=Name:http Address::80"
+        - "--defaultentrypoints=http"
+        - "--kubernetes"
+        - "--logLevel=DEBUG"
 ---
 # Declare Traefik ingress service
 kind: Service
