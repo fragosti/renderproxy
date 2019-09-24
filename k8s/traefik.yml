@@ -122,6 +122,4 @@ spec:
       name: http
     - port: 443
       name: https
-    - port: 8080
-      name: admin
   type: LoadBalancer

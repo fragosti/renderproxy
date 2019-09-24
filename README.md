@@ -18,3 +18,12 @@ gcloud auth configure-docker
 gcloud config set project [PROJECT_ID]
 gcloud config set compute/zone us-central1-b
 ```
+
+# Traefik
+
+The traefik dashboard is available at `traefik.renderproxy.com`. When creating a new cluster, you will need to configure kubernetes with the `traefik-dashboard-secret`.
+
+```
+$ htpasswd -c traefik <username>
+$ kubectl create secret generic traefik-dashboard-secret --from-file traefik
+```
