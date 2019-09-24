@@ -45,10 +45,14 @@ const matchURL = (str: string) => str.match(/^(?:http(s)?:\/\/)[\w.-]+(?:\.[\w.-
 export const correctedURL = (url: string): string | null => {
   let match = matchURL(url);
   if (match) {
-    return R.head(match);
+    const potentialUrl = R.head(match);
+    if (R.last(potentialUrl) !== '/') {
+      return `${potentialUrl}/`;
+    }
+    return potentialUrl;
   }
   // Assume they forgot the protocol and try again.
-  match = matchURL(`http://${url}`);
+  match = matchURL(`http://${url}/`);
   if (match) {
     return R.head(match);
   }
