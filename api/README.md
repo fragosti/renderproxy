@@ -2,12 +2,11 @@
 
 Render Proxy API
 
-Available at
-IP address: 35.185.238.72
+Available at api.renderproxy.com
 
 ## Config Requirements
 
-- Define a `prod.env` and `dev.env` file.
+- Define a `dev.env` file for development.
 - Get a `google-cloud-key-file.json` auth file for the Google cloud project.
 
 ## Quick Start
@@ -51,15 +50,6 @@ or debug it
 yarn run dev:debug
 ```
 
-#### Run in _production_ mode:
-
-Compiles the application and starts it in production production mode.
-
-```shell
-yarn run build
-yarn start
-```
-
 ## Test It
 
 Run the Mocha unit tests
@@ -90,4 +80,4 @@ yarn run test:debug
 
 #### Deploy
 
-You can deploy using `./scripts/deploy.sh` assuming you have set up google cloud and kubectl as described [here](../README.md).
+You can build and push the image to GCR using `./scripts/build_and_push.sh` assuming you have set up google cloud and kubectl as described [here](../README.md).
