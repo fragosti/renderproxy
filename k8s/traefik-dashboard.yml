@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-ingress-controller-dashboard
+spec:
+  type: ClusterIP
+  selector:
+    app: traefik-ingress-controller
+  ports:
+    - port: 3005
+      targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: traefik-ingress-controller-dashboard
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.frontend.priority: "2"
+    ingress.kubernetes.io/auth-type: "basic"
+    ingress.kubernetes.io/auth-secret: "traefik-dashboard-secret"
+spec:
+  rules:
+  - host: traefik.renderproxy.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: traefik-ingress-controller-dashboard
+          servicePort: 3005
