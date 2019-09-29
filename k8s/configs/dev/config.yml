@@ -7,3 +7,4 @@ data:
   ENABLE_HTTPS: "false"
   LOG_LEVEL: debug
   GOOGLE_APPLICATION_CREDENTIALS: "./google-cloud-key-file.json"
+  RENDERTRON_URL: http://rendertron

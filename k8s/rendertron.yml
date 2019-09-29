@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rendertron
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rendertron
+  template:
+    metadata:
+      labels:
+        app: rendertron
+    spec: 
+      containers:
+        - image: "gcr.io/renderproxy-247016/rendertron@sha256:d35c9cc95b2536026fe541a48d5cbe78939ea3ad9d11c0faaf7c25ff44392118"
+          name: rendertron
+          imagePullPolicy: Always
+          ports: 
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: app-configmap
+            - secretRef:
+                name: app-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rendertron
+spec:
+  type: ClusterIP
+  selector: 
+    app: rendertron
+  ports:
+    - port: 80
+      targetPort: 80
