@@ -13,7 +13,9 @@ export const handler = {
   handlePrerenderedRequest: async (proxySettings: ProxySettings, req: Request, res: Response): Promise<void> => {
     // TODO: Remove base= html tag from rendertron response.
     const urlToProxy = url.getUrlToProxyTo(req, proxySettings);
+    const fullUrl = url.fullFromRequest(req);
     try {
+      logger.info(`Rendering request for ${fullUrl} content with rendertron render ${urlToProxy}`);
       const response = await rendertron.render(urlToProxy);
       res.send(response);
     } catch (err) {
@@ -26,11 +28,12 @@ export const handler = {
     const { urlToProxy: proxyToUrl, shouldRedirectIfPossible } = proxySettings;
     const urlToProxy = url.getUrlToProxyTo(req, proxySettings);
     const fileType = url.getFileType(req);
+    const fullUrl = url.fullFromRequest(req);
     if (shouldRedirectIfPossible && req.protocol === 'https' && fileType && requestTypesToRedirect.has(fileType)) {
       logger.info(`Redirecting to ${urlToProxy}`);
       return res.redirect(urlToProxy);
     }
-    logger.info(`Proxying request for ${req.url} content from ${proxyToUrl}`);
+    logger.info(`Proxying request for ${fullUrl} content from ${urlToProxy}`);
     const { host, ...restHeaders } = req.headers;
     req.pipe(request({ qs: req.query, uri: urlToProxy, headers: restHeaders })).pipe(res);
   },
