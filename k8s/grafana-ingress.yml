@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.frontend.passHostHeader: "true"
+    traefik.frontend.priority: "2"
+spec:
+  rules:
+  - host: grafana.renderproxy.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus-grafana
+          servicePort: 80
