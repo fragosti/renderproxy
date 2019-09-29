@@ -25,7 +25,7 @@ export const handler = {
     }
   },
   handleRegularRequest: async (proxySettings: ProxySettings, req: Request, res: Response): Promise<void> => {
-    const { urlToProxy: proxyToUrl, shouldRedirectIfPossible } = proxySettings;
+    const { shouldRedirectIfPossible } = proxySettings;
     const urlToProxy = url.getUrlToProxyTo(req, proxySettings);
     const fileType = url.getFileType(req);
     const fullUrl = url.fullFromRequest(req);
