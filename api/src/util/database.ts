@@ -11,11 +11,11 @@ const userCollection = db.collection('users');
 
 export const database = {
   getProxySettingsAsync: async (domain: string): Promise<ProxySettings | undefined> => {
-    const settingsDoc = await proxySettingsCollection.doc(domain).get();
-    if (!settingsDoc.exists) {
+    const settingsDocSnap = await proxySettingsCollection.doc(domain).get();
+    if (!settingsDocSnap.exists) {
       return undefined;
     }
-    return settingsDoc.data() as ProxySettings;
+    return settingsDocSnap.data() as ProxySettings;
   },
   deleteProxySettingsForUser: async (userId: string, domain: string): Promise<void> => {
     const proxySettingsDoc = proxySettingsCollection.doc(domain);
