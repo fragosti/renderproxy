@@ -45,7 +45,7 @@ export const handler = {
     database.trackUsageAsync(domain);
     try {
       const proxySettings = await database.getProxySettingsAsync(domain);
-      if (isRequestFromBot) {
+      if (proxySettings.prerenderSetting === 'all' || (proxySettings.prerenderSetting === 'bot' && isRequestFromBot)) {
         return handler.handlePrerenderedRequest(proxySettings, req, res);
       }
       return handler.handleRegularRequest(proxySettings, req, res);
