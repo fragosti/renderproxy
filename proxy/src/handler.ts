@@ -38,7 +38,6 @@ export const handler = {
     req.pipe(request({ qs: req.query, uri: urlToProxy, headers: restHeaders })).pipe(res);
   },
   root: async (req: Request, res: Response): Promise<void> => {
-    const fullUrl = url.fullFromRequest(req);
     const isRequestFromBot = isBot(req.get('user-agent'));
     const domain = req.get('host');
     database.trackUsageAsync(domain);
@@ -55,12 +54,3 @@ export const handler = {
     }
   },
 };
-
-process.on('uncaughtException', (err) => {
-  logger.error(err);
-  process.exit(1);
-});
-process.on('unhandledRejection', (err) => {
-  logger.error(err);
-  process.exit(1);
-});

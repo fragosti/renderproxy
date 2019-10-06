@@ -1,6 +1,5 @@
 import express from 'express';
 import { Application } from 'express';
-import path from 'path';
 
 import { handler } from './handler';
 
