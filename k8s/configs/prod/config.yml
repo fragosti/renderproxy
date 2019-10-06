@@ -8,4 +8,4 @@ data:
   LOG_LEVEL: debug
   GOOGLE_APPLICATION_CREDENTIALS: ./google-cloud-key-file.json
   RENDERTRON_URL: http://rendertron
-  REDIS_URL: http://redis
+  REDIS_HOST: redis

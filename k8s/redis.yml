@@ -29,7 +29,7 @@ spec:
             claimName: redis-persistent-volume-claim
       containers:
         - name: redis
-          image: redislabs/rejson
+          image: redis
           imagePullPolicy: Always
           args: ["--appendonly", "yes", "--save", "900", "1", "--save", "30", "2"]
           ports:

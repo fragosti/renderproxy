@@ -1,9 +1,9 @@
 # redis
 
-Renderproxy uses [redisjson](https://oss.redislabs.com/redisjson/) under the hood for caching and telemetry.
+Renderproxy uses [redis](https://hub.docker.com/_/redis?tab=tags) under the hood for caching and usage tracking.
 
 To run it locally run:
 
 ```
-docker run -p 6379:6379 --name redis-redisjson redislabs/rejson:latest
-```
+docker run -p 6379:6379 --name redis redis:latest
+``` 
