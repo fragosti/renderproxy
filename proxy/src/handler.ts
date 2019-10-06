@@ -30,7 +30,7 @@ export const handler = {
     const fileType = url.getFileType(req);
     const fullUrl = url.fullFromRequest(req);
     if (shouldRedirectIfPossible && req.protocol === 'https' && fileType && requestTypesToRedirect.has(fileType)) {
-      logger.info(`Redirecting to ${urlToProxy}`);
+      logger.info(`Redirecting ${fullUrl} to ${urlToProxy}`);
       return res.redirect(urlToProxy);
     }
     logger.info(`Proxying request for ${fullUrl} content from ${urlToProxy}`);
@@ -40,7 +40,6 @@ export const handler = {
   root: async (req: Request, res: Response): Promise<void> => {
     const fullUrl = url.fullFromRequest(req);
     const isRequestFromBot = isBot(req.get('user-agent'));
-    logger.info(`Handling request for ${fullUrl}. Is bot: ${isRequestFromBot}`);
     const domain = req.get('host');
     database.trackUsageAsync(domain);
     try {
