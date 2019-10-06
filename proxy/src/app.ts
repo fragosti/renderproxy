@@ -6,9 +6,7 @@ import { handler } from './handler';
 
 const createApp = (): Application => {
   const application = express();
-  const root = path.normalize(__dirname + '/../..');
-  application.set('appPath', root + 'client');
-  application.get('/*', handler.root);
+  application.all('*', handler.root);
   return application;
 };
 
