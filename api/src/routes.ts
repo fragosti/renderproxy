@@ -20,10 +20,11 @@ export const apply = (app: Application) => {
       checkJwt,
       check('domain').exists(),
       check('urlToProxy').exists(),
+      check('prerenderSetting').exists(),
     ],
     async (req: AuthorizedRequest, res: Response): Promise<void> => {
       const userId = req.user.sub;
-      const { domain, urlToProxy } = req.body;
+      const { domain, urlToProxy, prerenderSetting } = req.body;
       const existingProxySettings = await database.getProxySettingsAsync(domain);
       if (existingProxySettings && existingProxySettings.userId !== userId) {
         logger.info(`${userId} failed adding ${domain}. It belongs to ${existingProxySettings.userId}`);
@@ -35,7 +36,7 @@ export const apply = (app: Application) => {
         domain,
         urlToProxy,
         shouldRedirectIfPossible: true,
-        prerenderSetting: 'none',
+        prerenderSetting,
         userId,
       };
       try {
