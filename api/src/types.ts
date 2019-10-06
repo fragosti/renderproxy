@@ -18,3 +18,7 @@ export interface DatabaseUser {
   customerId?: string;
   hasBillingInfo?: boolean;
 }
+
+export interface ObjectMap<T> {
+  [key: string]: T | undefined;
+}

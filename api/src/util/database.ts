@@ -1,8 +1,11 @@
 import { FieldValue, Firestore } from '@google-cloud/firestore';
 import { firestore } from 'firebase-admin';
+import moment from 'moment';
+import * as R from 'ramda';
 
-import { DatabaseUser, ProxySettings } from '../types';
+import { DatabaseUser, ObjectMap, ProxySettings } from '../types';
 import { logger } from './logger';
+import { redis } from './redis';
 
 const db = new Firestore();
 
@@ -103,5 +106,14 @@ export const database = {
       await userDoc.set(newUser);
       return newUser;
     }
+  },
+  getUsage: async (domain: string, days: number = 30): Promise<ObjectMap<number>> => {
+    const dates = R.range(0, days).map((daysAgo) => moment().subtract(daysAgo, 'days').format('YYYY-MM-DD'));
+    const redisUsageKeys = dates.map((date) => `${domain}_${date}`);
+    const usage = await redis.mgetAsync(redisUsageKeys);
+    return dates.reduce((acc, val, index) => {
+      acc[val] = parseInt(usage[index], 10) || 0;
+      return acc;
+    }, {});
   },
 };

@@ -202,4 +202,16 @@ export const apply = (app: Application) => {
         res.status(500).json({ type: 'subscribe_user_failure', message: err});
       }
     });
+  app.get('/usage/:domain', async (req: Request, res: Response): Promise<void> => {
+      const { domain } = req.params;
+      const { days } = req.query;
+      try {
+        const numberDays = days && parseInt(days, 10);
+        const usage = await database.getUsage(domain, numberDays);
+        res.status(200).json(usage);
+      } catch (err) {
+        logger.error(`Could not get usage for ${domain}: ${err}`);
+        res.status(500).json({ type: 'get_usage_error '});
+      }
+    });
 };

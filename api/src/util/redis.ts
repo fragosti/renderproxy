@@ -6,5 +6,6 @@ const redisClient = createClient({
 });
 
 export const redis = {
-  incrAsync: promisify(redisClient.incr).bind(redisClient),
+  getAsync: promisify(redisClient.get).bind(redisClient),
+  mgetAsync: promisify(redisClient.mget).bind(redisClient),
 };
