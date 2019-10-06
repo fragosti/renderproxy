@@ -42,8 +42,9 @@ export const handler = {
     const isRequestFromBot = isBot(req.get('user-agent'));
     logger.info(`Handling request for ${fullUrl}. Is bot: ${isRequestFromBot}`);
     const domain = req.get('host');
+    database.trackUsageAsync(domain);
     try {
-      const proxySettings = await database.getItemAsync(domain);
+      const proxySettings = await database.getProxySettingsAsync(domain);
       if (isRequestFromBot) {
         return handler.handlePrerenderedRequest(proxySettings, req, res);
       }
