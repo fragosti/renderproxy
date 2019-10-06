@@ -49,7 +49,6 @@ export class DatastoreCache {
     // TODO(samli): check info (data[1]) and loop through pages of entities to
     // delete.
   }
-
   async cacheContent(key: DatastoreKey, headers: {}, payload: Buffer) {
     const cacheDurationMinutes = 60 * 24;
     const now = new Date();
