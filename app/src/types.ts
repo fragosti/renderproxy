@@ -37,9 +37,9 @@ export interface StripeCard {
 }
 
 export enum PlanId {
-  Free = 'free',
-  Starter = 'starter',
-  Pro = 'pro',
+  Spark = 'spark',
+  Flame = 'flame',
+  Fire = 'fire',
   Metered = 'metered',
 }
 

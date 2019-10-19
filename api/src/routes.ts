@@ -166,7 +166,7 @@ export const apply = (app: Application) => {
         if (user.customerId && user.hasBillingInfo) {
           const proxySettings = await database.getProxySettingsAsync(domain);
           if (proxySettings.subscriptionId) {
-            if (planId === 'free') {
+            if (planId === 'spark') {
               await stripe.subscriptions.del(proxySettings.subscriptionId);
               await database.removeSubscriptionIdFromDomain(domain);
             } else {
