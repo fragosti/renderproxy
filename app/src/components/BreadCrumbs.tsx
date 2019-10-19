@@ -19,10 +19,6 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface Params {
-  domain: string;
-}
-
 export interface BreadCrumb {
   text: string;
   Icon: React.ComponentType<any>;

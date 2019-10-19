@@ -11,7 +11,8 @@ import {
   Snackbar,
   TextField,
 } from '@material-ui/core';
-import { Delete as DeleteIcon, Done as DoneIcon } from '@material-ui/icons';
+import { makeStyles } from '@material-ui/core/styles';
+import { Delete as DeleteIcon, Done as DoneIcon, Info as InfoIcon } from '@material-ui/icons';
 import * as R from 'ramda';
 import React, { useState } from 'react';
 
@@ -63,9 +64,9 @@ export const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
                 onChange={createOnChange('prerenderSetting')}
                 input={<OutlinedInput labelWidth={75} name="prerender-setting" id="prerender-setting" />}
               >
-                <MenuItem value="none">Never</MenuItem>
-                <MenuItem value="all">Always</MenuItem>
-                <MenuItem value="bot">Bot Only</MenuItem>
+                <MenuItem value="none">No Requests</MenuItem>
+                <MenuItem value="all">All Requests</MenuItem>
+                <MenuItem value="bot">Bot Requests</MenuItem>
               </Select>
             </FormControl>
           </Box>
