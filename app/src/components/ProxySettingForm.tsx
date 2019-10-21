@@ -1,8 +1,10 @@
 import {
   Box,
   Button,
+  Checkbox,
   Divider,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   OutlinedInput,
@@ -11,8 +13,7 @@ import {
   Snackbar,
   TextField,
 } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { Delete as DeleteIcon, Done as DoneIcon, Info as InfoIcon } from '@material-ui/icons';
+import { Delete as DeleteIcon, Done as DoneIcon } from '@material-ui/icons';
 import * as R from 'ramda';
 import React, { useState } from 'react';
 
@@ -29,14 +30,13 @@ export interface ProxySettingsFormProps extends ProxySettings {
 export const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
   const { onDeleteClick, ...proxySettings } = props;
   const [newSettings, setNewSettings] = useState(R.clone(proxySettings));
-  const areSettingsEqual = R.equals(proxySettings, newSettings);
   const [persistProxySettings, isLoading, message, resetMessage] = usePersistProxySettings();
   const [validateProxySettings, validations, resetValidations] = useValidateProxySettings();
-  const createOnChange = (propertyName: string) => (event: React.ChangeEvent<any>) => {
+  const createOnChange = (propertyName: string, isBoolean = false) => (event: React.ChangeEvent<any>) => {
     resetValidations();
     const settings = {
       ...newSettings,
-      [propertyName]: event.target.value,
+      [propertyName]: !isBoolean ? event.target.value : event.target.checked,
     };
     setNewSettings(settings);
   };
@@ -84,13 +84,26 @@ export const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
               inputProps={{ style: { backgroundColor: 'white' } }}
             />
           </Box>
+          <Box marginY={3}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={newSettings.shouldReplaceURLs}
+                onChange={createOnChange('shouldReplaceURLs', true)}
+                value={newSettings.shouldReplaceURLs}
+                color="primary"
+              />
+            }
+            label={<span>Replace <i>{newSettings.urlToProxy} </i> with <i>https://{newSettings.domain}/</i> in HTML.</span>}
+          />
+          </Box>
           <Box marginTop={3} marginBottom={1} display="flex">
             <Box marginRight={1}>
               <Button
                 variant="contained"
                 color="primary"
                 style={{ color: 'white' }}
-                disabled={areSettingsEqual || !R.isEmpty(validations) || isLoading}
+                disabled={!R.isEmpty(validations) || isLoading}
                 onClick={onSaveClick}
               >
                 {isLoading ? 'Saving...' : 'Save'}

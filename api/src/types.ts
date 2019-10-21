@@ -7,6 +7,7 @@ export interface ProxySettings {
   prerenderSetting: PrerenderSetting;
   userId: string;
   subscriptionId?: string;
+  shouldReplaceURLs: boolean;
 }
 
 export interface AuthorizedUser {

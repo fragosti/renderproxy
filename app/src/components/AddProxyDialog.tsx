@@ -35,6 +35,7 @@ export const AddProxyDialog: React.FC<AddProxyDialogProps> = props => {
       urlToProxy: '',
       shouldRedirectIfPossible: false,
       prerenderSetting: 'none',
+      shouldReplaceURLs: false,
     });
     if (proxySettings) {
       persistProxySettings(proxySettings);
