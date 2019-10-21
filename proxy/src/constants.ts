@@ -5,6 +5,8 @@ export const requestTypesToRedirect = new Set([
   'css',
   'gif',
   'tiff',
+  'js',
+  'ico',
   'svg',
   'png',
   'pdf',

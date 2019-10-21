@@ -12,4 +12,8 @@ export const url = {
   getUrlToProxyTo: (req: Request, proxySettings: ProxySettings) => {
     return `${proxySettings.urlToProxy}${req.url.slice(1)}`;
   },
+  isHtmlRequest: (req: Request) => {
+    const fileType = url.getFileType(req);
+    return fileType === undefined || fileType === 'html';
+  },
 };

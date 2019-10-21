@@ -37,7 +37,7 @@
     "@types/pino": "^5.8.5",
     "@types/redis": "^2.8.14",
     "@types/request": "^2.48.1",
-    "@types/request-promise": "^4.1.43",
+    "@types/request-promise": "^4.1.44",
     "chai": "^4.2.0",
     "mocha": "^6.0.2",
     "nodemon": "^1.18.10",

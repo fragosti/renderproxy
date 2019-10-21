@@ -29,13 +29,28 @@ export const handler = {
     const urlToProxy = url.getUrlToProxyTo(req, proxySettings);
     const fileType = url.getFileType(req);
     const fullUrl = url.fullFromRequest(req);
-    if (shouldRedirectIfPossible && req.protocol === 'https' && fileType && requestTypesToRedirect.has(fileType)) {
+    const isHtmlRequest = url.isHtmlRequest(req);
+    const { host, ...restHeaders } = req.headers;
+    const originRequestParams = {
+      method: req.method,
+      qs: req.query,
+      uri: urlToProxy,
+      headers: restHeaders,
+      body: req.body,
+    };
+    if (
+      !isHtmlRequest &&
+      shouldRedirectIfPossible &&
+      req.protocol === 'https' &&
+      requestTypesToRedirect.has(fileType)
+    ) {
       logger.info(`Redirecting ${fullUrl} to ${urlToProxy}`);
       return res.redirect(urlToProxy);
     }
     logger.info(`Proxying request for ${fullUrl} content from ${urlToProxy}`);
-    const { host, ...restHeaders } = req.headers;
-    req.pipe(request({ qs: req.query, uri: urlToProxy, headers: restHeaders })).pipe(res);
+    req.pipe(
+      request(originRequestParams),
+    ).pipe(res);
   },
   root: async (req: Request, res: Response): Promise<void> => {
     const isRequestFromBot = isBot(req.get('user-agent'));
@@ -43,7 +58,12 @@ export const handler = {
     database.trackUsageAsync(domain);
     try {
       const proxySettings = await database.getProxySettingsAsync(domain);
-      if (proxySettings.prerenderSetting === 'all' || (proxySettings.prerenderSetting === 'bot' && isRequestFromBot)) {
+      const isHtmlRequest = url.isHtmlRequest(req);
+      if (
+        isHtmlRequest &&
+        proxySettings.prerenderSetting === 'all' ||
+        (proxySettings.prerenderSetting === 'bot' && isRequestFromBot)
+      ) {
         return handler.handlePrerenderedRequest(proxySettings, req, res);
       }
       return handler.handleRegularRequest(proxySettings, req, res);
