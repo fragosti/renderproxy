@@ -3,10 +3,11 @@ import { Home as HomeIcon, Settings as SettingsIcon } from '@material-ui/icons';
 import React, { useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import { BreadCrumbs } from '../components/BreadCrumbs';
-import { DeleteProxyDialog } from '../components/DeleteProxyDialog';
-import { ProxySettingForm } from '../components/ProxySettingForm';
-import { SubscriptionCard } from '../components/SubscriptionCard';
+import { BreadCrumbs } from './BreadCrumbs';
+import { DeleteProxyDialog } from './DeleteProxyDialog';
+import { ProxySettingForm } from './ProxySettingForm';
+import { SubscriptionCard } from './SubscriptionCard';
+import { UsageCard } from './UsageCard';
 import { HOMEPAGE_TITLE } from '../constants';
 import { useProxySettingsForDomain } from '../hooks/useProxySettingsForDomain';
 import { Link } from './Link';
@@ -53,6 +54,9 @@ export const EditProxySettings: React.FC<EditProxySettingsProps> = props => {
           <SubscriptionCard domain={domain} />
         </Box>
         <Box marginY={3}>{proxySettings && <ProxySettingForm onDeleteClick={openDialog} {...proxySettings} />}</Box>
+        <Box marginY={3}>
+          <UsageCard domain={domain} />
+        </Box>
       </Container>
       <DeleteProxyDialog
         domain={domain}

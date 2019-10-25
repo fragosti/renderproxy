@@ -1,10 +1,11 @@
 import { API_ENDPOINT } from '../constants';
-import { GetCustomerResponse, PlanId, ProxySettings } from '../types';
+import { GetCustomerResponse, PlanId, ProxySettings, UsageData } from '../types';
 
 export const APIPaths = {
   proxySettings: 'proxy_settings',
   customer: 'customer',
   subscribe: 'subscribe',
+  usage: 'usage',
 };
 
 export class API {
@@ -62,6 +63,14 @@ export class API {
       planId,
       domain,
     });
+  }
+
+  public async getUsageAsync(domain: string): Promise<UsageData> {
+    const resp = await this._fetchAsync(`${APIPaths.usage}/${domain}`, 'GET');
+    if (resp.ok) {
+      return resp.json();
+    }
+    throw new Error('Failed to get usage');
   }
 
   private async _fetchAsync(path: string, method: 'POST' | 'GET' | 'DELETE', body?: any): Promise<Response> {

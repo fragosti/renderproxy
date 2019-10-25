@@ -52,3 +52,5 @@ export interface SubscriptionTierInfo {
 }
 
 export type FetchingState = 'progress' | 'success' | 'failure';
+
+export type UsageData = ObjectMap<number>;

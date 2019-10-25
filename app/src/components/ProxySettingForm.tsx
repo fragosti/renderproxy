@@ -11,8 +11,7 @@ import {
   Snackbar,
   TextField,
 } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { Delete as DeleteIcon, Done as DoneIcon, Info as InfoIcon } from '@material-ui/icons';
+import { Delete as DeleteIcon, Done as DoneIcon } from '@material-ui/icons';
 import * as R from 'ramda';
 import React, { useState } from 'react';
 

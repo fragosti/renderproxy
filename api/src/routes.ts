@@ -194,6 +194,7 @@ export const apply = (app: Application) => {
             });
             await database.addSubscriptionIdToDomain(domain, subscription.id);
           }
+          logger.info(`Successfully subscribed ${userId} to ${planId}`);
           res.status(200).json({ type: 'subscribe_customer_success' });
         } else {
           throw new Error(`User ${userId} does not have billing information.`);
@@ -209,6 +210,7 @@ export const apply = (app: Application) => {
       try {
         const numberDays = days && parseInt(days, 10);
         const usage = await database.getUsage(domain, numberDays);
+        logger.info(`Successfully got usage for ${domain} over ${numberDays} days`);
         res.status(200).json(usage);
       } catch (err) {
         logger.error(`Could not get usage for ${domain}: ${err}`);
