@@ -53,4 +53,8 @@ export interface SubscriptionTierInfo {
 
 export type FetchingState = 'progress' | 'success' | 'failure';
 
-export type UsageData = ObjectMap<number>;
+export interface UsageData {
+  dailyUsage: ObjectMap<number>;
+  monthlyUsage: ObjectMap<number>;
+  totalUsage: number;
+}

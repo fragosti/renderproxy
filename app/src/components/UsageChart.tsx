@@ -1,22 +1,21 @@
 import moment from 'moment';
 import { TimeSeries } from 'pondjs';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { BarChart, ChartContainer, ChartRow, Charts, Resizable, YAxis } from 'react-timeseries-charts';
 
 import { UsageData } from '../types';
-import { useAuth0 } from '../util/Auth0';
 
 export interface UsageChartProps {
-  domain: string;
+  usageData: UsageData;
 }
 
-const createTimeSeries = (usageData: UsageData): any => {
+const createTimeSeries = ({ dailyUsage }: UsageData): any => {
   return new TimeSeries({
     name: '30 Day Usage',
     utc: false,
     columns: ['index', 'requests'],
-    points: Object.keys(usageData)
-      .map(dateString => [dateString, usageData[dateString]])
+    points: Object.keys(dailyUsage)
+      .map(dateString => [dateString, dailyUsage[dateString]])
       .reverse(),
   });
 };
@@ -31,23 +30,10 @@ const style = {
 };
 
 export const UsageChart: React.FC<UsageChartProps> = props => {
-  const { api } = useAuth0();
-  const [timeSeries, setTimeSeries] = useState();
+  const timeSeries = createTimeSeries(props.usageData);
   const [selection, setSelection] = useState();
   const [highlight, setHighlight] = useState();
-  const [timeRange, setTimeRange] = useState();
-  useEffect(() => {
-    const getUsageData = async () => {
-      const data = await api.getUsageAsync(props.domain);
-      const series = createTimeSeries(data);
-      setTimeRange(series.range());
-      setTimeSeries(series);
-    };
-    getUsageData();
-  }, []);
-  if (!timeSeries) {
-    return null;
-  }
+  const [timeRange, setTimeRange] = useState(timeSeries.range());
   const max = timeSeries.max('requests');
   let infoValues: any = [];
   if (highlight) {
