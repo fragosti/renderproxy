@@ -207,25 +207,23 @@ export const apply = (app: Application) => {
     });
   app.get('/usage/:domain', async (req: Request, res: Response): Promise<void> => {
       const { domain } = req.params;
-      const { days, sum } = req.query;
+      const { days } = req.query;
       try {
         const numberDays = days && parseInt(days, 10);
-        const usage = await database.getUsage(domain, numberDays);
-        logger.info(`Successfully got ${sum} usage for ${domain} over ${numberDays} days`);
-        let response = usage;
-        if (sum === 'total') {
-          response = {
-            total: R.sum(Object.values(usage)),
-          };
-        }
-        if (sum === 'monthly') {
-          response = Object.keys(usage).reduce((acc, val) => {
-            const month = val.split('-').slice(0, 2).join('-');
-            const dayRequests = usage[val];
-            acc[month] = acc[month] ? acc[month] + dayRequests : dayRequests;
-            return acc;
-          }, {});
-        }
+        const dailyUsage = await database.getUsage(domain, numberDays);
+        const totalUsage = R.sum(Object.values(dailyUsage));
+        const monthlyUsage = Object.keys(dailyUsage).reduce((acc, val) => {
+          const month = val.split('-').slice(0, 2).join('-');
+          const dayRequests = dailyUsage[val];
+          acc[month] = acc[month] ? acc[month] + dayRequests : dayRequests;
+          return acc;
+        }, {});
+        const response = {
+          dailyUsage,
+          monthlyUsage,
+          totalUsage,
+        };
+        logger.info(`Successfully got usage for ${domain} over ${numberDays} days`);
         res.status(200).json(response);
       } catch (err) {
         logger.error(`Could not get usage for ${domain}: ${err}`);
