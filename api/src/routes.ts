@@ -1,5 +1,6 @@
 import { Application, Request, Response } from 'express';
 import { check } from 'express-validator';
+import * as R from 'ramda';
 
 import { checkJwt } from './middleware/jwt';
 import { AuthorizedUser, ProxySettings } from './types';
@@ -206,12 +207,26 @@ export const apply = (app: Application) => {
     });
   app.get('/usage/:domain', async (req: Request, res: Response): Promise<void> => {
       const { domain } = req.params;
-      const { days } = req.query;
+      const { days, sum } = req.query;
       try {
         const numberDays = days && parseInt(days, 10);
         const usage = await database.getUsage(domain, numberDays);
-        logger.info(`Successfully got usage for ${domain} over ${numberDays} days`);
-        res.status(200).json(usage);
+        logger.info(`Successfully got ${sum} usage for ${domain} over ${numberDays} days`);
+        let response = usage;
+        if (sum === 'total') {
+          response = {
+            total: R.sum(Object.values(usage)),
+          };
+        }
+        if (sum === 'monthly') {
+          response = Object.keys(usage).reduce((acc, val) => {
+            const month = val.split('-').slice(0, 2).join('-');
+            const dayRequests = usage[val];
+            acc[month] = acc[month] ? acc[month] + dayRequests : dayRequests;
+            return acc;
+          }, {});
+        }
+        res.status(200).json(response);
       } catch (err) {
         logger.error(`Could not get usage for ${domain}: ${err}`);
         res.status(500).json({ type: 'get_usage_error '});
