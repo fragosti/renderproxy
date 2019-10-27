@@ -41,6 +41,7 @@ export const subscriptionTiers: SubscriptionTierInfo[] = [
     price: 'Contact Us',
     properties: ['Unlimited requests / month', 'Free TLS certiciates', 'Unlimited pages'],
     ctaText: 'Contact',
+    ctaHref: 'mailto:hello@renderproxy.com',
   },
 ];
 

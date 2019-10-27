@@ -49,6 +49,7 @@ export interface SubscriptionTierInfo {
   price: string;
   properties: string[];
   ctaText?: string;
+  ctaHref?: string;
 }
 
 export type FetchingState = 'progress' | 'success' | 'failure';

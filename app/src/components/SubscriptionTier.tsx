@@ -7,6 +7,7 @@ import { SubscriptionDialog } from './SubscriptionDialog';
 import { Text } from './Text';
 
 import { SubscriptionTierInfo } from '../types';
+import { noop } from '../util/util';
 
 export interface SubscriptionTierProps extends SubscriptionTierInfo {
   domain: string;
@@ -22,6 +23,7 @@ export const SubscriptionTier: React.FC<SubscriptionTierProps> = ({
   price,
   properties,
   ctaText,
+  ctaHref,
   isActive,
   onSubscriptionChange,
   requiresBillingInfo,
@@ -54,7 +56,7 @@ export const SubscriptionTier: React.FC<SubscriptionTierProps> = ({
         </CardContent>
         {ctaText && !isActive && (
           <CardActions>
-            <Button color="primary" onClick={openDialog}>
+            <Button color="primary" onClick={ctaHref ? noop : openDialog} href={ctaHref}>
               {ctaText}
             </Button>
           </CardActions>
