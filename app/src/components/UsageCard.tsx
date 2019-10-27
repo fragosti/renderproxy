@@ -21,7 +21,7 @@ export const UsageCard: React.FC<UsageCardProps> = props => {
       setUsageData(data);
     };
     getUsageData();
-  }, []);
+  }, [api, props.domain]);
   return (
     <Paper elevation={1}>
       <Box display="flex" justifyContent="space-between" alignItems="center" paddingY={2} paddingX={3}>
