@@ -46,6 +46,7 @@ export const database = {
       });
     }
     await batch.commit();
+    redis.setAsync(`${domain}_proxy-settings`, JSON.stringify(settings));
   },
   getProxySettingsForUser: async (userId: string): Promise<ProxySettings[]> => {
     const userDocSnap = await userCollection.doc(userId).get();

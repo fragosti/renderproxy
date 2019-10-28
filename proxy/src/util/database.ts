@@ -11,11 +11,18 @@ const proxySettingsCollection = db.collection('proxySettings');
 
 export const database = {
   getProxySettingsAsync: async (domain: string): Promise<ProxySettings> => {
-    const settingsDocSnap = await proxySettingsCollection.doc(domain).get();
-    if (!settingsDocSnap.exists) {
-      throw new Error(`Fetching ProxySetting for ${domain}`);
+    const settingsKey = `${domain}_proxy-settings`;
+    const cachedSettings = await redis.getAsync(settingsKey);
+    if (!cachedSettings) {
+      const settingsDocSnap = await proxySettingsCollection.doc(domain).get();
+      if (!settingsDocSnap.exists) {
+        throw new Error(`Fetching ProxySetting for ${domain}`);
+      }
+      const proxySettings = settingsDocSnap.data() as ProxySettings;
+      redis.setAsync(settingsKey, JSON.stringify(proxySettings));
+      return proxySettings;
     }
-    return settingsDocSnap.data() as ProxySettings;
+    return JSON.parse(cachedSettings);
   },
   trackUsageAsync: async (domain: string): Promise<void> => {
     const todayString = moment().format('YYYY-MM-DD');
