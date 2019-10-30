@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import isBot from 'isbot';
 import request from 'request';
+import { promisify } from 'util';
 
 import { requestTypesToRedirect } from './constants';
 import { ProxySettings } from './types';
@@ -8,6 +9,10 @@ import { database } from './util/database';
 import { logger } from './util/logger';
 import { rendertron } from './util/rendertron';
 import { url } from './util/url';
+import { redis } from './util/redis';
+import { parse } from 'querystring';
+
+const requestAsync = promisify(request).bind(request);
 
 export const handler = {
   handlePrerenderedRequest: async (proxySettings: ProxySettings, req: Request, res: Response): Promise<void> => {
@@ -47,12 +52,42 @@ export const handler = {
       logger.info(`Redirecting ${fullUrl} to ${urlToProxy}`);
       return res.redirect(urlToProxy);
     }
+    if (isHtmlRequest && originRequestParams.method === 'GET') {
+      // TODO: clean this up.
+      const cachedResponseKey = JSON.stringify({
+        fullUrl,
+        acceptEncoding: originRequestParams.headers['accept-encoding'],
+      });
+      const rawCachedResponse = await redis.getAsync(cachedResponseKey);
+      if (!rawCachedResponse) {
+        logger.info(`Proxying request for ${fullUrl} content from ${urlToProxy}`);
+        req.pipe(
+          request(originRequestParams),
+        ).pipe(res);
+        // populate cache for next time.
+        const originResponse = await requestAsync(originRequestParams);
+        if (originResponse.statusCode === 200) {
+          await redis.setAsync(cachedResponseKey, JSON.stringify({
+            statusCode: originResponse.statusCode,
+            headers: originResponse.headers,
+            body: originResponse.body,
+          }));
+        }
+        return;
+      }
+      logger.info(`Proxying request for ${fullUrl} content from cached ${urlToProxy} content`);
+      const cachedResponse = JSON.parse(rawCachedResponse);
+      const { statusCode, headers, body } = cachedResponse;
+      res.set(headers).status(statusCode).send(body);
+      return;
+    }
     logger.info(`Proxying request for ${fullUrl} content from ${urlToProxy}`);
     req.pipe(
       request(originRequestParams),
     ).pipe(res);
   },
   root: async (req: Request, res: Response): Promise<void> => {
+    // TODO: user better bot detection.
     const isRequestFromBot = isBot(req.get('user-agent'));
     const domain = req.get('host');
     database.trackUsageAsync(domain);
