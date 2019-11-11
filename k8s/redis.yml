@@ -46,21 +46,3 @@ spec:
   ports:
     - port: 6379
       targetPort: 6379
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: redis-ingress
-  annotations:
-    kubernetes.io/ingress.class: traefik
-    traefik.frontend.passHostHeader: "true"
-    traefik.frontend.priority: "2"
-spec:
-  rules:
-  - host: redis.renderproxy.com
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: redis
-          servicePort: 6379
