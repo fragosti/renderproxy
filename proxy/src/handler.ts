@@ -60,12 +60,14 @@ export const handler = {
       originRequestParams.method === 'HEAD' &&
       !hasAuthorization;
 
+    // TODO: add TTL
     if (shouldUseCachedResponse) {
       const isMobile = url.isMobileRequest(req);
       const acceptsCompressed = req.acceptsEncodings('gzip');
       const cachedResponseHeaderKey = `header_${isMobile}_${acceptsCompressed}_${urlToProxy}`;
       const cachedResponseBodyKey = `body_${isMobile}_${acceptsCompressed}_${urlToProxy}`;
-      const rawCachedResponse = await redis.getBuffer(cachedResponseBodyKey);
+      const [rawHeaders, rawCachedResponse] =
+        await (redis as any).mgetBuffer(cachedResponseHeaderKey, cachedResponseBodyKey);
       if (!rawCachedResponse) {
         logger.info(`Proxying request for ${fullUrl} content from ${urlToProxy}`);
         req.pipe(
@@ -78,18 +80,20 @@ export const handler = {
           originResponse.headers['set-cookie'] === undefined &&
           originRequestParams.headers['cache-control'] !== 'no-cache';
         if (shouldCacheResponse) {
-          await redis.set(cachedResponseHeaderKey, JSON.stringify({
-            'accept-ranges': originResponse.headers['accept-ranges'],
-            'content-type': originResponse.headers['content-type'],
-            'content-encoding': originResponse.headers['content-encoding'],
-          }));
-          await redis.set(cachedResponseBodyKey, originResponse.body);
+          await redis.multi()
+            .set(cachedResponseHeaderKey, JSON.stringify({
+              'accept-ranges': originResponse.headers['accept-ranges'],
+              'content-type': originResponse.headers['content-type'],
+              'content-encoding': originResponse.headers['content-encoding'],
+            }))
+            .set(cachedResponseBodyKey, originResponse.body)
+            .exec();
         }
         return;
       }
       logger.info(`Proxying request for ${fullUrl} content from cached ${urlToProxy} content`);
-      const headers = await redis.get(cachedResponseHeaderKey);
-      res.set(JSON.parse(headers)).status(200).send(rawCachedResponse);
+      const headers = JSON.parse(rawHeaders);
+      res.set(headers).status(200).send(rawCachedResponse);
       return;
     }
     logger.info(`Proxying request for ${fullUrl} content from ${urlToProxy}`);
