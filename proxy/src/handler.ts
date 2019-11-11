@@ -7,10 +7,9 @@ import { requestTypesToRedirect } from './constants';
 import { ProxySettings } from './types';
 import { database } from './util/database';
 import { logger } from './util/logger';
+import { redis } from './util/redis';
 import { rendertron } from './util/rendertron';
 import { url } from './util/url';
-import { redis } from './util/redis';
-import { parse } from 'querystring';
 
 const requestAsync = promisify(request).bind(request);
 
@@ -21,6 +20,7 @@ export const handler = {
     const fullUrl = url.fullFromRequest(req);
     try {
       logger.info(`Rendering request for ${fullUrl} content with rendertron render ${urlToProxy}`);
+      // TODO: implement caching;
       const response = await rendertron.render(urlToProxy);
       res.send(response);
     } catch (err) {
@@ -42,6 +42,7 @@ export const handler = {
       uri: urlToProxy,
       headers: restHeaders,
       body: req.body,
+      encoding: null,
     };
     if (
       !isHtmlRequest &&
@@ -52,13 +53,19 @@ export const handler = {
       logger.info(`Redirecting ${fullUrl} to ${urlToProxy}`);
       return res.redirect(urlToProxy);
     }
-    if (isHtmlRequest && originRequestParams.method === 'GET') {
-      // TODO: clean this up.
-      const cachedResponseKey = JSON.stringify({
-        fullUrl,
-        acceptEncoding: originRequestParams.headers['accept-encoding'],
-      });
-      const rawCachedResponse = await redis.getAsync(cachedResponseKey);
+    const hasAuthorization = restHeaders.authorization !== undefined;
+    const shouldUseCachedResponse =
+      isHtmlRequest &&
+      originRequestParams.method === 'GET' ||
+      originRequestParams.method === 'HEAD' &&
+      !hasAuthorization;
+
+    if (shouldUseCachedResponse) {
+      const isMobile = url.isMobileRequest(req);
+      const acceptsCompressed = req.acceptsEncodings('gzip');
+      const cachedResponseHeaderKey = `header_${isMobile}_${acceptsCompressed}_${urlToProxy}`;
+      const cachedResponseBodyKey = `body_${isMobile}_${acceptsCompressed}_${urlToProxy}`;
+      const rawCachedResponse = await redis.getBuffer(cachedResponseBodyKey);
       if (!rawCachedResponse) {
         logger.info(`Proxying request for ${fullUrl} content from ${urlToProxy}`);
         req.pipe(
@@ -66,19 +73,23 @@ export const handler = {
         ).pipe(res);
         // populate cache for next time.
         const originResponse = await requestAsync(originRequestParams);
-        if (originResponse.statusCode === 200) {
-          await redis.setAsync(cachedResponseKey, JSON.stringify({
-            statusCode: originResponse.statusCode,
-            headers: originResponse.headers,
-            body: originResponse.body,
+        const shouldCacheResponse =
+          originResponse.statusCode === 200 &&
+          originResponse.headers['set-cookie'] === undefined &&
+          originRequestParams.headers['cache-control'] !== 'no-cache';
+        if (shouldCacheResponse) {
+          await redis.set(cachedResponseHeaderKey, JSON.stringify({
+            'accept-ranges': originResponse.headers['accept-ranges'],
+            'content-type': originResponse.headers['content-type'],
+            'content-encoding': originResponse.headers['content-encoding'],
           }));
+          await redis.set(cachedResponseBodyKey, originResponse.body);
         }
         return;
       }
       logger.info(`Proxying request for ${fullUrl} content from cached ${urlToProxy} content`);
-      const cachedResponse = JSON.parse(rawCachedResponse);
-      const { statusCode, headers, body } = cachedResponse;
-      res.set(headers).status(statusCode).send(body);
+      const headers = await redis.get(cachedResponseHeaderKey);
+      res.set(JSON.parse(headers)).status(200).send(rawCachedResponse);
       return;
     }
     logger.info(`Proxying request for ${fullUrl} content from ${urlToProxy}`);
@@ -87,7 +98,7 @@ export const handler = {
     ).pipe(res);
   },
   root: async (req: Request, res: Response): Promise<void> => {
-    // TODO: user better bot detection.
+    // TODO: use better bot detection.
     const isRequestFromBot = isBot(req.get('user-agent'));
     const domain = req.get('host');
     database.trackUsageAsync(domain);

@@ -12,14 +12,14 @@ const proxySettingsCollection = db.collection('proxySettings');
 export const database = {
   getProxySettingsAsync: async (domain: string): Promise<ProxySettings> => {
     const settingsKey = `${domain}_proxy-settings`;
-    const cachedSettings = await redis.getAsync(settingsKey);
+    const cachedSettings = await redis.get(settingsKey);
     if (!cachedSettings) {
       const settingsDocSnap = await proxySettingsCollection.doc(domain).get();
       if (!settingsDocSnap.exists) {
         throw new Error(`Fetching ProxySetting for ${domain}`);
       }
       const proxySettings = settingsDocSnap.data() as ProxySettings;
-      redis.setAsync(settingsKey, JSON.stringify(proxySettings));
+      redis.set(settingsKey, JSON.stringify(proxySettings));
       return proxySettings;
     }
     return JSON.parse(cachedSettings);
@@ -28,7 +28,7 @@ export const database = {
     const todayString = moment().format('YYYY-MM-DD');
     const trackingKey = `${domain}_${todayString}`;
     try {
-      await redis.incrAsync(trackingKey);
+      await redis.incr(trackingKey);
     } catch (err) {
       logger.error(`Failed to INCR redis key ${trackingKey}`);
     }

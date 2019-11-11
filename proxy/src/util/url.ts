@@ -16,4 +16,8 @@ export const url = {
     const fileType = url.getFileType(req);
     return fileType === undefined || fileType === 'html';
   },
+  isMobileRequest: (req: Request) => {
+    const userAgent = req.headers['user-agent'];
+    return /iPhone|iPad|iPod|Android/i.test(userAgent);
+  },
 };
