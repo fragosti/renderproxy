@@ -18,10 +18,17 @@ export const handler = {
     const urlToProxy = requestUtils.getUrlToProxyTo(req, proxySettings);
     const fullUrl = requestUtils.fullFromRequest(req);
     try {
-      logger.info(`Rendering request for ${fullUrl} content with rendertron render ${urlToProxy}`);
-      // TODO: implement caching;
-      const response = await rendertron.render(urlToProxy);
-      res.send(response);
+      const cachedResponseBodyKey = cacheUtils.getBodyCacheKey(req, proxySettings, true);
+      const cachedResponse = await redis.get(cachedResponseBodyKey);
+      if (!cachedResponse) {
+        logger.info(`Rendering request for ${fullUrl} content with rendertron render ${urlToProxy}`);
+        const response = await rendertron.render(urlToProxy);
+        res.send(response);
+        redis.set(cachedResponseBodyKey, response);
+        return;
+      }
+      logger.info(`Rendering request for ${fullUrl} content with cached rendertron render ${urlToProxy}`);
+      res.send(cachedResponse);
     } catch (err) {
       logger.error(err);
       // Just proxy the regular page if we cannot get a pre-rendered one.
