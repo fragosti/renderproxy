@@ -8,6 +8,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import TextField from '@material-ui/core/TextField';
 import React, { useState } from 'react';
 
+import { DEFAULT_TTL } from '../constants';
 import { usePersistProxySettings } from '../hooks/usePersistProxySettings';
 import { useValidateProxySettings } from '../hooks/useValidateProxySettings';
 import { SnackbarMessage } from './SnackbarMessage';
@@ -35,6 +36,7 @@ export const AddProxyDialog: React.FC<AddProxyDialogProps> = props => {
       urlToProxy: '',
       shouldRedirectIfPossible: false,
       prerenderSetting: 'none',
+      cacheExpirySeconds: DEFAULT_TTL,
     });
     if (proxySettings) {
       persistProxySettings(proxySettings);

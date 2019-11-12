@@ -31,11 +31,15 @@ export const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
   const areSettingsEqual = R.equals(proxySettings, newSettings);
   const [persistProxySettings, isLoading, message, resetMessage] = usePersistProxySettings();
   const [validateProxySettings, validations, resetValidations] = useValidateProxySettings();
-  const createOnChange = (propertyName: string) => (event: React.ChangeEvent<any>) => {
+  const createOnChange = (propertyName: string, isNumber: boolean = false) => (event: React.ChangeEvent<any>) => {
     resetValidations();
+    let value = event.target.value;
+    if (value && isNumber) {
+      value = +value;
+    }
     const settings = {
       ...newSettings,
-      [propertyName]: event.target.value,
+      [propertyName]: value,
     };
     setNewSettings(settings);
   };
@@ -68,6 +72,19 @@ export const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
                 <MenuItem value="bot">Bot Requests</MenuItem>
               </Select>
             </FormControl>
+          </Box>
+          <Box marginY={3}>
+            <TextField
+              error={!!validations.cacheExpirySeconds}
+              helperText={validations.cacheExpirySeconds}
+              type="number"
+              label="Cache TTL (seconds)"
+              variant="outlined"
+              fullWidth={true}
+              onChange={createOnChange('cacheExpirySeconds')}
+              value={newSettings.cacheExpirySeconds}
+              inputProps={{ style: { backgroundColor: 'white' } }}
+            />
           </Box>
           <Box marginY={3}>
             <TextField

@@ -7,6 +7,7 @@ export interface ProxySettings {
   urlToProxy: string;
   shouldRedirectIfPossible: boolean;
   prerenderSetting: PrerenderSetting;
+  cacheExpirySeconds: number;
 }
 
 export interface ObjectMap<T> {

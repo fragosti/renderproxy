@@ -13,6 +13,7 @@ export const STRIPE_PUBLIC_KEY =
   process.env.NODE_ENV === 'development'
     ? 'pk_test_a3HL1b2vANClXKfrB05OySs000dF8F2LLM'
     : 'pk_live_EHJOyKGGdURSBHb4g2AQZTt900AIZ0ORmD';
+export const DEFAULT_TTL = 86400;
 export const subscriptionTiers: SubscriptionTierInfo[] = [
   {
     id: PlanId.Spark,
