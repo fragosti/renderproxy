@@ -1,23 +1,22 @@
 import { Request, Response } from 'express';
-import isBot from 'isbot';
 import request from 'request';
 import { promisify } from 'util';
 
-import { requestTypesToRedirect } from './constants';
 import { ProxySettings } from './types';
+import { cacheUtils } from './util/cache';
 import { database } from './util/database';
 import { logger } from './util/logger';
 import { redis } from './util/redis';
 import { rendertron } from './util/rendertron';
-import { url } from './util/url';
+import { requestUtils } from './util/request';
 
 const requestAsync = promisify(request).bind(request);
 
 export const handler = {
   handlePrerenderedRequest: async (proxySettings: ProxySettings, req: Request, res: Response): Promise<void> => {
     // TODO: Remove base= html tag from rendertron response.
-    const urlToProxy = url.getUrlToProxyTo(req, proxySettings);
-    const fullUrl = url.fullFromRequest(req);
+    const urlToProxy = requestUtils.getUrlToProxyTo(req, proxySettings);
+    const fullUrl = requestUtils.fullFromRequest(req);
     try {
       logger.info(`Rendering request for ${fullUrl} content with rendertron render ${urlToProxy}`);
       // TODO: implement caching;
@@ -30,11 +29,8 @@ export const handler = {
     }
   },
   handleRegularRequest: async (proxySettings: ProxySettings, req: Request, res: Response): Promise<void> => {
-    const { shouldRedirectIfPossible } = proxySettings;
-    const urlToProxy = url.getUrlToProxyTo(req, proxySettings);
-    const fileType = url.getFileType(req);
-    const fullUrl = url.fullFromRequest(req);
-    const isHtmlRequest = url.isHtmlRequest(req);
+    const urlToProxy = requestUtils.getUrlToProxyTo(req, proxySettings);
+    const fullUrl = requestUtils.fullFromRequest(req);
     const { host, ...restHeaders } = req.headers;
     const originRequestParams = {
       method: req.method,
@@ -45,27 +41,15 @@ export const handler = {
       encoding: null,
     };
     if (
-      !isHtmlRequest &&
-      shouldRedirectIfPossible &&
-      req.protocol === 'https' &&
-      requestTypesToRedirect.has(fileType)
+      requestUtils.shouldRedirect(req, proxySettings)
     ) {
       logger.info(`Redirecting ${fullUrl} to ${urlToProxy}`);
       return res.redirect(urlToProxy);
     }
-    const hasAuthorization = restHeaders.authorization !== undefined;
-    const shouldUseCachedResponse =
-      isHtmlRequest &&
-      originRequestParams.method === 'GET' ||
-      originRequestParams.method === 'HEAD' &&
-      !hasAuthorization;
-
     // TODO: add TTL
-    if (shouldUseCachedResponse) {
-      const isMobile = url.isMobileRequest(req);
-      const acceptsCompressed = req.acceptsEncodings('gzip');
-      const cachedResponseHeaderKey = `header_${isMobile}_${acceptsCompressed}_${urlToProxy}`;
-      const cachedResponseBodyKey = `body_${isMobile}_${acceptsCompressed}_${urlToProxy}`;
+    if (cacheUtils.shouldUseCachedResponse(req)) {
+      const cachedResponseHeaderKey = cacheUtils.getHeaderCacheKey(req, proxySettings, false);
+      const cachedResponseBodyKey = cacheUtils.getBodyCacheKey(req, proxySettings, false);
       const [rawHeaders, rawCachedResponse] =
         await (redis as any).mgetBuffer(cachedResponseHeaderKey, cachedResponseBodyKey);
       if (!rawCachedResponse) {
@@ -75,11 +59,7 @@ export const handler = {
         ).pipe(res);
         // populate cache for next time.
         const originResponse = await requestAsync(originRequestParams);
-        const shouldCacheResponse =
-          originResponse.statusCode === 200 &&
-          originResponse.headers['set-cookie'] === undefined &&
-          originRequestParams.headers['cache-control'] !== 'no-cache';
-        if (shouldCacheResponse) {
+        if (cacheUtils.shouldCacheResponse(req, originResponse)) {
           await redis.multi()
             .set(cachedResponseHeaderKey, JSON.stringify({
               'accept-ranges': originResponse.headers['accept-ranges'],
@@ -102,18 +82,11 @@ export const handler = {
     ).pipe(res);
   },
   root: async (req: Request, res: Response): Promise<void> => {
-    // TODO: use better bot detection.
-    const isRequestFromBot = isBot(req.get('user-agent'));
     const domain = req.get('host');
     database.trackUsageAsync(domain);
     try {
       const proxySettings = await database.getProxySettingsAsync(domain);
-      const isHtmlRequest = url.isHtmlRequest(req);
-      if (
-        isHtmlRequest &&
-        proxySettings.prerenderSetting === 'all' ||
-        (proxySettings.prerenderSetting === 'bot' && isRequestFromBot)
-      ) {
+      if (requestUtils.shouldPrerender(req, proxySettings)) {
         return handler.handlePrerenderedRequest(proxySettings, req, res);
       }
       return handler.handleRegularRequest(proxySettings, req, res);
