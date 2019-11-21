@@ -1,12 +1,5 @@
-import { createClient } from 'redis';
-import { promisify } from 'util';
+import Redis from 'ioredis';
 
-const redisClient = createClient({
+export const redis = new Redis({
   host: process.env.REDIS_HOST,
 });
-
-export const redis = {
-  getAsync: promisify(redisClient.get).bind(redisClient),
-  setAsync: promisify(redisClient.set).bind(redisClient),
-  mgetAsync: promisify(redisClient.mget).bind(redisClient),
-};

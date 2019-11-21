@@ -46,7 +46,7 @@ export const database = {
       });
     }
     await batch.commit();
-    redis.setAsync(`${domain}_proxy-settings`, JSON.stringify(settings));
+    redis.set(`${domain}_proxy-settings`, JSON.stringify(settings));
   },
   getProxySettingsForUser: async (userId: string): Promise<ProxySettings[]> => {
     const userDocSnap = await userCollection.doc(userId).get();
@@ -111,7 +111,7 @@ export const database = {
   getUsage: async (domain: string, days: number = 30): Promise<ObjectMap<number>> => {
     const dates = R.range(0, days).map((daysAgo) => moment().subtract(daysAgo, 'days').format('YYYY-MM-DD'));
     const redisUsageKeys = dates.map((date) => `${domain}_${date}`);
-    const usage = await redis.mgetAsync(redisUsageKeys);
+    const usage = await redis.mget(...redisUsageKeys);
     return dates.reduce((acc, val, index) => {
       acc[val] = parseInt(usage[index], 10) || 0;
       return acc;
