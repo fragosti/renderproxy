@@ -24,7 +24,7 @@ export const handler = {
         logger.info(`Rendering request for ${fullUrl} content with rendertron render ${urlToProxy}`);
         const response = await rendertron.render(urlToProxy);
         res.send(response);
-        redis.set(cachedResponseBodyKey, response);
+        redis.set(cachedResponseBodyKey, response, 'EX', proxySettings.cacheExpirySeconds);
         return;
       }
       logger.info(`Rendering request for ${fullUrl} content with cached rendertron render ${urlToProxy}`);
@@ -53,7 +53,6 @@ export const handler = {
       logger.info(`Redirecting ${fullUrl} to ${urlToProxy}`);
       return res.redirect(urlToProxy);
     }
-    // TODO: add TTL
     if (cacheUtils.shouldUseCachedResponse(req)) {
       const cachedResponseHeaderKey = cacheUtils.getHeaderCacheKey(req, proxySettings, false);
       const cachedResponseBodyKey = cacheUtils.getBodyCacheKey(req, proxySettings, false);
@@ -72,8 +71,8 @@ export const handler = {
               'accept-ranges': originResponse.headers['accept-ranges'],
               'content-type': originResponse.headers['content-type'],
               'content-encoding': originResponse.headers['content-encoding'],
-            }))
-            .set(cachedResponseBodyKey, originResponse.body)
+            }), 'EX', proxySettings.cacheExpirySeconds)
+            .set(cachedResponseBodyKey, originResponse.body, 'EX', proxySettings.cacheExpirySeconds)
             .exec();
         }
         return;
