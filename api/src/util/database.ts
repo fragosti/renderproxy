@@ -117,4 +117,9 @@ export const database = {
       return acc;
     }, {});
   },
+  clearWebCache: async (domain: string): Promise<void> => {
+    const proxySettings = await database.getProxySettingsAsync(domain);
+    const keysToDelete = await redis.keys(`*:${proxySettings.urlToProxy}`);
+    await redis.del(...keysToDelete);
+  },
 };

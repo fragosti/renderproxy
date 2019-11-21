@@ -208,28 +208,39 @@ export const apply = (app: Application) => {
       }
     });
   app.get('/usage/:domain', async (req: Request, res: Response): Promise<void> => {
+    const { domain } = req.params;
+    const { days } = req.query;
+    try {
+      const numberDays = days && parseInt(days, 10);
+      const dailyUsage = await database.getUsage(domain, numberDays);
+      const totalUsage = R.sum(Object.values(dailyUsage));
+      const monthlyUsage = Object.keys(dailyUsage).reduce((acc, val) => {
+        const month = val.split('-').slice(0, 2).join('-');
+        const dayRequests = dailyUsage[val];
+        acc[month] = acc[month] ? acc[month] + dayRequests : dayRequests;
+        return acc;
+      }, {});
+      const response = {
+        dailyUsage,
+        monthlyUsage,
+        totalUsage,
+      };
+      logger.info(`Successfully got usage for ${domain} over ${numberDays} days`);
+      res.status(200).json(response);
+    } catch (err) {
+      logger.error(`Could not get usage for ${domain}: ${err}`);
+      res.status(500).json({ type: 'get_usage_error '});
+    }
+  });
+  app.delete('/cache/:domain', async (req: Request, res: Response): Promise<void> => {
       const { domain } = req.params;
-      const { days } = req.query;
       try {
-        const numberDays = days && parseInt(days, 10);
-        const dailyUsage = await database.getUsage(domain, numberDays);
-        const totalUsage = R.sum(Object.values(dailyUsage));
-        const monthlyUsage = Object.keys(dailyUsage).reduce((acc, val) => {
-          const month = val.split('-').slice(0, 2).join('-');
-          const dayRequests = dailyUsage[val];
-          acc[month] = acc[month] ? acc[month] + dayRequests : dayRequests;
-          return acc;
-        }, {});
-        const response = {
-          dailyUsage,
-          monthlyUsage,
-          totalUsage,
-        };
-        logger.info(`Successfully got usage for ${domain} over ${numberDays} days`);
-        res.status(200).json(response);
+        await database.clearWebCache(domain);
+        logger.info(`Successfully cleared cache for ${domain}`);
+        res.status(200).json({ type: 'clear_cache_success' });
       } catch (err) {
-        logger.error(`Could not get usage for ${domain}: ${err}`);
-        res.status(500).json({ type: 'get_usage_error '});
+        logger.error(`Could not clear cache for ${domain}`);
+        res.status(500).json({ type: 'clear_cache_failure' });
       }
-    });
+  });
 };
