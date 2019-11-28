@@ -6,6 +6,7 @@ export const APIPaths = {
   customer: 'customer',
   subscribe: 'subscribe',
   usage: 'usage',
+  cache: 'cache',
 };
 
 export class API {
@@ -71,6 +72,14 @@ export class API {
       return resp.json();
     }
     throw new Error('Failed to get usage');
+  }
+
+  public async clearCache(domain: string): Promise<void> {
+    const resp = await this._fetchAsync(`${APIPaths.cache}/${domain}`, 'DELETE');
+    if (resp.ok) {
+      return resp.json();
+    }
+    throw new Error('Failed to clear cache');
   }
 
   private async _fetchAsync(path: string, method: 'POST' | 'GET' | 'DELETE', body?: any): Promise<Response> {
