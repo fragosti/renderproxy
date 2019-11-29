@@ -14,13 +14,13 @@ const requestAsync = promisify(request).bind(request);
 
 export const handler = {
   handlePrerenderedRequest: async (proxySettings: ProxySettings, req: Request, res: Response): Promise<void> => {
-    // TODO: Remove base= html tag from rendertron response.
     const urlToProxy = requestUtils.getUrlToProxyTo(req, proxySettings);
     const fullUrl = requestUtils.fullFromRequest(req);
     try {
       const cachedResponseBodyKey = cacheUtils.getBodyCacheKey(req, proxySettings, true);
       const cachedResponse = await redis.get(cachedResponseBodyKey);
       if (!cachedResponse) {
+        // TODO: compress
         logger.info(`Rendering request for ${fullUrl} content with rendertron render ${urlToProxy}`);
         const response = await rendertron.render(urlToProxy);
         res.send(response);
