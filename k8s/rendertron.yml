@@ -13,7 +13,7 @@ spec:
         app: rendertron
     spec: 
       containers:
-        - image: "gcr.io/renderproxy-247016/rendertron@sha256:d35c9cc95b2536026fe541a48d5cbe78939ea3ad9d11c0faaf7c25ff44392118"
+        - image: "gcr.io/renderproxy-247016/rendertron@sha256:01274a741034fb957b629bf1203a3d5fdb9366cc08ff09823a5f594530f90cd5"
           name: rendertron
           imagePullPolicy: Always
           ports: 

@@ -119,7 +119,7 @@ export const database = {
   },
   clearWebCache: async (domain: string): Promise<void> => {
     const proxySettings = await database.getProxySettingsAsync(domain);
-    const keysToDelete = await redis.keys(`*:${proxySettings.urlToProxy}`);
+    const keysToDelete = await redis.keys(`*:${proxySettings.urlToProxy}*`);
     if (keysToDelete.length) {
       await redis.del(...keysToDelete);
     }
