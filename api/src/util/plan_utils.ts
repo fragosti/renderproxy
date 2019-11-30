@@ -43,7 +43,7 @@ export const planUtils = {
     return planUtils.isValidProxySettingsForPlan(proxySettings, planId);
   },
   adjustProxySettingsForPlan: (proxySettings: ProxySettings, planId): ProxySettings => {
-    if (planId === PlanId.Spark && proxySettings.prerenderSetting !== 'none') {
+    if (planId === PlanId.Spark) {
       return {
         ...proxySettings,
         prerenderSetting: 'none',

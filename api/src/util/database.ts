@@ -30,12 +30,17 @@ export const database = {
     });
     await batch.commit();
   },
-  addProxySettingsForUser: async (userId: string, domain: string, settings: ProxySettings): Promise<void> => {
+  updateProxySettingsForUser: async (userId: string, domain: string, settings: ProxySettings): Promise<void> => {
     const proxySettingsDoc = proxySettingsCollection.doc(domain);
     const userDoc = userCollection.doc(userId);
     const user = await userDoc.get();
+    const existingProxySettings = await proxySettingsDoc.get();
     const batch = db.batch();
-    batch.set(proxySettingsDoc, settings);
+    if (existingProxySettings.exists) {
+      batch.update(proxySettingsDoc, settings);
+    } else {
+      batch.set(proxySettingsDoc, settings);
+    }
     if (user.exists) {
       batch.update(userDoc, {
         domains: firestore.FieldValue.arrayUnion(domain),

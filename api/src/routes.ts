@@ -59,7 +59,7 @@ export const apply = (app: Application) => {
         return;
       }
       try {
-        await database.addProxySettingsForUser(userId, domain, proxySettings);
+        await database.updateProxySettingsForUser(userId, domain, proxySettings);
         logger.info(`User ${userId} successfully added proxy ${urlToProxy} for ${domain}`);
         res.status(201).json({ type: 'success', message: 'Successfully added domain.'});
       } catch (err) {
@@ -182,12 +182,13 @@ export const apply = (app: Application) => {
       const { planId, domain } = req.body;
       try {
         const user = await database.getUserOrCreate(userId);
-        const proxySettings = await database.getProxySettingsAsync(domain);
         if (user.customerId && user.hasBillingInfo) {
+          const proxySettings = await database.getProxySettingsAsync(domain);
           if (proxySettings.subscriptionId) {
             if (planId === 'spark') {
               await stripe.subscriptions.del(proxySettings.subscriptionId);
               await database.removeSubscriptionIdFromDomain(domain);
+              delete proxySettings.subscriptionId;
             } else {
               const subscription = await stripe.subscriptions.retrieve(proxySettings.subscriptionId);
               await stripe.subscriptions.update(proxySettings.subscriptionId, {
@@ -214,14 +215,14 @@ export const apply = (app: Application) => {
             await database.addSubscriptionIdToDomain(domain, subscription.id);
           }
           const adjustedProxySettings = planUtils.adjustProxySettingsForPlan(proxySettings, planId);
-          await database.addProxySettingsForUser(userId, domain, adjustedProxySettings);
+          await database.updateProxySettingsForUser(userId, domain, adjustedProxySettings);
           logger.info(`Successfully subscribed ${userId} to ${planId}`);
           res.status(200).json({ type: 'subscribe_customer_success' });
         } else {
           throw new Error(`User ${userId} does not have billing information.`);
         }
       } catch (err) {
-        logger.error(`Failed to subscribe ${userId} to ${planId} for ${domain}`);
+        logger.error(`Failed to subscribe ${userId} to ${planId} for ${domain}: ${err}`);
         res.status(500).json({ type: 'subscribe_user_failure', message: err});
       }
     });
