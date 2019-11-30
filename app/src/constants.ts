@@ -5,7 +5,6 @@ export const AUTH0_CLIENT_ID = 'ZgLSqr5Q2cgUhgWKDRZrhz9YPRWDM1Ag';
 export const AUTH0_AUDIENCE = 'https://api.renderproxy.com';
 export const API_ENDPOINT =
   process.env.NODE_ENV === 'development' ? 'http://localhost:3002' : 'https://api.renderproxy.com';
-// export const API_ENDPOINT = 'https://api.renderproxy.com';
 export const RETURN_TO_URL =
   process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://renderproxy.com';
 export const HOMEPAGE_TITLE = 'Home';
@@ -19,7 +18,7 @@ export const subscriptionTiers: SubscriptionTierInfo[] = [
     id: PlanId.Spark,
     name: 'Spark',
     price: '$0',
-    properties: ['1,000 requests / month', 'Free TLS certificates', 'Bot-only pre-rendering', 'Unlimited pages'],
+    properties: ['1,000 requests / month', 'Free TLS certificates', 'No pre-rendering', 'Unlimited pages'],
     ctaText: 'Select',
   },
   {
