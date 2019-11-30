@@ -29,7 +29,6 @@ export interface ProxySettingsFormProps extends ProxySettings {
 export const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
   const { onDeleteClick, ...proxySettings } = props;
   const [newSettings, setNewSettings] = useState(R.clone(proxySettings));
-  const areSettingsEqual = R.equals(proxySettings, newSettings);
   const { api } = useAuth0();
   const [persistProxySettings, isPersisting, persistMessage, resetPersistMessage] = usePersistProxySettings();
   const [validateProxySettings, validations, resetValidations] = useValidateProxySettings();
@@ -133,7 +132,7 @@ export const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
                 variant="contained"
                 color="primary"
                 style={{ color: 'white' }}
-                disabled={areSettingsEqual || !R.isEmpty(validations) || isLoading}
+                disabled={!R.isEmpty(validations) || isLoading}
                 onClick={onSaveClick}
               >
                 {isLoading ? 'Saving...' : 'Save'}
