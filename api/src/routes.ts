@@ -208,6 +208,7 @@ export const apply = (app: Application) => {
                   plan: planId,
                 },
               ],
+              trial_from_plan: true,
               metadata: {
                 domain,
               },
