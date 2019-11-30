@@ -42,4 +42,19 @@ export const planUtils = {
     const planId = planUtils.getPlanId(proxySettings.domain, customer);
     return planUtils.isValidProxySettingsForPlan(proxySettings, planId);
   },
+  adjustProxySettingsForPlan: (proxySettings: ProxySettings, planId): ProxySettings => {
+    if (planId === PlanId.Spark && proxySettings.prerenderSetting !== 'none') {
+      return {
+        ...proxySettings,
+        prerenderSetting: 'none',
+      };
+    }
+    if (planId === PlanId.Flame && proxySettings.prerenderSetting === 'all') {
+      return {
+        ...proxySettings,
+        prerenderSetting: 'bot',
+      };
+    }
+    return proxySettings;
+  },
 };

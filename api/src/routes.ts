@@ -182,8 +182,8 @@ export const apply = (app: Application) => {
       const { planId, domain } = req.body;
       try {
         const user = await database.getUserOrCreate(userId);
+        const proxySettings = await database.getProxySettingsAsync(domain);
         if (user.customerId && user.hasBillingInfo) {
-          const proxySettings = await database.getProxySettingsAsync(domain);
           if (proxySettings.subscriptionId) {
             if (planId === 'spark') {
               await stripe.subscriptions.del(proxySettings.subscriptionId);
@@ -213,7 +213,8 @@ export const apply = (app: Application) => {
             });
             await database.addSubscriptionIdToDomain(domain, subscription.id);
           }
-
+          const adjustedProxySettings = planUtils.adjustProxySettingsForPlan(proxySettings, planId);
+          await database.addProxySettingsForUser(userId, domain, adjustedProxySettings);
           logger.info(`Successfully subscribed ${userId} to ${planId}`);
           res.status(200).json({ type: 'subscribe_customer_success' });
         } else {
