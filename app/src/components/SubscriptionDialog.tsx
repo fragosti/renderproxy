@@ -71,7 +71,7 @@ export const SubscriptionDialog = injectStripe<SubscriptionDialogProps>(props =>
             The plan costs {subscriptionInfo.price} and{' '}
             {subscriptionInfo.id === 'spark'
               ? 'will unsubscribe you from your paid plans for this domain'
-              : 'is billed a month from today'}
+              : 'is billed a month from today because of the 30 day free trial'}
             . The plan includes:
           </DialogContentText>
           <Box display="flex" marginBottom={2}>
