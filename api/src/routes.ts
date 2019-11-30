@@ -114,21 +114,21 @@ export const apply = (app: Application) => {
     checkJwt,
     check('cardToken').exists(),
   ], async (req: AuthorizedRequest, res: Response): Promise<void> => {
-    const { sub } = req.user;
+    const userId = req.user.sub;
     const { cardToken } = req.body;
     try {
       const customer = await stripe.customers.create({
         source: cardToken,
         metadata: {
-          id: sub,
+          id: userId,
         },
       });
       logger.info(`Successfully create customer ${customer.id}`);
-      await database.addCustomerToUser(sub, customer.id);
-      logger.info(`Successfully created ${customer.id} entity for user ${sub}`);
+      await database.addCustomerToUser(userId, customer.id);
+      logger.info(`Successfully created ${customer.id} entity for user ${userId}`);
       res.status(200).json({ type: 'create_customer_success' });
     } catch (err) {
-      logger.error(`Failed to create customer for ${sub}`);
+      logger.error(`Failed to create customer for ${userId}`);
       res.status(500).json({ type: 'create_customer_failure', message: err });
     }
   });
