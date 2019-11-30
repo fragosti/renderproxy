@@ -6,7 +6,8 @@ import { checkJwt } from './middleware/jwt';
 import { AuthorizedUser, ProxySettings } from './types';
 import { database } from './util/database';
 import { logger } from './util/logger';
-import { isValidProxySettingsForCustomer, stripe } from './util/stripe';
+import { planUtils } from './util/plan_utils';
+import { stripe } from './util/stripe';
 
 export interface AuthorizedRequest extends Request {
   user: AuthorizedUser;
@@ -47,7 +48,7 @@ export const apply = (app: Application) => {
         if (user.customerId) {
           customer = await stripe.customers.retrieve(user.customerId);
         }
-        if (!isValidProxySettingsForCustomer(proxySettings, customer)) {
+        if (!planUtils.isValidProxySettingsForCustomer(proxySettings, customer)) {
           logger.info(`User ${userId} could not add settings on ${urlToProxy} for ${domain} because of plan.`);
           res.status(400).json({ type: 'plan_upgrade_required' });
           return;
@@ -212,6 +213,7 @@ export const apply = (app: Application) => {
             });
             await database.addSubscriptionIdToDomain(domain, subscription.id);
           }
+
           logger.info(`Successfully subscribed ${userId} to ${planId}`);
           res.status(200).json({ type: 'subscribe_customer_success' });
         } else {
