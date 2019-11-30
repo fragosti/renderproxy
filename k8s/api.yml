@@ -13,7 +13,7 @@ spec:
         app: api
     spec: 
       containers:
-        - image: "gcr.io/renderproxy-247016/api@sha256:fc93f903f8cc7153eab2dbb4beb8549a59739cf5c58794bbbc45d06c542a7f6d"
+        - image: "gcr.io/renderproxy-247016/api@sha256:e0ee6c31e5c284387072a826f065d71a0fb3c01e3b64fb1b469ae0ca0ef5e86a"
           name: api
           imagePullPolicy: Always
           ports: 
