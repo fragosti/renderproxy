@@ -23,3 +23,10 @@ export interface DatabaseUser {
 export interface ObjectMap<T> {
   [key: string]: T | undefined;
 }
+
+export enum PlanId {
+  Spark = 'spark',
+  Flame = 'flame',
+  Fire = 'fire',
+  Metered = 'metered',
+}

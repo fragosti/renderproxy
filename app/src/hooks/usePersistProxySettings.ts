@@ -8,6 +8,7 @@ type SuccessHandler = (domain: string) => void;
 
 const messages = {
   domainClaimed: (domain: string) => `The domain ${domain} already has already been claimed.`,
+  upgradeRequired: `Your plan does not support that setting. Please upgrade or try a different setting.`,
   genericError: 'Something went wrong. Please try again later.',
   success: (domain: string) => `Successfully saved ${domain} settings.`,
 };
@@ -37,6 +38,11 @@ export const usePersistProxySettings = (
           setMessage({
             variant: 'error',
             message: messages.domainClaimed(proxySettings.domain),
+          });
+        } else if (type === 'plan_upgrade_required') {
+          setMessage({
+            variant: 'error',
+            message: messages.upgradeRequired,
           });
         } else {
           setMessage({

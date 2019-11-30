@@ -6,7 +6,7 @@ import { checkJwt } from './middleware/jwt';
 import { AuthorizedUser, ProxySettings } from './types';
 import { database } from './util/database';
 import { logger } from './util/logger';
-import { stripe } from './util/stripe';
+import { isValidProxySettingsForCustomer, stripe } from './util/stripe';
 
 export interface AuthorizedRequest extends Request {
   user: AuthorizedUser;
@@ -33,7 +33,6 @@ export const apply = (app: Application) => {
         res.status(400).json({ type: 'domain_claimed' });
         return;
       }
-
       const proxySettings: ProxySettings = {
         domain,
         urlToProxy,
@@ -42,6 +41,22 @@ export const apply = (app: Application) => {
         userId,
         cacheExpirySeconds,
       };
+      try {
+        const user = await database.getUserOrCreate(userId);
+        let customer;
+        if (user.customerId) {
+          customer = await stripe.customers.retrieve(user.customerId);
+        }
+        if (!isValidProxySettingsForCustomer(proxySettings, customer)) {
+          logger.info(`User ${userId} could not add settings on ${urlToProxy} for ${domain} because of plan.`);
+          res.status(400).json({ type: 'plan_upgrade_required' });
+          return;
+        }
+      } catch (err) {
+        res.status(500).json({ type: '' });
+        logger.error(`Failed to validate plan of ${userId} when altering ${domain} settings.`);
+        return;
+      }
       try {
         await database.addProxySettingsForUser(userId, domain, proxySettings);
         logger.info(`User ${userId} successfully added proxy ${urlToProxy} for ${domain}`);
