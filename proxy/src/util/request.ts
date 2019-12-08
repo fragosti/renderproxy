@@ -32,6 +32,9 @@ export const requestUtils = {
       requestTypesToRedirect.has(fileType);
   },
   shouldPrerender: (req: Request, proxySettings: ProxySettings) => {
+    if (req.get('should-render')) {
+      return true;
+    }
     const isHtmlRequest = requestUtils.isHtmlRequest(req);
     const isRequestFromBot = isBot(req.get('user-agent'));
     return isHtmlRequest &&
