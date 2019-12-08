@@ -1,6 +1,6 @@
 version: '3'
 services:
     redis:
-        image: redis:latest
+        image: redis:5.0.7-alpine
         ports:
             - "6379:6379"
