@@ -7,6 +7,7 @@ import { HOMEPAGE_TITLE } from '../constants';
 import { useProxySettingsForDomain } from '../hooks/useProxySettingsForDomain';
 import { BreadCrumbs } from './BreadCrumbs';
 import { DeleteProxyDialog } from './DeleteProxyDialog';
+import { InstructionsCard } from './InstructionsCard';
 import { Link } from './Link';
 import { ProxySettingForm } from './ProxySettingForm';
 import { SubscriptionCard } from './SubscriptionCard';
@@ -51,11 +52,14 @@ export const EditProxySettings: React.FC<EditProxySettingsProps> = props => {
           </Typography>
         </Box>
         <Box marginY={3}>
-          <SubscriptionCard domain={domain} />
+          <InstructionsCard domain={domain} />
         </Box>
         <Box marginY={3}>{proxySettings && <ProxySettingForm onDeleteClick={openDialog} {...proxySettings} />}</Box>
         <Box marginY={3}>
           <UsageCard domain={domain} />
+        </Box>
+        <Box marginY={3}>
+          <SubscriptionCard domain={domain} />
         </Box>
       </Container>
       <DeleteProxyDialog

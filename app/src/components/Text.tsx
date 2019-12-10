@@ -9,7 +9,7 @@ export const Text: React.FC<TextProps> = props => {
   const typographyProps = { align, color, gutterBottom, noWrap, paragraph, variant, variantMapping };
   return (
     <Typography {...typographyProps}>
-      <Box component="span" {...boxProps} />
+      <Box component="span" {...boxProps} display="inline-block" />
     </Typography>
   );
 };
