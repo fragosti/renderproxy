@@ -65,7 +65,7 @@ export const Dash: React.FC<DashProps> = props => {
             {didError ? (
               <>
                 <Divider />
-                <Box display="flex" paddingY={2} alignItems="center" justifyContent="center">
+                <Box display="flex" paddingY={2} alignItems="center" justifyContent="center" flexWrap="wrap">
                   <Text>Something went wrong. Please try refreshing or coming back later.</Text>
                 </Box>
               </>
@@ -80,8 +80,8 @@ export const Dash: React.FC<DashProps> = props => {
               userProxySettings.map(settings => (
                 <Box key={settings.domain}>
                   <Divider />
-                  <Box display="flex" justifyContent="space-between" paddingY={1} paddingX={3}>
-                    <Box key={settings.domain} display="flex" alignItems="center">
+                  <Box display="flex" justifyContent="space-between" paddingY={1} paddingX={3} flexWrap="wrap">
+                    <Box key={settings.domain} display="flex" alignItems="center" flexWrap="wrap">
                       <Typography>
                         <Link href={`http://${settings.domain}`} fontSize={18} fontWeight="bold">
                           {settings.domain}

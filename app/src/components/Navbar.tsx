@@ -16,11 +16,11 @@ export const Navbar: React.FC = () => {
       <Toolbar>
         <Grid container={true} spacing={3} justify="space-between" alignItems="center">
           <RouterLink to="/">
-            <Box ml={10} p={4}>
+            <Box ml={{ xs: 6, md: 10 }} p={{ xs: 4, md: 4 }} pb={{ xs: 2 }}>
               <Logo height={36} />
             </Box>
           </RouterLink>
-          <Box display="flex" alignItems="center">
+          <Box display="flex" alignItems="center" py={2}>
             {user && (
               <Text mr={2} fontSize={15} fontWeight="fontWeightBold" fontFamily="Monospace" component="span">
                 {user.email || user.nickname}

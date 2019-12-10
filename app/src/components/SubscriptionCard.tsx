@@ -56,7 +56,7 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ domain }) =>
         </Text>
       </Box>
       <Divider />
-      <Box paddingY={1} paddingX={3} display="flex" justifyContent="space-between">
+      <Box paddingY={1} paddingX={3} display="flex" justifyContent="space-between" flexWrap="wrap">
         {subscriptionTiers.map(tier => (
           <SubscriptionTier
             key={tier.name}
