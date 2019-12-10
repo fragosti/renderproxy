@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import isMobile from 'is-mobile';
 import request from 'request';
 import { promisify } from 'util';
 
@@ -22,7 +23,7 @@ export const handler = {
       if (!cachedResponse) {
         // TODO: compress
         logger.info(`Rendering request for ${fullUrl} content with rendertron render ${urlToProxy}`);
-        const response = await rendertron.render(urlToProxy);
+        const response = await rendertron.render(urlToProxy, (isMobile as any)({ ua: req }));
         res.send(response);
         redis.set(cachedResponseBodyKey, response, 'EX', proxySettings.cacheExpirySeconds);
         return;
