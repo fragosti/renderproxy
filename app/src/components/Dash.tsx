@@ -55,7 +55,7 @@ export const Dash: React.FC<DashProps> = props => {
           <Paper elevation={1}>
             <Box display="flex" justifyContent="space-between" alignItems="center" paddingY={2} paddingX={3}>
               <Text align="left" variant="h5" fontWeight="bold">
-                Proxied Sites
+                Domains
               </Text>
               <Button variant="contained" color="primary" style={{ color: 'white' }} onClick={openDialog}>
                 Add
@@ -92,7 +92,7 @@ export const Dash: React.FC<DashProps> = props => {
                       </Box>
                       <Typography>
                         <Link href={settings.urlToProxy || undefined} fontSize={18}>
-                          {settings.urlToProxy || <i>The URL to proxy has not yet been set.</i>}
+                          {settings.urlToProxy || <i>The origin URL has not been set.</i>}
                         </Link>
                       </Typography>
                     </Box>
