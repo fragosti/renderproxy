@@ -5,8 +5,8 @@ import React from 'react';
 export type LinkProps = BoxProps & MLinkProps;
 
 export const Link: React.FC<LinkProps> = props => {
-  const { variant, href, underline, color, TypographyClasses, ...boxProps } = props;
-  const linkProps = { variant, href, underline, color, TypographyClasses };
+  const { variant, href, underline, color, TypographyClasses, target, ...boxProps } = props;
+  const linkProps = { variant, href, underline, color, TypographyClasses, target };
   return (
     <MLink {...linkProps}>
       <Box component="span" {...boxProps} />

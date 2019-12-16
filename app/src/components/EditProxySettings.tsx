@@ -46,8 +46,13 @@ export const EditProxySettings: React.FC<EditProxySettingsProps> = props => {
             ]}
           />
           <Typography align="left" variant="h3">
-            <Link href={`http://${domain}`} fontWeight="bold">
+            <Link href={`http://${domain}`} fontWeight="bold" target="_blank">
               {domain}
+            </Link>
+          </Typography>
+          <Typography align="left" variant="h6">
+            <Link href={`http://${domain}.renderproxy.com`} target="_blank">
+              Available at {domain}.renderproxy.com
             </Link>
           </Typography>
         </Box>
