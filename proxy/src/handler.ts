@@ -89,7 +89,11 @@ export const handler = {
     ).pipe(res);
   },
   root: async (req: Request, res: Response): Promise<void> => {
-    const domain = req.get('host');
+    const host = req.get('host');
+    let domain = host;
+    if (domain.includes('.renderproxy.com')) {
+      domain = domain.split('.').slice(0, -2).join('.');
+    }
     database.trackUsageAsync(domain);
     try {
       const proxySettings = await database.getProxySettingsAsync(domain);
