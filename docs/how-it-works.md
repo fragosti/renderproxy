@@ -2,7 +2,7 @@
 
 Renderproxy is the easiest way to set up a reverse proxy to any website or endpoint.
 
-A reverse proxy is software running on a server that forwards requests and responses from an origin server (the server being proxied).
+A reverse proxy is software running on a server that forwards requests to and responses from an origin server (the server being proxied).
 
 ![reverse proxy](https://www.cloudflare.com/img/learning/cdn/glossary/reverse-proxy/reverse-proxy-flow.svg)
 
@@ -10,7 +10,7 @@ Running a reverse proxy can bring many benefits, but is typically difficult to s
 
 ## Dynamic Rendering
 
-One of the main use-cases of renderproxy is to implement [dynamic rendering](https://webmasters.googleblog.com/2019/01/dynamic-rendering-with-rendertron.html), which can help Javascript client-side rendered sites with SEO issues.
+One of the main use-cases of renderproxy is to implement [dynamic rendering](https://webmasters.googleblog.com/2019/01/dynamic-rendering-with-rendertron.html), which can help Javascript client-side rendered sites with SEO issues. It works by serving search engine bots a pre-rendered version of your website (so that they can easily crawl and index it), and your regular users your normal client-side rendered website.
 
 Read about how to set up dynamic rendering for your Javascript site on [GitHub pages](/blog/dynamic-rendering-with-git-hub-pages) or on an [AWS S3](/blog/dynamic-rendering-with-s3) bucket.
 
@@ -26,4 +26,4 @@ Secure connections are better and encrypting and decrypting SSL (or TLS) communi
 
 ## Caching
 
-Renderproxy caches aggressively so you don't pay a performance penalty for using renderproxy in front of you website. You can configure and clear the cache from your dashboard.
+Renderproxy caches aggressively so you don't pay a performance penalty for using renderproxy in front of your website. You can configure and clear the cache from your dashboard.
