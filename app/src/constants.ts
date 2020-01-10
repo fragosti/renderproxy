@@ -15,23 +15,24 @@ export const STRIPE_PUBLIC_KEY =
 export const DEFAULT_TTL = 86400;
 export const subscriptionTiers: SubscriptionTierInfo[] = [
   {
+    id: PlanId.Free,
+    name: 'Free',
+    price: '$0 / month',
+    properties: ['1,000 requests / month', 'HTTPS', 'No dynamic rendering', 'Unlimited pages', 'Free'],
+    ctaText: 'Select',
+  },
+  {
     id: PlanId.Spark,
     name: 'Spark',
-    price: '$0',
-    properties: ['1,000 requests / month', 'Free TLS certificates', 'No pre-rendering', 'Unlimited pages', 'Free'],
+    price: '$5 / month',
+    properties: ['10,000 requests / month', 'HTTPS', 'No dynamic rendering', 'Unlimited pages', 'Free'],
     ctaText: 'Select',
   },
   {
     id: PlanId.Flame,
     name: 'Flame',
     price: '$10 / month',
-    properties: [
-      '100,000 requests / month',
-      'Free TLS certificates',
-      'Bot-only pre-rendering',
-      'Unlimited pages',
-      '30 day free trial',
-    ],
+    properties: ['100,000 requests / month', 'HTTPS', 'Dynamic rendering', 'Unlimited pages', '30 day free trial'],
     ctaText: 'Select',
   },
   {
@@ -40,20 +41,12 @@ export const subscriptionTiers: SubscriptionTierInfo[] = [
     price: '$50 / month',
     properties: [
       '10,00,000 requests / month',
-      'Free TLS certificates',
+      'HTTPS',
       'Pre-render every request',
       'Unlimited pages',
       '30 day free trial',
     ],
     ctaText: 'Select',
-  },
-  {
-    id: PlanId.Metered,
-    name: 'Metered',
-    price: 'Contact Us',
-    properties: ['Unlimited requests / month', 'Free TLS certiciates', 'Unlimited pages'],
-    ctaText: 'Contact',
-    ctaHref: 'mailto:hello@renderproxy.com',
   },
 ];
 
