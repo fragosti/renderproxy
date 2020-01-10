@@ -3,7 +3,7 @@ import { check } from 'express-validator';
 import * as R from 'ramda';
 
 import { checkJwt } from './middleware/jwt';
-import { AuthorizedUser, ProxySettings } from './types';
+import { AuthorizedUser, ProxySettings, PlanId } from './types';
 import { database } from './util/database';
 import { logger } from './util/logger';
 import { planUtils } from './util/plan_utils';
@@ -185,7 +185,7 @@ export const apply = (app: Application) => {
         if (user.customerId && user.hasBillingInfo) {
           const proxySettings = await database.getProxySettingsAsync(domain);
           if (proxySettings.subscriptionId) {
-            if (planId === 'spark') {
+            if (planId === PlanId.Free) {
               await stripe.subscriptions.del(proxySettings.subscriptionId);
               await database.removeSubscriptionIdFromDomain(domain);
               delete proxySettings.subscriptionId;

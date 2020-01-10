@@ -25,6 +25,7 @@ export interface ObjectMap<T> {
 }
 
 export enum PlanId {
+  Free = 'free',
   Spark = 'spark',
   Flame = 'flame',
   Fire = 'fire',
