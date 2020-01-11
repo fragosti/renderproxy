@@ -44,6 +44,13 @@ metadata:
     kubernetes.io/ingress.class: traefik
     traefik.frontend.passHostHeader: "true"
     traefik.frontend.priority: "1"
+    traefik.ingress.kubernetes.io/rate-limit: |
+      extractorfunc: client.ip
+      rateset:
+        api-rateset:
+          period: "10s"
+          average: 100
+          burst: 200
 spec:
   rules:
   - http:
