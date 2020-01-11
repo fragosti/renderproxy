@@ -47,7 +47,10 @@ export const AddProxyDialog: React.FC<AddProxyDialogProps> = props => {
       <Dialog {...dialogProps} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Add Proxied Domain</DialogTitle>
         <DialogContent>
-          <DialogContentText>Get started by entering the domain (eg. mywebsite.com) that you own.</DialogContentText>
+          <DialogContentText>
+            Get started by entering the domain (eg. mywebsite.com) that you own. If you don't own a domain, you can make
+            one up and your proxy will still be reachable at mymadeupdomain.com.renderproxy.com.
+          </DialogContentText>
           <TextField
             error={!!validations.domain}
             helperText={validations.domain}
