@@ -20,8 +20,7 @@ export const handler = {
     try {
       const cachedResponseBodyKey = cacheUtils.getBodyCacheKey(req, proxySettings, true);
       const cachedResponse = await redis.get(cachedResponseBodyKey);
-      if (!cachedResponse) {
-        // TODO: compress
+      if (!cachedResponse || requestUtils.shouldSkipCache(req)) {
         logger.info(`Rendering request for ${fullUrl} content with rendertron render ${urlToProxy}`);
         const response = await rendertron.render(urlToProxy, (isMobile as any)({ ua: req }));
         res.send(response);
@@ -59,7 +58,7 @@ export const handler = {
       const cachedResponseBodyKey = cacheUtils.getBodyCacheKey(req, proxySettings, false);
       const [rawHeaders, rawCachedResponse] =
         await (redis as any).mgetBuffer(cachedResponseHeaderKey, cachedResponseBodyKey);
-      if (!rawCachedResponse) {
+      if (!rawCachedResponse || requestUtils.shouldSkipCache(req)) {
         logger.info(`Proxying request for ${fullUrl} content from ${urlToProxy}`);
         req.pipe(
           request(originRequestParams),

@@ -41,4 +41,7 @@ export const requestUtils = {
       proxySettings.prerenderSetting === 'all' ||
       (proxySettings.prerenderSetting === 'bot' && isRequestFromBot);
   },
+  shouldSkipCache: (req: Request): boolean => {
+    return req.get('cache-control') === 'no-cache';
+  },
 };
