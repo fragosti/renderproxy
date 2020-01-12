@@ -96,6 +96,11 @@ export const handler = {
     database.trackUsageAsync(domain);
     try {
       const proxySettings = await database.getProxySettingsAsync(domain);
+      if (!proxySettings.urlToProxy) {
+        logger.info(`No origin URL found for ${domain}`);
+        res.send(`Could not find an origin URL for ${domain}.`);
+        return;
+      }
       if (requestUtils.shouldPrerender(req, proxySettings)) {
         return handler.handlePrerenderedRequest(proxySettings, req, res);
       }
