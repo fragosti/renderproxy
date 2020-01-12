@@ -29,6 +29,7 @@ export const database = {
       domains: firestore.FieldValue.arrayRemove(domain),
     });
     await batch.commit();
+    await redis.del(`${domain}_proxy-settings`);
   },
   updateProxySettingsForUser: async (userId: string, domain: string, settings: ProxySettings): Promise<void> => {
     const proxySettingsDoc = proxySettingsCollection.doc(domain);
@@ -51,7 +52,7 @@ export const database = {
       });
     }
     await batch.commit();
-    redis.set(`${domain}_proxy-settings`, JSON.stringify(settings));
+    await redis.set(`${domain}_proxy-settings`, JSON.stringify(settings));
   },
   getProxySettingsForUser: async (userId: string): Promise<ProxySettings[]> => {
     const userDocSnap = await userCollection.doc(userId).get();
