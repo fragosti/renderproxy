@@ -3,7 +3,7 @@ import isMobile from 'is-mobile';
 import request from 'request';
 import { promisify } from 'util';
 
-import { ProxySettings } from './types';
+import { ProxySettings, PrerenderSetting } from './types';
 import { cacheUtils } from './util/cache';
 import { database } from './util/database';
 import { logger } from './util/logger';
@@ -28,6 +28,9 @@ export const handler = {
         return;
       }
       logger.info(`Rendering request for ${fullUrl} content with cached rendertron render ${urlToProxy}`);
+      if (proxySettings.prerenderSetting === 'bot') {
+        res.vary('User-Agent');
+      }
       res.send(cachedResponse);
     } catch (err) {
       logger.error(err);
@@ -52,6 +55,9 @@ export const handler = {
     ) {
       logger.info(`Redirecting ${fullUrl} to ${urlToProxy}`);
       return res.redirect(urlToProxy);
+    }
+    if (proxySettings.prerenderSetting === 'bot') {
+      res.vary('User-Agent');
     }
     if (cacheUtils.shouldUseCachedResponse(req)) {
       const cachedResponseHeaderKey = cacheUtils.getHeaderCacheKey(req, proxySettings, false);
