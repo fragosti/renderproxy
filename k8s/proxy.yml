@@ -13,7 +13,7 @@ spec:
         app: proxy
     spec: 
       containers:
-        - image: "gcr.io/renderproxy-247016/proxy@sha256:8f0aab7d092cf41f4d3f5adae140570af3bd2d4ee309d2b003082feb973d99e7"
+        - image: "gcr.io/renderproxy-247016/proxy@sha256:24cc47343aadead6b5956ba728c5354f59b487646866d3a686d9513ba4298a69"
           name: proxy
           imagePullPolicy: Always
           ports: 
