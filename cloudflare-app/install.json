@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json.schemastore.org/install",
+  "resources": {},
+  "dns": [
+    {
+      "type": "A",
+      "content": "35.224.107.18",
+      "name": "",
+      "ttl": 120
+    }
+  ],
+  "preview": {}
+}
