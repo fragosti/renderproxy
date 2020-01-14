@@ -1,12 +1,21 @@
 {
   "$schema": "http://json.schemastore.org/install",
   "resources": {},
+  "options": {
+    "properties": {
+      "domain": {
+        "title": "Type the domain you've set up on Renderproxy (the domain of your app)",
+        "type": "string"
+      }
+    }
+  },
   "dns": [
     {
       "type": "A",
       "content": "35.224.107.18",
-      "name": "",
-      "ttl": 120
+      "name": "{{options.domain}}",
+      "ttl": 120,
+      "proxied": true
     }
   ],
   "preview": {}
