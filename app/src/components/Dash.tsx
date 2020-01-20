@@ -9,6 +9,7 @@ import {
   Tooltip,
   Typography,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import {
   Add as AddIcon,
   ArrowForward as ArrowForwardIcon,
@@ -29,6 +30,16 @@ import { Text } from './Text';
 
 export type DashProps = RouteComponentProps;
 
+const useStyles = makeStyles({
+  root: {
+    textOverflow: 'ellipsis',
+    maxWidth: '500px',
+    overflow: 'hidden',
+    position: 'relative',
+    top: '3px',
+  },
+});
+
 export const Dash: React.FC<DashProps> = props => {
   const [userProxySettings, didError] = useUserProxySettings();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -38,6 +49,7 @@ export const Dash: React.FC<DashProps> = props => {
     closeDialog();
     props.history.push(`/edit/${domain}`);
   };
+  const styles = useStyles();
   return (
     <>
       <Container maxWidth="md">
@@ -90,8 +102,8 @@ export const Dash: React.FC<DashProps> = props => {
                       <Box marginX={2} marginTop={1}>
                         <ArrowForwardIcon />
                       </Box>
-                      <Typography>
-                        <Link href={settings.urlToProxy || undefined} fontSize={18}>
+                      <Typography noWrap={true}>
+                        <Link href={settings.urlToProxy || undefined} fontSize={18} classes={styles}>
                           {settings.urlToProxy || <i>The origin URL has not been set.</i>}
                         </Link>
                       </Typography>

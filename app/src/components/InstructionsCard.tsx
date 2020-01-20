@@ -72,11 +72,12 @@ export const InstructionsCard: React.FC<InstructionsCardProps> = props => {
     instructions = (
       <>
         <Text mb={2}>
-          To set up your own domain you'll have to provide a different Origin URL in the settings panel below.
+          To set up your own domain you'll have to provide a different Origin URL than <i>{defaultOriginUrl}</i> in the
+          settings panel below.
         </Text>
         <Text mb={2}>
           Usually this will be the URL or IP address that your domain is pointing to in your DNS settings. In general,
-          it should be a URL or IP address that serves your website that isn't your domain ({defaultOriginUrl}).
+          it should be a URL or IP address that serves your website that isn't your domain.
         </Text>
         <Text mb={2}>
           For example, if your website is deployed on AWS S3, the URL will look like{' '}
