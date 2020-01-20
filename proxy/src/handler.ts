@@ -3,7 +3,7 @@ import isMobile from 'is-mobile';
 import request from 'request';
 import { promisify } from 'util';
 
-import { ProxySettings, PrerenderSetting } from './types';
+import { ProxySettings } from './types';
 import { cacheUtils } from './util/cache';
 import { database } from './util/database';
 import { logger } from './util/logger';
@@ -18,6 +18,7 @@ export const handler = {
     const urlToProxy = requestUtils.getUrlToProxyTo(req, proxySettings);
     const fullUrl = requestUtils.fullFromRequest(req);
     try {
+      res.vary('User-Agent');
       const cachedResponseBodyKey = cacheUtils.getBodyCacheKey(req, proxySettings, true);
       const cachedResponse = await redis.get(cachedResponseBodyKey);
       if (!cachedResponse || requestUtils.shouldSkipCache(req)) {
