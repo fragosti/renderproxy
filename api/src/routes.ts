@@ -43,22 +43,6 @@ export const apply = (app: Application) => {
         cacheExpirySeconds,
       };
       try {
-        const user = await database.getUserOrCreate(userId);
-        let customer;
-        if (user.customerId) {
-          customer = await stripe.customers.retrieve(user.customerId);
-        }
-        if (!planUtils.isValidProxySettingsForCustomer(proxySettings, customer)) {
-          logger.info(`User ${userId} could not add settings on ${urlToProxy} for ${domain} because of plan.`);
-          res.status(400).json({ type: 'plan_upgrade_required' });
-          return;
-        }
-      } catch (err) {
-        res.status(500).json({ type: 'plan_validation_failed', message: err  });
-        logger.error(`Failed to validate plan of ${userId} when altering ${domain} settings.`);
-        return;
-      }
-      try {
         await database.updateProxySettingsForUser(userId, domain, proxySettings);
         logger.info(`User ${userId} successfully added proxy ${urlToProxy} for ${domain}`);
         res.status(201).json({ type: 'success', message: 'Successfully added domain.'});
@@ -185,7 +169,7 @@ export const apply = (app: Application) => {
         if (user.customerId && user.hasBillingInfo) {
           const proxySettings = await database.getProxySettingsAsync(domain);
           if (proxySettings.subscriptionId) {
-            if (planId === PlanId.Free) {
+            if (planId === PlanId.Spark) {
               await stripe.subscriptions.del(proxySettings.subscriptionId);
               await database.removeSubscriptionIdFromDomain(domain);
               delete proxySettings.subscriptionId;
@@ -215,8 +199,7 @@ export const apply = (app: Application) => {
             });
             await database.addSubscriptionIdToDomain(domain, subscription.id);
           }
-          const adjustedProxySettings = planUtils.adjustProxySettingsForPlan(proxySettings, planId);
-          await database.updateProxySettingsForUser(userId, domain, adjustedProxySettings);
+          await database.updateProxySettingsForUser(userId, domain, proxySettings);
           logger.info(`Successfully subscribed ${userId} to ${planId}`);
           res.status(200).json({ type: 'subscribe_customer_success' });
         } else {

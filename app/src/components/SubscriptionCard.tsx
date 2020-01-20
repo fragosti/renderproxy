@@ -22,7 +22,7 @@ const getPlanId = (
     return undefined;
   }
   if (!customer || !customer.subscriptions) {
-    return PlanId.Free;
+    return PlanId.Spark;
   }
   const subscriptions = customer.subscriptions.data;
   if (subscriptions.length > 0) {
@@ -36,9 +36,9 @@ const getPlanId = (
         return plan.id as PlanId;
       }
     }
-    return PlanId.Free;
+    return PlanId.Spark;
   }
-  return PlanId.Free;
+  return PlanId.Spark;
 };
 
 export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ domain }) => {

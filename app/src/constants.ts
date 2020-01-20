@@ -15,24 +15,31 @@ export const STRIPE_PUBLIC_KEY =
 export const DEFAULT_TTL = 86400;
 export const subscriptionTiers: SubscriptionTierInfo[] = [
   {
-    id: PlanId.Free,
-    name: 'Free',
-    price: '$0 / month',
-    properties: ['1,000 requests / month', 'HTTPS', 'No dynamic rendering', 'Unlimited pages', 'Free'],
-    ctaText: 'Select',
-  },
-  {
     id: PlanId.Spark,
     name: 'Spark',
-    price: '$5 / month',
-    properties: ['10,000 requests / month', 'HTTPS', 'No dynamic rendering', 'Unlimited pages', '30 day free trial'],
+    price: '$0 / month',
+    properties: [
+      '1,000 requests / month',
+      'HTTPS',
+      'Dynamic',
+      'Unlimited pages',
+      'Custom domains',
+      '30 day free trial',
+    ],
     ctaText: 'Select',
   },
   {
     id: PlanId.Flame,
     name: 'Flame',
     price: '$20 / month',
-    properties: ['100,000 requests / month', 'HTTPS', 'Dynamic rendering', 'Unlimited pages', '30 day free trial'],
+    properties: [
+      '100,000 requests / month',
+      'HTTPS',
+      'Dynamic rendering',
+      'Unlimited pages',
+      'Custom domains',
+      '30 day free trial',
+    ],
     ctaText: 'Select',
   },
   {
@@ -42,8 +49,9 @@ export const subscriptionTiers: SubscriptionTierInfo[] = [
     properties: [
       '10,00,000 requests / month',
       'HTTPS',
-      'Pre-render every request',
+      'Dynamic Rendering',
       'Unlimited pages',
+      'Custom domains',
       '30 day free trial',
     ],
     ctaText: 'Select',

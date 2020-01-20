@@ -11,7 +11,7 @@ export const planUtils = {
     customer?: Customer | undefined,
   ): PlanId | undefined => {
     if (!customer || !customer.subscriptions) {
-      return PlanId.Free;
+      return PlanId.Spark;
     }
     const subscriptions = customer.subscriptions.data;
     if (subscriptions.length > 0) {
@@ -25,36 +25,8 @@ export const planUtils = {
           return plan.id as PlanId;
         }
       }
-      return PlanId.Free;
+      return PlanId.Spark;
     }
-    return PlanId.Free;
-  },
-  isValidProxySettingsForPlan: (proxySettings: ProxySettings, planId: PlanId) => {
-    if ((planId === PlanId.Free || planId === PlanId.Spark) && proxySettings.prerenderSetting !== 'none') {
-      return false;
-    }
-    if (planId === PlanId.Flame && proxySettings.prerenderSetting === 'all') {
-      return false;
-    }
-    return true;
-  },
-  isValidProxySettingsForCustomer: (proxySettings: ProxySettings, customer?: Customer) => {
-    const planId = planUtils.getPlanId(proxySettings.domain, customer);
-    return planUtils.isValidProxySettingsForPlan(proxySettings, planId);
-  },
-  adjustProxySettingsForPlan: (proxySettings: ProxySettings, planId): ProxySettings => {
-    if (planId === PlanId.Free || planId === PlanId.Spark) {
-      return {
-        ...proxySettings,
-        prerenderSetting: 'none',
-      };
-    }
-    if (planId === PlanId.Flame && proxySettings.prerenderSetting === 'all') {
-      return {
-        ...proxySettings,
-        prerenderSetting: 'bot',
-      };
-    }
-    return proxySettings;
+    return PlanId.Spark;
   },
 };
