@@ -38,7 +38,8 @@ export const apply = (app: Application) => {
         domain,
         urlToProxy,
         shouldRedirectIfPossible: true,
-        prerenderSetting,
+        // Only support this setting for now
+        prerenderSetting: 'bot',
         userId,
         cacheExpirySeconds,
       };

@@ -100,20 +100,6 @@ export const ProxySettingForm: React.FC<ProxySettingsFormProps> = props => {
             />
           </Box>
           <Box marginY={3}>
-            <FormControl variant="outlined" style={{ backgroundColor: 'white' }}>
-              <InputLabel htmlFor="prerender-setting">Pre-render</InputLabel>
-              <Select
-                value={newSettings.prerenderSetting}
-                onChange={createOnChange('prerenderSetting')}
-                input={<OutlinedInput labelWidth={75} name="prerender-setting" id="prerender-setting" />}
-              >
-                <MenuItem value="none">No Requests</MenuItem>
-                <MenuItem value="all">All Requests</MenuItem>
-                <MenuItem value="bot">Bot Requests</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          <Box marginY={3}>
             <TextField
               error={!!validations.cacheExpirySeconds}
               helperText={validations.cacheExpirySeconds}
