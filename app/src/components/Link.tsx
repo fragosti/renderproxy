@@ -18,4 +18,5 @@ Link.defaultProps = {
   target: '_blank',
   fontFamily: 'Monospace',
   color: 'inherit',
+  display: 'inline-block',
 };

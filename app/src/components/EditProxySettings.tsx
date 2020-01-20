@@ -56,16 +56,20 @@ export const EditProxySettings: React.FC<EditProxySettingsProps> = props => {
             </Link>
           </Typography>
         </Box>
-        <Box marginY={3}>
-          <InstructionsCard domain={domain} />
-        </Box>
-        <Box marginY={3}>{proxySettings && <ProxySettingForm onDeleteClick={openDialog} {...proxySettings} />}</Box>
-        <Box marginY={3}>
-          <UsageCard domain={domain} />
-        </Box>
-        <Box marginY={3}>
-          <SubscriptionCard domain={domain} />
-        </Box>
+        {proxySettings && (
+          <>
+            <Box marginY={3}>
+              <InstructionsCard domain={domain} originUrl={proxySettings.urlToProxy} />
+            </Box>
+            <Box marginY={3}>{proxySettings && <ProxySettingForm onDeleteClick={openDialog} {...proxySettings} />}</Box>
+            <Box marginY={3}>
+              <UsageCard domain={domain} />
+            </Box>
+            <Box marginY={3}>
+              <SubscriptionCard domain={domain} />
+            </Box>
+          </>
+        )}
       </Container>
       <DeleteProxyDialog
         domain={domain}

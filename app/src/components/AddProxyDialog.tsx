@@ -33,7 +33,7 @@ export const AddProxyDialog: React.FC<AddProxyDialogProps> = props => {
     }
     const proxySettings = validateProxySettings({
       domain,
-      urlToProxy: '',
+      urlToProxy: `http://${domain}/`,
       shouldRedirectIfPossible: false,
       prerenderSetting: 'none',
       cacheExpirySeconds: DEFAULT_TTL,
