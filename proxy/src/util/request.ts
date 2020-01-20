@@ -16,7 +16,8 @@ export const requestUtils = {
   },
   isHtmlRequest: (req: Request) => {
     const fileType = requestUtils.getFileType(req);
-    return fileType === undefined || fileType === 'html';
+    const acceptsHtml = req.accepts('html');
+    return !!acceptsHtml || fileType === 'html';
   },
   isMobileRequest: (req: Request) => {
     const userAgent = req.headers['user-agent'];

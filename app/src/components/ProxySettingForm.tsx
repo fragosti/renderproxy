@@ -1,16 +1,4 @@
-import {
-  Box,
-  Button,
-  Divider,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Paper,
-  Select,
-  Snackbar,
-  TextField,
-} from '@material-ui/core';
+import { Box, Button, Divider, Paper, Snackbar, TextField } from '@material-ui/core';
 import { Cached as CachedIcon, Delete as DeleteIcon, Done as DoneIcon } from '@material-ui/icons';
 import * as R from 'ramda';
 import React, { useState } from 'react';

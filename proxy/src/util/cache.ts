@@ -20,7 +20,8 @@ export const cacheUtils = {
   shouldCacheResponse: (req: Request, originResponse: Response): boolean => {
     return originResponse.statusCode === 200 &&
       originResponse.headers['set-cookie'] === undefined &&
-      req.headers['cache-control'] !== 'no-cache';
+      req.headers['cache-control'] !== 'no-cache' &&
+      requestUtils.isHtmlRequest(req);
   },
   shouldUseCachedResponse: (req: Request): boolean => {
     const isHtmlRequest = requestUtils.isHtmlRequest(req);
