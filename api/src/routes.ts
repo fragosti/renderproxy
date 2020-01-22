@@ -1,5 +1,6 @@
 import { Application, Request, Response } from 'express';
 import { check } from 'express-validator';
+import * as R from 'ramda';
 
 import { checkJwt } from './middleware/jwt';
 import { AuthorizedUser, PlanId, ProxySettings } from './types';
@@ -240,7 +241,7 @@ export const apply = (app: Application) => {
         return true;
       });
       logger.info(`Successfully got usages over ${numberOver} for ${allDomains.length} over ${numberDays} days`);
-      res.status(200).json(formattedUsages);
+      res.status(200).json(R.zipObj(allDomains, formattedUsages));
     } catch (err) {
       logger.error(`Could not get usages: ${err}`);
       res.status(500).json({ type: 'get_usage_error' });
