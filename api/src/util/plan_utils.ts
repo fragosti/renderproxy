@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import Stripe from 'stripe';
 
-import { PlanId, ProxySettings } from '../types';
+import { PlanId } from '../types';
 
 type Customer = Stripe.customers.ICustomer;
 

@@ -1,13 +1,12 @@
 import { Application, Request, Response } from 'express';
 import { check } from 'express-validator';
-import * as R from 'ramda';
 
 import { checkJwt } from './middleware/jwt';
-import { AuthorizedUser, ProxySettings, PlanId } from './types';
+import { AuthorizedUser, PlanId, ProxySettings } from './types';
 import { database } from './util/database';
 import { logger } from './util/logger';
-import { planUtils } from './util/plan_utils';
 import { stripe } from './util/stripe';
+import { usageUtils } from './util/usage_utils';
 
 export interface AuthorizedRequest extends Request {
   user: AuthorizedUser;
@@ -27,7 +26,7 @@ export const apply = (app: Application) => {
     ],
     async (req: AuthorizedRequest, res: Response): Promise<void> => {
       const userId = req.user.sub;
-      const { domain, urlToProxy, prerenderSetting, cacheExpirySeconds } = req.body;
+      const { domain, urlToProxy, cacheExpirySeconds } = req.body;
       const existingProxySettings = await database.getProxySettingsAsync(domain);
       if (existingProxySettings && existingProxySettings.userId !== userId) {
         logger.info(`${userId} failed adding ${domain}. It belongs to ${existingProxySettings.userId}`);
@@ -217,23 +216,34 @@ export const apply = (app: Application) => {
     try {
       const numberDays = days && parseInt(days, 10);
       const dailyUsage = await database.getUsage(domain, numberDays);
-      const totalUsage = R.sum(Object.values(dailyUsage));
-      const monthlyUsage = Object.keys(dailyUsage).reduce((acc, val) => {
-        const month = val.split('-').slice(0, 2).join('-');
-        const dayRequests = dailyUsage[val];
-        acc[month] = acc[month] ? acc[month] + dayRequests : dayRequests;
-        return acc;
-      }, {});
-      const response = {
-        dailyUsage,
-        monthlyUsage,
-        totalUsage,
-      };
+      const response = usageUtils.formatDailyUsage(dailyUsage);
       logger.info(`Successfully got usage for ${domain} over ${numberDays} days`);
       res.status(200).json(response);
     } catch (err) {
       logger.error(`Could not get usage for ${domain}: ${err}`);
       res.status(500).json({ type: 'get_usage_error '});
+    }
+  });
+  app.get('/usage', async (req: Request, res: Response): Promise<void> => {
+    const { over, days } = req.query;
+    try {
+      const numberDays = days && parseInt(days, 10);
+      const numberOver = over && parseInt(over, 10);
+      const allDomains = await database.getAllDomainsAsync();
+      const allDailyUsages = await Promise.all(allDomains.map((domain) => database.getUsage(domain)));
+      const formattedUsages = allDailyUsages
+        .map((dailyUsage) => usageUtils.formatDailyUsage(dailyUsage))
+        .filter((formattedUsage) => {
+        if (numberOver) {
+          return formattedUsage.totalUsage >= numberOver;
+        }
+        return true;
+      });
+      logger.info(`Successfully got usages over ${numberOver} for ${allDomains.length} over ${numberDays} days`);
+      res.status(200).json(formattedUsages);
+    } catch (err) {
+      logger.error(`Could not get usages: ${err}`);
+      res.status(500).json({ type: 'get_usage_error' });
     }
   });
   app.delete('/cache/:domain', async (req: Request, res: Response): Promise<void> => {

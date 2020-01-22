@@ -20,6 +20,11 @@ export const database = {
     }
     return settingsDocSnap.data() as ProxySettings;
   },
+  getAllDomainsAsync: async (): Promise<string[]> => {
+    const allSettingsSnap = await proxySettingsCollection.get();
+    const domains = allSettingsSnap.docs.map((doc) => doc.id);
+    return domains;
+  },
   deleteProxySettingsForUser: async (userId: string, domain: string): Promise<void> => {
     const proxySettingsDoc = proxySettingsCollection.doc(domain);
     const userDoc = userCollection.doc(userId);
@@ -122,6 +127,22 @@ export const database = {
       acc[val] = parseInt(usage[index], 10) || 0;
       return acc;
     }, {});
+  },
+  getFormattedUsage: async (domain: string, days: number = 30): Promise<any> => {
+    const dailyUsage = await database.getUsage(domain, days);
+    const totalUsage = R.sum(Object.values(dailyUsage));
+    const monthlyUsage = Object.keys(dailyUsage).reduce((acc, val) => {
+      const month = val.split('-').slice(0, 2).join('-');
+      const dayRequests = dailyUsage[val];
+      acc[month] = acc[month] ? acc[month] + dayRequests : dayRequests;
+      return acc;
+    }, {});
+    const response = {
+      dailyUsage,
+      monthlyUsage,
+      totalUsage,
+    };
+    return response;
   },
   clearWebCache: async (domain: string): Promise<void> => {
     const proxySettings = await database.getProxySettingsAsync(domain);
