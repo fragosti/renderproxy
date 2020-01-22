@@ -232,16 +232,20 @@ export const apply = (app: Application) => {
       const numberOver = over && parseInt(over, 10);
       const allDomains = await database.getAllDomainsAsync();
       const allDailyUsages = await Promise.all(allDomains.map((domain) => database.getUsage(domain)));
-      const formattedUsages = allDailyUsages
-        .map((dailyUsage) => usageUtils.formatDailyUsage(dailyUsage))
-        .filter((formattedUsage) => {
-        if (numberOver) {
-          return formattedUsage.totalUsage >= numberOver;
-        }
-        return true;
-      });
+      const domainDailyUsages = R.zipObj(allDomains, allDailyUsages);
+      const formattedDomainUsages = Object.keys(domainDailyUsages)
+        .reduce((acc, domain) => {
+          const formattedUsage = usageUtils.formatDailyUsage(domainDailyUsages[domain])
+          if (numberOver && formattedUsage.totalUsage < numberOver) {
+            return acc;
+          }
+          return {
+            ...acc,
+            [domain]: formattedUsage,
+          };
+        }, {} as any);
       logger.info(`Successfully got usages over ${numberOver} for ${allDomains.length} over ${numberDays} days`);
-      res.status(200).json(R.zipObj(allDomains, formattedUsages));
+      res.status(200).json(formattedDomainUsages);
     } catch (err) {
       logger.error(`Could not get usages: ${err}`);
       res.status(500).json({ type: 'get_usage_error' });
